@@ -1,0 +1,29 @@
+# apps/inventario/domain/movement_ports.py
+from abc import ABC, abstractmethod
+from typing import List, Optional
+
+from .movement_entities import AlertaDomain, MovimientoDomain
+
+
+class MovimientoRepositoryPort(ABC):
+    @abstractmethod
+    def crear(self, mov: MovimientoDomain) -> MovimientoDomain: ...
+    @abstractmethod
+    def listar(self) -> List[MovimientoDomain]: ...
+    @abstractmethod
+    def listar_por_producto(self, producto_id: int) -> List[MovimientoDomain]: ...
+    @abstractmethod
+    def timeline_producto(self, producto_id: int) -> List[MovimientoDomain]: ...
+
+
+class AlertaRepositoryPort(ABC):
+    @abstractmethod
+    def crear(self, alerta: AlertaDomain) -> AlertaDomain: ...
+    @abstractmethod
+    def marcar_atendida(self, alerta_id: int) -> Optional[AlertaDomain]: ...
+    @abstractmethod
+    def listar_activas(self) -> List[AlertaDomain]: ...
+    @abstractmethod
+    def listar_por_producto(self, producto_id: int) -> List[AlertaDomain]: ...
+    @abstractmethod
+    def desactivar_para_producto(self, producto_id: int) -> None: ...

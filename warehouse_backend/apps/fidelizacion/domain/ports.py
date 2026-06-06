@@ -1,0 +1,29 @@
+# apps/fidelizacion/domain/ports.py
+from abc import ABC, abstractmethod
+from typing import List, Optional
+
+from .entities import CanjesFidelizacionDomain, ReglaFidelizacionDomain
+
+
+class ReglaFidelizacionRepositoryPort(ABC):
+    @abstractmethod
+    def crear(self, regla: ReglaFidelizacionDomain) -> ReglaFidelizacionDomain: ...
+    @abstractmethod
+    def obtener_por_id(self, id: int) -> Optional[ReglaFidelizacionDomain]: ...
+    @abstractmethod
+    def listar(self, solo_activos: bool = True) -> List[ReglaFidelizacionDomain]: ...
+    @abstractmethod
+    def obtener_activa_para_nivel(self, nivel: str) -> Optional[ReglaFidelizacionDomain]: ...
+    @abstractmethod
+    def actualizar(self, regla: ReglaFidelizacionDomain) -> ReglaFidelizacionDomain: ...
+    @abstractmethod
+    def desactivar(self, id: int) -> None: ...
+
+
+class CanjeRepositoryPort(ABC):
+    @abstractmethod
+    def crear(self, canje: CanjesFidelizacionDomain) -> CanjesFidelizacionDomain: ...
+    @abstractmethod
+    def listar_por_cliente(self, cliente_id: int) -> List[CanjesFidelizacionDomain]: ...
+    @abstractmethod
+    def listar(self) -> List[CanjesFidelizacionDomain]: ...
