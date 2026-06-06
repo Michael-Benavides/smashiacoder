@@ -1,20 +1,31 @@
 # apps/seguridad/infrastructure/views.py
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
-from shared.responses import success_response, error_response
-from shared.exceptions import ReglaNegocioException, EntidadNoEncontradaException
-from ..application.use_cases import (
-    LoginUseCase, CrearUsuarioUseCase, CrearRolUseCase,
-    RecuperarPasswordUseCase, RestablecerPasswordUseCase
-)
-from .repositories import DjangoUsuarioRepository, DjangoRolRepository
-from .serializers import (
-    LoginSerializer, CrearUsuarioSerializer, CrearRolSerializer,
-    RecuperarPasswordSerializer, RestablecerPasswordSerializer
-)
-from .models import UsuarioORM, RolORM
+from django.conf import settings as django_settings
 from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework_simplejwt.settings import api_settings as jwt_settings
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.utils import datetime_from_epoch
+
+from shared.exceptions import EntidadNoEncontradaException, ReglaNegocioException
+from shared.responses import error_response, success_response
+
+from ..application.use_cases import (
+    CrearRolUseCase,
+    CrearUsuarioUseCase,
+    LoginUseCase,
+    RecuperarPasswordUseCase,
+    RestablecerPasswordUseCase,
+)
+from .models import RolORM, UsuarioORM
+from .repositories import DjangoRolRepository, DjangoUsuarioRepository
+from .serializers import (
+    CrearRolSerializer,
+    CrearUsuarioSerializer,
+    LoginSerializer,
+    RecuperarPasswordSerializer,
+    RestablecerPasswordSerializer,
+)
 
 
 def _usuario_a_dict(usuario) -> dict:
@@ -22,6 +33,37 @@ def _usuario_a_dict(usuario) -> dict:
         "id": usuario.id, "nombre": usuario.nombre, "email": usuario.email,
         "rol_id": usuario.rol_id, "activo": usuario.activo, "avatar": usuario.avatar
     }
+
+
+def _emitir_tokens_para_usuario(usuario_id: int) -> RefreshToken:
+    """
+    Construye un ``RefreshToken`` para un ``UsuarioORM`` sin pasar por
+    ``RefreshToken.for_user``.
+
+    Razón: ``BlacklistMixin.for_user`` crea un ``OutstandingToken`` cuyo
+    campo ``user`` es FK a ``AUTH_USER_MODEL`` (Django auth). Nuestro
+    ``UsuarioORM`` NO es ``AUTH_USER_MODEL``, por lo que esa asignación
+    explota con ``ValueError``.
+
+    Solución: crear el token con el claim ``user_id`` manualmente y
+    registrar el ``OutstandingToken`` con ``user=None`` (el campo es
+    ``null=True``), lo que mantiene la trazabilidad para
+    ``LogoutView.blacklist()`` sin romper la integridad referencial.
+    """
+    refresh = RefreshToken()
+    refresh[jwt_settings.USER_ID_CLAIM] = str(usuario_id)
+
+    if "rest_framework_simplejwt.token_blacklist" in django_settings.INSTALLED_APPS:
+        from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+        OutstandingToken.objects.create(
+            user=None,
+            jti=refresh[jwt_settings.JTI_CLAIM],
+            token=str(refresh),
+            created_at=refresh.current_time,
+            expires_at=datetime_from_epoch(refresh["exp"]),
+        )
+
+    return refresh
 
 
 class LoginView(APIView):
@@ -35,11 +77,14 @@ class LoginView(APIView):
             repo = DjangoUsuarioRepository()
             use_case = LoginUseCase(repo)
             usuario = use_case.ejecutar(**serializer.validated_data)
-            orm_user = UsuarioORM.objects.get(pk=usuario.id)
-            refresh = RefreshToken.for_user(orm_user)
+            refresh = _emitir_tokens_para_usuario(usuario.id)
             return success_response(
-                data={"access_token": str(refresh.access_token), "refresh_token": str(refresh), "usuario": _usuario_a_dict(usuario)},
-                message="Autenticación exitosa."
+                data={
+                    "access_token": str(refresh.access_token),
+                    "refresh_token": str(refresh),
+                    "usuario": _usuario_a_dict(usuario),
+                },
+                message="Autenticación exitosa.",
             )
         except ReglaNegocioException as e:
             return error_response("Credenciales incorrectas.", e.detail, status.HTTP_401_UNAUTHORIZED)
