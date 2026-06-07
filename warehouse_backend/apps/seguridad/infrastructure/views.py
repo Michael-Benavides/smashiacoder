@@ -1,5 +1,6 @@
 # apps/seguridad/infrastructure/views.py
 from django.conf import settings as django_settings
+from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 
@@ -86,6 +87,44 @@ def _emitir_tokens_para_usuario(usuario_id: int) -> RefreshToken:
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        tags=['Autenticación'],
+        summary='Iniciar sesión',
+        description=(
+            'Autentica con email y contraseña. Copia el `access_token` de la respuesta '
+            'y úsalo en el botón **Authorize** de Swagger.'
+        ),
+        auth=[],
+        request=LoginSerializer,
+        responses={
+            200: OpenApiResponse(
+                description='Autenticación exitosa',
+                examples=[
+                    OpenApiExample(
+                        'Login administrador',
+                        value={
+                            'success': True,
+                            'message': 'Autenticación exitosa.',
+                            'data': {
+                                'access_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+                                'refresh_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+                                'usuario': {
+                                    'id': 1,
+                                    'nombre': 'Administrador',
+                                    'email': 'admin@smashiacoder.com',
+                                    'rol_id': 1,
+                                    'rol_nombre': 'Administrador',
+                                    'activo': True,
+                                    'avatar': None,
+                                },
+                            },
+                        },
+                    ),
+                ],
+            ),
+            401: OpenApiResponse(description='Credenciales incorrectas'),
+        },
+    )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if not serializer.is_valid():
@@ -110,6 +149,12 @@ class LoginView(APIView):
 class MeView(APIView):
     permission_classes = [EsUsuarioActivo]
 
+    @extend_schema(
+        tags=['Autenticación'],
+        summary='Perfil del usuario autenticado',
+        description='Devuelve los datos del usuario en sesión. Requiere JWT válido.',
+        responses={200: OpenApiResponse(description='Perfil del usuario')},
+    )
     def get(self, request):
         try:
             repo = DjangoUsuarioRepository()
@@ -187,11 +232,27 @@ class RolListCreateView(APIView):
 class UsuarioListCreateView(APIView):
     permission_classes = [EsAdministrador]
 
+    @extend_schema(
+        tags=['Usuarios'],
+        summary='Listar usuarios',
+        description='Lista todos los usuarios. Solo administradores.',
+        responses={200: OpenApiResponse(description='Lista de usuarios')},
+    )
     def get(self, request):
         repo = DjangoUsuarioRepository()
         usuarios = repo.listar()
         return success_response(data=[_usuario_a_dict(u) for u in usuarios])
 
+    @extend_schema(
+        tags=['Usuarios'],
+        summary='Crear usuario',
+        description='Registra un nuevo usuario con rol asignado. Solo administradores.',
+        request=CrearUsuarioSerializer,
+        responses={
+            201: OpenApiResponse(description='Usuario creado'),
+            400: OpenApiResponse(description='Datos inválidos'),
+        },
+    )
     def post(self, request):
         serializer = CrearUsuarioSerializer(data=request.data)
         if not serializer.is_valid():

@@ -1,7 +1,23 @@
 # apps/inventario/infrastructure/movement_serializers.py
+from drf_spectacular.utils import OpenApiExample, extend_schema_serializer
 from rest_framework import serializers
 
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Entrada de stock',
+            value={
+                'producto_id': 1,
+                'cantidad': 50,
+                'numero_lote': 'LOTE-2026-001',
+                'proveedor_id': 1,
+                'observaciones': 'Compra mensual',
+            },
+            request_only=True,
+        ),
+    ],
+)
 class EntradaSerializer(serializers.Serializer):
     producto_id = serializers.IntegerField(
         error_messages={'required': 'El producto es obligatorio.'},

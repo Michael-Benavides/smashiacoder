@@ -1,6 +1,7 @@
 # apps/inventario/infrastructure/serializers.py
 from decimal import Decimal
 
+from drf_spectacular.utils import OpenApiExample, extend_schema_serializer
 from rest_framework import serializers
 
 
@@ -8,6 +9,15 @@ from rest_framework import serializers
 # Categoría
 # ──────────────────────────────────────────────────────────────────────
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Categoría ejemplo',
+            value={'nombre': 'Electrónica', 'descripcion': 'Equipos y dispositivos electrónicos'},
+            request_only=True,
+        ),
+    ],
+)
 class CrearCategoriaSerializer(serializers.Serializer):
     nombre = serializers.CharField(
         max_length=200,
@@ -58,6 +68,25 @@ class ActualizarUbicacionSerializer(serializers.Serializer):
 # Producto
 # ──────────────────────────────────────────────────────────────────────
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Producto ejemplo',
+            value={
+                'codigo': 'PROD-001',
+                'nombre': 'Cable HDMI 2.0 4K',
+                'descripcion': 'Cable HDMI de alta velocidad',
+                'categoria_id': 1,
+                'precio_compra': '8.50',
+                'precio_venta': '15.99',
+                'unidad_medida': 'Unidad',
+                'stock_minimo': 5,
+                'ubicacion_id': 1,
+            },
+            request_only=True,
+        ),
+    ],
+)
 class CrearProductoSerializer(serializers.Serializer):
     codigo = serializers.CharField(
         max_length=100,

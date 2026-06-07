@@ -1,10 +1,26 @@
 # apps/fidelizacion/infrastructure/serializers.py
+from drf_spectacular.utils import OpenApiExample, extend_schema_serializer
 from rest_framework import serializers
 
 
 NIVELES_VALIDOS = ["Bronce", "Plata", "Oro", "Platino"]
 
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Regla de puntos',
+            value={
+                'nombre': 'Doble puntos fin de semana',
+                'puntos_por_unidad': 2,
+                'nivel_minimo': 'Oro',
+                'nivel_maximo': 'Platino',
+                'recompensa': '2 puntos por cada dólar en compras de sábado y domingo',
+            },
+            request_only=True,
+        ),
+    ],
+)
 class CrearReglaFidelizacionSerializer(serializers.Serializer):
     nombre = serializers.CharField(max_length=200, error_messages={
         "required": "El nombre es obligatorio.",

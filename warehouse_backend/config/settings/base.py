@@ -161,22 +161,136 @@ SPECTACULAR_SETTINGS = {
         'name': 'Proyecto Académico UPEC',
     },
     'TAGS': [
-        {'name': 'Autenticación', 'description': 'Login, logout y gestión de sesión JWT'},
-        {'name': 'Usuarios', 'description': 'Gestión de usuarios y roles'},
-        {'name': 'Categorías', 'description': 'Categorías de productos'},
-        {'name': 'Ubicaciones', 'description': 'Ubicaciones y zonas del almacén'},
-        {'name': 'Productos', 'description': 'Gestión completa de productos'},
-        {'name': 'Lotes', 'description': 'Control de lotes con método FIFO'},
-        {'name': 'Movimientos', 'description': 'Entradas, salidas y traslados de inventario'},
-        {'name': 'Proveedores', 'description': 'Gestión de proveedores'},
-        {'name': 'Clientes', 'description': 'Gestión de clientes'},
-        {'name': 'Fidelización', 'description': 'Reglas de puntos y canjes'},
-        {'name': 'Dashboard', 'description': 'KPIs y métricas del sistema'},
-        {'name': 'Reportes', 'description': 'Generación de reportes PDF y Excel'},
-        {'name': 'Auditoría', 'description': 'Registro de acciones del sistema'},
-        {'name': 'Configuración', 'description': 'Parámetros del sistema'},
-        {'name': 'Chatbot', 'description': 'Asistente IA con Groq Llama 3.3'},
+        {
+            'name': 'Autenticación',
+            'description': (
+                'Login, logout y gestión de sesión JWT. '
+                'Responsable: Michael Benavides (coordinación principal).'
+            ),
+        },
+        {
+            'name': 'Usuarios',
+            'description': (
+                'Gestión de usuarios y roles del sistema. '
+                'Responsable: Michael Benavides (coordinación principal).'
+            ),
+        },
+        {
+            'name': 'Categorías',
+            'description': (
+                'Categorías de productos del inventario. '
+                'Responsable: Jhonatan Zambrano (backend).'
+            ),
+        },
+        {
+            'name': 'Ubicaciones',
+            'description': (
+                'Ubicaciones y zonas del almacén. '
+                'Responsable: Jhonatan Zambrano (backend).'
+            ),
+        },
+        {
+            'name': 'Productos',
+            'description': (
+                'Gestión completa de productos y stock. '
+                'Responsable: Jhonatan Zambrano (backend).'
+            ),
+        },
+        {
+            'name': 'Lotes',
+            'description': (
+                'Control de lotes con método FIFO. '
+                'Responsable: Jhonatan Zambrano (backend).'
+            ),
+        },
+        {
+            'name': 'Movimientos',
+            'description': (
+                'Entradas, salidas y traslados de inventario. '
+                'Responsable: Jhonatan Zambrano (backend).'
+            ),
+        },
+        {
+            'name': 'Proveedores',
+            'description': (
+                'Gestión de proveedores. '
+                'Responsable: Jhonatan Zambrano (backend).'
+            ),
+        },
+        {
+            'name': 'Clientes',
+            'description': (
+                'Gestión de clientes y datos de contacto. '
+                'Responsable: Johan Almeida (frontend).'
+            ),
+        },
+        {
+            'name': 'Fidelización',
+            'description': (
+                'Reglas de puntos, niveles y canjes. '
+                'Responsable: Johan Almeida (frontend).'
+            ),
+        },
+        {
+            'name': 'Dashboard',
+            'description': (
+                'KPIs, métricas y alertas del sistema. '
+                'Responsable: Michael Benavides (coordinación principal).'
+            ),
+        },
+        {
+            'name': 'Reportes',
+            'description': (
+                'Generación de reportes PDF y Excel. '
+                'Responsable: Jhonatan Zambrano (backend).'
+            ),
+        },
+        {
+            'name': 'Auditoría',
+            'description': (
+                'Registro de acciones del sistema. '
+                'Responsable: Jhonatan Zambrano (backend).'
+            ),
+        },
+        {
+            'name': 'Configuración',
+            'description': (
+                'Parámetros globales del sistema. '
+                'Responsable: Michael Benavides (coordinación principal).'
+            ),
+        },
+        {
+            'name': 'Chatbot',
+            'description': (
+                'Asistente IA con Groq Llama 3.3. '
+                'Responsable: Johan Almeida (frontend).'
+            ),
+        },
     ],
     'COMPONENT_SPLIT_REQUEST': True,
     'SORT_OPERATIONS': False,
+    'SECURITY': [{'BearerAuth': []}],
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'BearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+                'description': (
+                    'Token JWT obtenido en POST /api/seguridad/login. '
+                    'Usuarios de prueba: admin@smashiacoder.com / Admin2024@ '
+                    'o usuario@smashiacoder.com / User2024@'
+                ),
+            },
+        },
+    },
+    'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,
+        'displayRequestDuration': True,
+        'docExpansion': 'list',
+        'filter': True,
+    },
+    'POSTPROCESSING_HOOKS': [
+        'shared.openapi.postprocess_schema_hook',
+    ],
 }
