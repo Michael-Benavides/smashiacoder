@@ -1,18 +1,19 @@
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Bell, Menu } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import { getAlertas } from '@/api/administracion'
 import { useSidebarStore } from '@/store/sidebarStore'
-import { useI18n } from '@/lib/i18n'
+import { useT } from '@/hooks/useT'
 
-const titles = {
+const TITLE_KEYS = {
   '/dashboard': 'Dashboard',
   '/inventario/productos': 'Productos',
   '/inventario/categorias': 'Categorías',
   '/inventario/ubicaciones': 'Ubicaciones',
   '/movimientos': 'Movimientos',
-  '/movimientos/entrada': 'Entrada',
-  '/movimientos/salida': 'Salida',
+  '/movimientos/entrada': 'Entrada de Inventario',
+  '/movimientos/salida': 'Salida de Inventario',
   '/movimientos/traslado': 'Traslado',
   '/terceros/proveedores': 'Proveedores',
   '/terceros/clientes': 'Clientes',
@@ -29,7 +30,7 @@ const titles = {
 export default function Header() {
   const { pathname } = useLocation()
   const setMobileOpen = useSidebarStore((s) => s.setMobileOpen)
-  const t = useI18n((s) => s.t)
+  const { t } = useT()
 
   const { data: alertas = [] } = useQuery({
     queryKey: ['alertas-header'],
@@ -41,7 +42,10 @@ export default function Header() {
   })
 
   const alertCount = Array.isArray(alertas) ? alertas.length : 0
-  const pageTitle = titles[pathname] ?? 'SmashIACodeR'
+  const pageTitle = useMemo(() => {
+    const key = TITLE_KEYS[pathname]
+    return key ? t(key) : 'SmashIACodeR'
+  }, [pathname, t])
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900 lg:px-6">
@@ -50,7 +54,7 @@ export default function Header() {
           type="button"
           onClick={() => setMobileOpen(true)}
           className="rounded-lg p-2 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 lg:hidden"
-          aria-label="Abrir menú"
+          aria-label={t('Abrir menú')}
         >
           <Menu size={20} />
         </button>
@@ -61,7 +65,7 @@ export default function Header() {
       <button
         type="button"
         className="relative shrink-0 rounded-lg p-2 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-700 dark:hover:bg-zinc-800"
-        title={alertCount > 0 ? `${alertCount} ${t('nav.audit')}` : 'Sin alertas'}
+        title={alertCount > 0 ? `${alertCount} ${t('Alertas')}` : t('Sin alertas')}
       >
         <Bell size={16} />
         {alertCount > 0 && (

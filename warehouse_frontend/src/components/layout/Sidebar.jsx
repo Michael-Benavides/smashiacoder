@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { useI18n } from '@/lib/i18n'
+import { useT } from '@/hooks/useT'
 import {
   LayoutDashboard, Package, ArrowLeftRight, Users, Gift,
   ShieldCheck, Settings, MessageCircle, Boxes, MapPin,
@@ -15,67 +15,67 @@ import UserMenu from './UserMenu'
 const STORAGE_KEY = 'wi_sidebar_groups'
 
 const GROUP_ICONS = {
-  'nav.inventory': Boxes,
-  'nav.operations': ArrowLeftRight,
-  'nav.thirdParties': Users,
-  'nav.loyalty': Gift,
-  'nav.warehouse': Warehouse,
-  'nav.reports': FileBarChart,
-  'nav.admin': ShieldCheck,
+  'Inventario': Boxes,
+  'Operaciones': ArrowLeftRight,
+  'Terceros': Users,
+  'Fidelización': Gift,
+  'Almacén': Warehouse,
+  'Reportes': FileBarChart,
+  'Administración': ShieldCheck,
 }
 
 const navGroups = [
   {
-    labelKey: 'nav.inventory',
+    labelKey: 'Inventario',
     items: [
-      { to: '/inventario/productos', icon: Package, labelKey: 'nav.products' },
-      { to: '/inventario/categorias', icon: Boxes, labelKey: 'nav.categories' },
-      { to: '/inventario/ubicaciones', icon: MapPin, labelKey: 'nav.locations' },
+      { to: '/inventario/productos', icon: Package, labelKey: 'Productos' },
+      { to: '/inventario/categorias', icon: Boxes, labelKey: 'Categorías' },
+      { to: '/inventario/ubicaciones', icon: MapPin, labelKey: 'Ubicaciones' },
     ],
   },
   {
-    labelKey: 'nav.operations',
+    labelKey: 'Operaciones',
     items: [
-      { to: '/movimientos', icon: ArrowLeftRight, labelKey: 'nav.movements' },
-      { to: '/movimientos/entrada', icon: TrendingUp, labelKey: 'nav.entry' },
-      { to: '/movimientos/salida', icon: TrendingUp, labelKey: 'nav.exit', iconClass: 'rotate-180' },
-      { to: '/movimientos/traslado', icon: Map, labelKey: 'nav.transfer' },
+      { to: '/movimientos', icon: ArrowLeftRight, labelKey: 'Movimientos' },
+      { to: '/movimientos/entrada', icon: TrendingUp, labelKey: 'Entrada' },
+      { to: '/movimientos/salida', icon: TrendingUp, labelKey: 'Salida', iconClass: 'rotate-180' },
+      { to: '/movimientos/traslado', icon: Map, labelKey: 'Traslado' },
     ],
   },
   {
-    labelKey: 'nav.thirdParties',
+    labelKey: 'Terceros',
     items: [
-      { to: '/terceros/proveedores', icon: Users, labelKey: 'nav.suppliers' },
-      { to: '/terceros/clientes', icon: Users, labelKey: 'nav.clients' },
+      { to: '/terceros/proveedores', icon: Users, labelKey: 'Proveedores' },
+      { to: '/terceros/clientes', icon: Users, labelKey: 'Clientes' },
     ],
   },
   {
-    labelKey: 'nav.loyalty',
+    labelKey: 'Fidelización',
     items: [
-      { to: '/fidelizacion/reglas', icon: Gift, labelKey: 'nav.rules' },
-      { to: '/fidelizacion/canjes', icon: Gift, labelKey: 'nav.redemptions' },
+      { to: '/fidelizacion/reglas', icon: Gift, labelKey: 'Reglas' },
+      { to: '/fidelizacion/canjes', icon: Gift, labelKey: 'Canjes' },
     ],
   },
   {
-    labelKey: 'nav.warehouse',
+    labelKey: 'Almacén',
     items: [
-      { to: '/almacen/layout', icon: Map, labelKey: 'nav.layout' },
-      { to: '/almacen/codigos', icon: QrCode, labelKey: 'nav.codes' },
+      { to: '/almacen/layout', icon: Map, labelKey: 'Layout' },
+      { to: '/almacen/codigos', icon: QrCode, labelKey: 'Códigos / QR' },
     ],
   },
   {
-    labelKey: 'nav.reports',
+    labelKey: 'Reportes',
     adminOnly: true,
     items: [
-      { to: '/reportes', icon: FileBarChart, labelKey: 'nav.reports' },
+      { to: '/reportes', icon: FileBarChart, labelKey: 'Reportes' },
     ],
   },
   {
-    labelKey: 'nav.admin',
+    labelKey: 'Administración',
     adminOnly: true,
     items: [
-      { to: '/administracion/auditoria', icon: ShieldCheck, labelKey: 'nav.audit' },
-      { to: '/administracion/configuracion', icon: Settings, labelKey: 'nav.settings' },
+      { to: '/administracion/auditoria', icon: ShieldCheck, labelKey: 'Auditoría' },
+      { to: '/administracion/configuracion', icon: Settings, labelKey: 'Configuración' },
     ],
   },
 ]
@@ -132,7 +132,7 @@ function TopNavItem({ to, icon: Icon, label, onNavigate }) {
 
 export default function Sidebar() {
   const { pathname } = useLocation()
-  const t = useI18n((s) => s.t)
+  const { t } = useT()
   const { isAdmin } = usePermissions()
   const mobileOpen = useSidebarStore((s) => s.mobileOpen)
   const setMobileOpen = useSidebarStore((s) => s.setMobileOpen)
@@ -208,8 +208,8 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-4">
-        <TopNavItem to="/dashboard" icon={LayoutDashboard} label={t('nav.dashboard')} onNavigate={closeMobile} />
-        <TopNavItem to="/chatbot" icon={MessageCircle} label={t('nav.assistant')} onNavigate={closeMobile} />
+        <TopNavItem to="/dashboard" icon={LayoutDashboard} label={t('Dashboard')} onNavigate={closeMobile} />
+        <TopNavItem to="/chatbot" icon={MessageCircle} label={t('Asistente IA')} onNavigate={closeMobile} />
 
         {gruposFiltrados.map((group) => {
           const GroupIcon = GROUP_ICONS[group.labelKey]

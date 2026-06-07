@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 import { es, enUS } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { fetchAndDownloadReport } from '@/lib/download'
-import { useI18n } from '@/lib/i18n'
+import { useT } from '@/hooks/useT'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
@@ -19,7 +19,7 @@ export function parseAssistantContent(content) {
 }
 
 function PdfDownloadBubble({ reportType }) {
-  const t = useI18n((s) => s.t)
+  const { t } = useT()
   const [loading, setLoading] = useState(false)
 
   async function handleDownload() {
@@ -36,9 +36,9 @@ function PdfDownloadBubble({ reportType }) {
 
   return (
     <div className="space-y-2">
-      <p className="text-sm">{t('chat.pdfMessage')}</p>
+      <p className="text-sm">{t('El listado es muy extenso. Te lo preparo como PDF para descarga.')}</p>
       <Button variant="gold" size="sm" loading={loading} onClick={handleDownload}>
-        📄 {t('chat.downloadPdf')}
+        📄 {t('Descargar PDF')}
       </Button>
     </div>
   )

@@ -6,10 +6,12 @@ import { Toaster } from 'react-hot-toast'
 import { router } from '@/router'
 import { initPreferences } from '@/lib/theme'
 import { initLanguage } from '@/lib/i18n'
+import { useLanguageStore } from '@/store/languageStore'
 import '@/index.css'
 
 initPreferences()
-initLanguage()
+const savedLang = initLanguage()
+useLanguageStore.setState({ language: savedLang })
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30000 } },

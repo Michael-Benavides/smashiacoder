@@ -6,7 +6,7 @@ import { enviarMensajeChatbot } from '@/api/administracion'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { ChatbotMessage } from '@/components/chatbot/ChatbotMessage'
-import { useI18n } from '@/lib/i18n'
+import { useT } from '@/hooks/useT'
 import { apiErrorMessage } from '@/lib/formUtils'
 import { cn } from '@/lib/utils'
 
@@ -28,8 +28,7 @@ export default function ChatbotPanel({
   showNewChat = true,
   compact = false,
 }) {
-  const t = useI18n((s) => s.t)
-  const language = useI18n((s) => s.language)
+  const { t, language } = useT()
   const locale = language === 'en' ? enUS : es
 
   const [messages, setMessages] = useState([])
@@ -99,8 +98,8 @@ export default function ChatbotPanel({
             <Bot size={16} />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-zinc-900">{t('chat.title')}</h2>
-            <Badge variant="success" className="mt-0.5 text-[10px]">{t('chat.online')}</Badge>
+            <h2 className="text-sm font-semibold text-zinc-900">{t('Asistente SmashIACodeR')}</h2>
+            <Badge variant="success" className="mt-0.5 text-[10px]">{t('En línea')}</Badge>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -108,7 +107,7 @@ export default function ChatbotPanel({
           {showNewChat && (
             <Button variant="ghost" size="sm" onClick={nuevaConversacion}>
               <RotateCcw size={14} />
-              {!compact && t('chat.newChat')}
+              {!compact && t('Nueva conversación')}
             </Button>
           )}
         </div>
@@ -118,7 +117,7 @@ export default function ChatbotPanel({
         {messages.length === 0 && !loading && (
           <div className="flex h-full flex-col items-center justify-center text-center">
             <Bot size={compact ? 32 : 40} className="mb-3 text-zinc-300" />
-            <p className="text-sm font-medium text-zinc-700">{t('chat.help')}</p>
+            <p className="text-sm font-medium text-zinc-700">{t('¿En qué puedo ayudarte?')}</p>
           </div>
         )}
         <div className="space-y-3">
@@ -139,7 +138,7 @@ export default function ChatbotPanel({
           <textarea
             ref={inputRef}
             className="min-h-[40px] max-h-24 flex-1 resize-none rounded-xl border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
-            placeholder={t('chat.placeholder')}
+            placeholder={t('Escribe un mensaje...')}
             value={input}
             maxLength={MAX_CHARS}
             rows={1}

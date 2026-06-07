@@ -28,7 +28,7 @@ import {
 import { getDashboard, getDashboardGraficas } from '@/api/administracion'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useAuthStore } from '@/store/authStore'
-import { useI18n } from '@/lib/i18n'
+import { useT } from '@/hooks/useT'
 import { useDarkMode, resolveIconBg } from '@/hooks/useDarkMode'
 import { useCountUp } from '@/hooks/useCountUp'
 import { cn } from '@/lib/utils'
@@ -84,22 +84,22 @@ function KpiCard({ card, index, isDark, heading }) {
 const RANGE_MAP = { '7D': 7, '15D': 15, '30D': 30 }
 
 const QUICK_ACCESS = [
-  { label: 'Entrada', icon: TrendingUp, color: '#16A34A', bg: '#F0FDF4', href: '/movimientos/entrada' },
-  { label: 'Salida', icon: TrendingDown, color: '#DC2626', bg: '#FEF2F2', href: '/movimientos/salida' },
-  { label: 'Traslado', icon: ArrowLeftRight, color: '#2563EB', bg: '#EFF6FF', href: '/movimientos/traslado' },
-  { label: 'Reportes', icon: FileBarChart, color: '#7C3AED', bg: '#F5F3FF', href: '/reportes' },
-  { label: 'Chatbot', icon: MessageCircle, color: '#D97706', bg: '#FEF3C7', href: '/chatbot' },
+  { labelKey: 'Entrada', icon: TrendingUp, color: '#16A34A', bg: '#F0FDF4', href: '/movimientos/entrada' },
+  { labelKey: 'Salida', icon: TrendingDown, color: '#DC2626', bg: '#FEF2F2', href: '/movimientos/salida' },
+  { labelKey: 'Traslado', icon: ArrowLeftRight, color: '#2563EB', bg: '#EFF6FF', href: '/movimientos/traslado' },
+  { labelKey: 'Reportes', icon: FileBarChart, color: '#7C3AED', bg: '#F5F3FF', href: '/reportes' },
+  { labelKey: 'Asistente IA', icon: MessageCircle, color: '#D97706', bg: '#FEF3C7', href: '/chatbot' },
 ]
 
 function greetingKey() {
   const hour = new Date().getHours()
-  if (hour < 12) return 'greeting.morning'
-  if (hour < 19) return 'greeting.afternoon'
-  return 'greeting.evening'
+  if (hour < 12) return 'Buenos días'
+  if (hour < 19) return 'Buenas tardes'
+  return 'Buenas noches'
 }
 
 export default function DashboardPage() {
-  const t = useI18n((s) => s.t)
+  const { t } = useT()
   const user = useAuthStore((s) => s.user)
   const isDark = useDarkMode()
   const [rango, setRango] = useState('30D')
@@ -125,7 +125,7 @@ export default function DashboardPage() {
 
   const cards = useMemo(() => [
     {
-      label: 'Productos',
+      label: t('Productos'),
       value: kpis.total_productos_activos ?? 0,
       icon: Package,
       bgColor: '#FEF3C7',
@@ -135,7 +135,7 @@ export default function DashboardPage() {
       href: '/inventario/productos',
     },
     {
-      label: 'Clientes',
+      label: t('Clientes'),
       value: kpis.total_clientes_activos ?? 0,
       icon: Users,
       bgColor: '#EFF6FF',
@@ -145,7 +145,7 @@ export default function DashboardPage() {
       href: '/terceros/clientes',
     },
     {
-      label: 'Alertas',
+      label: t('Alertas'),
       value: kpis.alertas_no_atendidas ?? 0,
       icon: AlertTriangle,
       bgColor: (kpis.alertas_no_atendidas ?? 0) > 0 ? '#FEF2F2' : '#F0FDF4',
@@ -155,7 +155,7 @@ export default function DashboardPage() {
       href: '/administracion/auditoria',
     },
     {
-      label: 'Proveedores',
+      label: t('Proveedores'),
       value: kpis.total_proveedores_activos ?? 0,
       icon: Truck,
       bgColor: '#F0FDF4',
@@ -164,7 +164,7 @@ export default function DashboardPage() {
       statusColor: 'text-green-500',
       href: '/terceros/proveedores',
     },
-  ], [kpis])
+  ], [kpis, t])
 
   const datosGrafica = useMemo(() => {
     const cutoff = subDays(new Date(), rangeDays)
@@ -230,14 +230,14 @@ export default function DashboardPage() {
                 : 'border-zinc-300 text-zinc-700 hover:bg-zinc-50',
             )}
           >
-            + Entrada
+            {t('+ Entrada')}
           </Link>
           <Link
             to="/inventario/productos"
             className="rounded-full px-5 py-2.5 text-sm font-medium text-white transition-all active:scale-95 hover:opacity-90"
             style={{ backgroundColor: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
-            Ver Inventario
+            {t('Ver Inventario')}
           </Link>
         </div>
       </div>
@@ -260,10 +260,10 @@ export default function DashboardPage() {
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <h2 className={cn('text-base font-semibold', heading)}>
-              Movimientos del Inventario
+              {t('Movimientos del Inventario')}
             </h2>
             <p className="mt-0.5 text-xs text-zinc-400">
-              Entradas y salidas registradas
+              {t('Entradas y salidas registradas')}
             </p>
           </div>
           <div className={cn('flex gap-1 rounded-full p-1', rangeWrap)}>
@@ -284,7 +284,7 @@ export default function DashboardPage() {
         </div>
 
         {datosGrafica.length === 0 ? (
-          <p className="flex h-[280px] items-center justify-center text-sm text-zinc-400">Sin datos</p>
+          <p className="flex h-[280px] items-center justify-center text-sm text-zinc-400">{t('Sin datos')}</p>
         ) : (
           <ResponsiveContainer width="100%" height={280}>
             <LineChart key={rango} data={datosGrafica}>
@@ -322,20 +322,20 @@ export default function DashboardPage() {
         <div className="mb-4 flex items-center justify-between">
           <h2 className={cn('flex items-center gap-2 text-base font-semibold', heading)}>
             <Lightbulb size={16} className="text-amber-500" />
-            Requiere Atención
+            {t('Requiere Atención')}
           </h2>
           <span className={cn('rounded-full px-3 py-1 text-xs font-medium', pill)}>
-            ACTUALIZADO AHORA
+            {t('ACTUALIZADO AHORA')}
           </span>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
             <span className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-600">
-              STOCK CRÍTICO
+              {t('STOCK CRÍTICO')}
             </span>
             <h3 className={cn('mb-2 mt-3 font-semibold', heading)}>
-              {kpis.productos_stock_bajo?.length ?? 0} productos bajo mínimo
+              {kpis.productos_stock_bajo?.length ?? 0} {t('productos bajo mínimo')}
             </h3>
             <p className={cn('text-sm leading-relaxed', subtext)}>
               Algunos productos están por debajo del stock mínimo requerido.
@@ -344,16 +344,16 @@ export default function DashboardPage() {
               to="/inventario/productos"
               className="mt-4 flex items-center gap-1 text-sm font-medium text-amber-500 transition-all hover:gap-2"
             >
-              Ver productos <ArrowRight size={14} />
+              {t('Ver productos')} <ArrowRight size={14} />
             </Link>
           </div>
 
           <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
             <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-600">
-              INVENTARIO
+              {t('INVENTARIO')}
             </span>
             <h3 className={cn('mb-2 mt-3 font-semibold', heading)}>
-              Valor total en stock
+              {t('Valor total en stock')}
             </h3>
             <p className={cn('text-2xl font-bold', heading)}>
               ${valorInventario.toLocaleString('es-EC', { minimumFractionDigits: 2 })}
@@ -362,16 +362,16 @@ export default function DashboardPage() {
               to="/reportes"
               className="mt-4 flex items-center gap-1 text-sm font-medium text-amber-500 transition-all hover:gap-2"
             >
-              Ver reporte <ArrowRight size={14} />
+              {t('Ver reporte')} <ArrowRight size={14} />
             </Link>
           </div>
 
           <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
             <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-600">
-              VENCIMIENTOS
+              {t('VENCIMIENTOS')}
             </span>
             <h3 className={cn('mb-2 mt-3 font-semibold', heading)}>
-              {lotesCount} lotes próximos a vencer
+              {lotesCount} {t('Lotes próximos a vencer')}
             </h3>
             <p className={cn('text-sm leading-relaxed', subtext)}>
               Revisa los lotes con fecha de vencimiento en los próximos 30 días.
@@ -380,7 +380,7 @@ export default function DashboardPage() {
               to="/inventario/productos"
               className="mt-4 flex items-center gap-1 text-sm font-medium text-amber-500 transition-all hover:gap-2"
             >
-              Revisar lotes <ArrowRight size={14} />
+              {t('Revisar lotes')} <ArrowRight size={14} />
             </Link>
           </div>
         </div>
@@ -389,7 +389,7 @@ export default function DashboardPage() {
       {/* BLOQUE 5 — Accesos rápidos */}
       <div>
         <h2 className={cn('mb-4 text-base font-semibold', heading)}>
-          Accesos Rápidos
+          {t('Accesos Rápidos')}
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
           {QUICK_ACCESS.map((item) => {
@@ -412,7 +412,7 @@ export default function DashboardPage() {
                   <Icon size={22} style={{ color: item.color }} />
                 </div>
                 <span className={cn('text-xs font-semibold', label)}>
-                  {item.label}
+                  {t(item.labelKey)}
                 </span>
               </Link>
             )
@@ -423,10 +423,10 @@ export default function DashboardPage() {
       {/* BLOQUE 6 — Actividad reciente */}
       <div className={cn('rounded-2xl border p-6', surface)}>
         <h2 className={cn('mb-5 text-base font-semibold', heading)}>
-          Actividad Reciente
+          {t('Actividad Reciente')}
         </h2>
         {!movimientos.length ? (
-          <p className="text-sm text-zinc-400">Sin movimientos registrados</p>
+          <p className="text-sm text-zinc-400">{t('Sin movimientos registrados')}</p>
         ) : (
           <div className={cn('divide-y', divider)}>
             {movimientos.slice(0, 6).map((m, i) => (

@@ -7,6 +7,7 @@ import { login } from '@/api/auth'
 import { useAuthStore } from '@/store/authStore'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { useT } from '@/hooks/useT'
 const BRANDING_ITEMS = [
   { icon: '⚡', text: 'Control FIFO automatizado' },
   { icon: '📊', text: 'Dashboard en tiempo real' },
@@ -22,6 +23,7 @@ const IA_SHIMMER_STYLE = {
 }
 
 export default function LoginPage() {
+  const { t } = useT()
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
   const user = useAuthStore((s) => s.user)
@@ -227,23 +229,23 @@ export default function LoginPage() {
           <div className="rounded-2xl border border-zinc-200 bg-white px-8 py-10 shadow-lg dark:border-zinc-800 dark:bg-zinc-900 lg:px-10 lg:py-12">
             <div className="mb-8">
               <h1 className="mb-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                Bienvenido
+                {t('Bienvenido')}
               </h1>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Ingresa tus credenciales para continuar
+                {t('Ingresa tus credenciales para continuar')}
               </p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <Input
-                label="Correo electrónico"
+                label={t('Correo electrónico')}
                 type="email"
                 placeholder="admin@smashiacoder.com"
                 error={errors.email?.message}
                 {...register('email', { required: 'El correo es requerido' })}
               />
               <Input
-                label="Contraseña"
+                label={t('Contraseña')}
                 type="password"
                 placeholder="••••••••"
                 error={errors.password?.message}
@@ -258,13 +260,13 @@ export default function LoginPage() {
                 loading={loading}
                 className="mt-2 h-11 w-full rounded-xl text-sm font-semibold"
               >
-                Iniciar sesión
+                {t('Iniciar sesión')}
               </Button>
             </form>
 
             <div className="mt-8 rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800">
               <p className="mb-3 text-xs font-semibold text-zinc-500">
-                Credenciales de prueba:
+                {t('Credenciales de prueba')}:
               </p>
               <div className="space-y-2">
                 <button

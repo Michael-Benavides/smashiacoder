@@ -15,15 +15,16 @@ import {
   applyDensity,
   getStoredTheme,
 } from '@/lib/theme'
-import { getLanguage, setLanguage } from '@/lib/i18n'
+import { useT } from '@/hooks/useT'
+import { useLanguageStore } from '@/store/languageStore'
 import { cn } from '@/lib/utils'
 
 const TABS = [
-  { id: 'general', label: 'General', icon: Globe },
-  { id: 'apariencia', label: 'Apariencia', icon: Palette },
-  { id: 'notificaciones', label: 'Notificaciones', icon: Bell },
-  { id: 'seguridad', label: 'Seguridad', icon: Shield },
-  { id: 'correo', label: 'Correo', icon: Mail },
+  { id: 'general', labelKey: 'General', icon: Globe },
+  { id: 'apariencia', labelKey: 'Apariencia', icon: Palette },
+  { id: 'notificaciones', labelKey: 'Notificaciones', icon: Bell },
+  { id: 'seguridad', labelKey: 'Seguridad', icon: Shield },
+  { id: 'correo', labelKey: 'Correo', icon: Mail },
 ]
 
 const DEFAULTS = {
@@ -90,6 +91,8 @@ function SelectField({ value, onChange, options }) {
 }
 
 export default function ConfiguracionPanel({ compact = false }) {
+  const { t, language } = useT()
+  const setLanguage = useLanguageStore((s) => s.setLanguage)
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState('general')
   const [saving, setSaving] = useState(false)
@@ -98,7 +101,7 @@ export default function ConfiguracionPanel({ compact = false }) {
     sistema_nombre: DEFAULTS.sistema_nombre,
     sistema_logo: DEFAULTS.sistema_logo,
     zona_horaria: DEFAULTS.zona_horaria,
-    idioma: getLanguage(),
+    idioma: language,
     moneda: DEFAULTS.moneda,
   })
 
@@ -145,7 +148,7 @@ export default function ConfiguracionPanel({ compact = false }) {
       sistema_nombre: map.sistema_nombre,
       sistema_logo: map.sistema_logo,
       zona_horaria: map.zona_horaria,
-      idioma: getLanguage() || map.idioma,
+      idioma: language || map.idioma,
       moneda: map.moneda,
     })
     setNotificaciones({
@@ -164,7 +167,7 @@ export default function ConfiguracionPanel({ compact = false }) {
       email_password: map.email_password,
       email_tls: map.email_tls,
     })
-  }, [configs])
+  }, [configs, language])
 
   async function saveSection(entries, sectionLabel) {
     setSaving(true)
@@ -205,6 +208,10 @@ export default function ConfiguracionPanel({ compact = false }) {
     toast.success(idioma === 'en' ? 'Language changed to English' : 'Idioma cambiado a Español')
   }
 
+  useEffect(() => {
+    setGeneral((s) => ({ ...s, idioma: language }))
+  }, [language])
+
   function saveApariencia() {
     applyDarkMode(apariencia.mode)
     applyAccentColor(apariencia.accent)
@@ -220,7 +227,7 @@ export default function ConfiguracionPanel({ compact = false }) {
         <Card className="border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base text-zinc-900 dark:text-zinc-100">
-              <Globe size={18} /> General
+              <Globe size={18} /> {t('General')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -240,9 +247,12 @@ export default function ConfiguracionPanel({ compact = false }) {
                 ]}
               />
             </FieldRow>
-            <FieldRow compact={compact} label="Idioma">
-              <SelectField value={general.idioma} onChange={(e) => handleLanguageChange(e.target.value)}
-                options={[{ value: 'es', label: 'Español' }, { value: 'en', label: 'English' }]}
+            <FieldRow compact={compact} label={t('Idioma')}>
+              <SelectField value={language} onChange={(e) => handleLanguageChange(e.target.value)}
+                options={[
+                  { value: 'es', label: '🇪🇸 Español' },
+                  { value: 'en', label: '🇬🇧 English' },
+                ]}
               />
             </FieldRow>
             <FieldRow compact={compact} label="Moneda">
@@ -251,7 +261,7 @@ export default function ConfiguracionPanel({ compact = false }) {
               />
             </FieldRow>
             <div className="flex justify-end border-t border-zinc-100 pt-4 dark:border-zinc-800">
-              <Button loading={saving} onClick={() => saveSection(general, 'General')}><Save size={15} /> Guardar</Button>
+              <Button loading={saving} onClick={() => saveSection(general, t('General'))}><Save size={15} /> {t('Guardar')}</Button>
             </div>
           </CardContent>
         </Card>
@@ -261,7 +271,7 @@ export default function ConfiguracionPanel({ compact = false }) {
         <Card className="border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base text-zinc-900 dark:text-zinc-100">
-              <Palette size={18} /> Apariencia
+              <Palette size={18} /> {t('Apariencia')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -274,7 +284,7 @@ export default function ConfiguracionPanel({ compact = false }) {
                 ]}
               />
             </FieldRow>
-            <FieldRow compact={compact} label="Color de acento">
+            <FieldRow compact={compact} label={t('Color de acento')}>
               <div className="flex flex-wrap gap-2">
                 {ACCENT_OPTIONS.map(({ id, label, swatch }) => (
                   <button
@@ -304,7 +314,7 @@ export default function ConfiguracionPanel({ compact = false }) {
               />
             </FieldRow>
             <div className="flex justify-end border-t border-zinc-100 pt-4 dark:border-zinc-800">
-              <Button onClick={saveApariencia}><Save size={15} /> Guardar</Button>
+              <Button onClick={saveApariencia}><Save size={15} /> {t('Guardar')}</Button>
             </div>
           </CardContent>
         </Card>
@@ -408,7 +418,7 @@ export default function ConfiguracionPanel({ compact = false }) {
         'flex shrink-0 gap-1 overflow-x-auto rounded-xl border border-zinc-100 bg-white p-1.5 dark:border-zinc-800 dark:bg-zinc-900',
         compact ? 'flex-row' : 'flex-row lg:w-56 lg:flex-col',
       )}>
-        {TABS.map(({ id, label, icon: Icon }) => (
+        {TABS.map(({ id, labelKey, icon: Icon }) => (
           <button
             key={id}
             type="button"
@@ -424,7 +434,7 @@ export default function ConfiguracionPanel({ compact = false }) {
               : undefined}
           >
             <Icon size={15} />
-            {label}
+            {t(labelKey)}
           </button>
         ))}
       </nav>
