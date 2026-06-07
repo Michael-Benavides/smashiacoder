@@ -52,7 +52,7 @@ export function DataTable({ columns, data, loading, emptyTitle = 'Sin resultados
               {columns.map((col) => (
                 <td
                   key={col.key}
-                  className={cn('px-4 py-3 text-sm', cellText, col.cellClassName)}
+                  className={cn('px-4 py-3 text-sm', cellText, col.className, col.cellClassName)}
                 >
                   {col.render ? col.render(row[col.key], row) : row[col.key] ?? '—'}
                 </td>

@@ -302,6 +302,7 @@ export default function ProductosPage() {
     {
       key: 'categoria_id',
       header: 'Categoría',
+      className: 'hide-mobile',
       render: (val) => categoriaMap.get(val) ?? '—',
     },
     {
@@ -319,11 +320,13 @@ export default function ProductosPage() {
     {
       key: 'stock_minimo',
       header: 'Stock Mínimo',
+      className: 'hide-mobile',
       render: (val, row) => `${val} ${row.unidad_medida}`,
     },
     {
       key: 'precio_venta',
       header: 'Precio Venta',
+      className: 'hide-mobile',
       render: (val) => formatPrecio(val),
     },
     {

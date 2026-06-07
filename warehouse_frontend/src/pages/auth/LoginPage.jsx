@@ -7,7 +7,6 @@ import { login } from '@/api/auth'
 import { useAuthStore } from '@/store/authStore'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { BrandName } from '@/components/shared/BrandName'
 import { useI18n } from '@/lib/i18n'
 
 const BRANDING_ITEMS = [
@@ -42,8 +41,19 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const res = await login(data.email, data.password)
-      if (!res.data.success) {
-        toast.error(res.data.error?.message ?? 'Error al iniciar sesión')
+      if (!res.data?.success || !res.data?.data) {
+        const apiError = res.data?.error
+        const errores = apiError?.details ?? res.data?.errors
+        const mensaje = apiError?.message ?? res.data?.message ?? 'Credenciales inválidas'
+        if (errores?.email) {
+          const msg = typeof errores.email === 'string' ? errores.email : errores.email?.[0]
+          if (msg) setError('email', { message: msg })
+        }
+        if (errores?.password) {
+          const msg = typeof errores.password === 'string' ? errores.password : errores.password?.[0]
+          if (msg) setError('password', { message: msg })
+        }
+        toast.error(mensaje)
         return
       }
       const { access_token, refresh_token, usuario } = res.data.data
@@ -51,19 +61,20 @@ export default function LoginPage() {
       localStorage.setItem('refresh_token', refresh_token)
       setAuth(usuario, access_token, refresh_token)
       toast.success(res.data.message ?? 'Bienvenido')
-      navigate('/dashboard')
+      navigate('/dashboard', { replace: true })
     } catch (err) {
       const apiError = err.response?.data?.error
-      const details = apiError?.details ?? err.response?.data?.errors
-      if (details?.email) {
-        const msg = typeof details.email === 'string' ? details.email : details.email?.[0]
+      const errores = apiError?.details ?? err.response?.data?.errors
+      const mensaje = apiError?.message ?? err.response?.data?.message ?? 'Credenciales inválidas'
+      if (errores?.email) {
+        const msg = typeof errores.email === 'string' ? errores.email : errores.email?.[0]
         if (msg) setError('email', { message: msg })
       }
-      if (details?.password) {
-        const msg = typeof details.password === 'string' ? details.password : details.password?.[0]
+      if (errores?.password) {
+        const msg = typeof errores.password === 'string' ? errores.password : errores.password?.[0]
         if (msg) setError('password', { message: msg })
       }
-      toast.error(apiError?.message ?? err.response?.data?.message ?? 'Error al iniciar sesión')
+      toast.error(mensaje)
     } finally {
       setLoading(false)
     }
@@ -157,18 +168,18 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center bg-[#FAFAFA] p-8">
-        <div className="w-full max-w-md rounded-2xl border border-zinc-100 bg-white p-10 shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
-          <div className="mb-8 lg:hidden">
-            <div className="mb-4 flex items-center gap-2">
-              <div
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500"
-                style={{ animation: 'pulse-glow 2s ease-in-out infinite' }}
-              >
-                <Zap size={15} className="text-white" />
-              </div>
-              <BrandName className="font-black tracking-tight text-zinc-900" accentClass="text-amber-500" />
+      <div className="flex flex-1 items-center justify-center bg-zinc-50 p-6 dark:bg-zinc-950 lg:p-8">
+        <div className="w-full max-w-sm rounded-2xl border border-zinc-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:border-zinc-800 dark:bg-zinc-900 lg:max-w-md lg:p-10">
+          <div className="mb-8 flex items-center gap-2 lg:hidden">
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500"
+              style={{ animation: 'pulse-glow 2s ease-in-out infinite' }}
+            >
+              <Zap size={16} className="text-white" />
             </div>
+            <span className="font-black text-zinc-900 dark:text-zinc-100">
+              Smash<span className="text-amber-500">IA</span>CodeR
+            </span>
           </div>
           <div className="mb-6">
             <h1 className="mb-1 text-2xl font-bold text-zinc-900">{t('form.welcome')}</h1>

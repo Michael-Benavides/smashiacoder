@@ -485,3 +485,16 @@ html[data-density="spacious"] { --density-padding: 1.5rem; --density-gap: 0.75re
   background-size: 200% auto;
   animation: shimmer 1s linear infinite;
 }
+
+/* Responsive — móvil */
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .hide-mobile {
+    display: none;
+  }
+}

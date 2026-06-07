@@ -1,42 +1,35 @@
 import { useQuery } from '@tanstack/react-query'
-import { Bell, ChevronRight } from 'lucide-react'
+import { Bell, Menu } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import { getAlertas } from '@/api/administracion'
-import { useAuthStore } from '@/store/authStore'
+import { useSidebarStore } from '@/store/sidebarStore'
 import { useI18n } from '@/lib/i18n'
 
-const breadcrumbKeys = {
-  '/dashboard': ['nav.dashboard'],
-  '/inventario/productos': ['nav.inventory', 'nav.products'],
-  '/inventario/categorias': ['nav.inventory', 'nav.categories'],
-  '/inventario/ubicaciones': ['nav.inventory', 'nav.locations'],
-  '/movimientos': ['nav.operations', 'nav.movements'],
-  '/movimientos/entrada': ['nav.operations', 'nav.entry'],
-  '/movimientos/salida': ['nav.operations', 'nav.exit'],
-  '/movimientos/traslado': ['nav.operations', 'nav.transfer'],
-  '/terceros/proveedores': ['nav.thirdParties', 'nav.suppliers'],
-  '/terceros/clientes': ['nav.thirdParties', 'nav.clients'],
-  '/fidelizacion/reglas': ['nav.loyalty', 'nav.rules'],
-  '/fidelizacion/canjes': ['nav.loyalty', 'nav.redemptions'],
-  '/reportes': ['nav.reports'],
-  '/almacen/layout': ['nav.warehouse', 'nav.layout'],
-  '/almacen/codigos': ['nav.warehouse', 'nav.codes'],
-  '/administracion/auditoria': ['nav.admin', 'nav.audit'],
-  '/administracion/configuracion': ['nav.admin', 'nav.settings'],
-  '/chatbot': ['nav.assistant'],
+const titles = {
+  '/dashboard': 'Dashboard',
+  '/inventario/productos': 'Productos',
+  '/inventario/categorias': 'Categorías',
+  '/inventario/ubicaciones': 'Ubicaciones',
+  '/movimientos': 'Movimientos',
+  '/movimientos/entrada': 'Entrada',
+  '/movimientos/salida': 'Salida',
+  '/movimientos/traslado': 'Traslado',
+  '/terceros/proveedores': 'Proveedores',
+  '/terceros/clientes': 'Clientes',
+  '/fidelizacion/reglas': 'Reglas',
+  '/fidelizacion/canjes': 'Canjes',
+  '/reportes': 'Reportes',
+  '/almacen/layout': 'Layout Almacén',
+  '/almacen/codigos': 'Códigos QR',
+  '/administracion/auditoria': 'Auditoría',
+  '/administracion/configuracion': 'Configuración',
+  '/chatbot': 'Asistente IA',
 }
 
 export default function Header() {
   const { pathname } = useLocation()
-  const { user } = useAuthStore()
+  const setMobileOpen = useSidebarStore((s) => s.setMobileOpen)
   const t = useI18n((s) => s.t)
-  const language = useI18n((s) => s.language)
-
-  const crumbKeys = breadcrumbKeys[pathname] ?? ['nav.dashboard']
-  const firstName = user?.nombre?.split(' ')[0] ?? 'Usuario'
-
-  const hour = new Date().getHours()
-  const greetingKey = hour < 12 ? 'greeting.morning' : hour < 19 ? 'greeting.afternoon' : 'greeting.evening'
 
   const { data: alertas = [] } = useQuery({
     queryKey: ['alertas-header'],
@@ -48,28 +41,27 @@ export default function Header() {
   })
 
   const alertCount = Array.isArray(alertas) ? alertas.length : 0
+  const pageTitle = titles[pathname] ?? 'SmashIACodeR'
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-6 shadow-sm">
-      <div>
-        <p className="text-xs text-zinc-500">
-          {t(greetingKey)}, <span className="font-medium text-zinc-700">{firstName}</span>
-        </p>
-        <nav className="mt-0.5 flex items-center gap-1 text-sm font-semibold text-zinc-900">
-          {crumbKeys.map((key, i) => (
-            <span key={`${key}-${language}`} className="flex items-center gap-1">
-              {i > 0 && <ChevronRight size={12} className="text-zinc-400" />}
-              <span className={i === crumbKeys.length - 1 ? 'text-zinc-900' : 'text-zinc-500'}>
-                {t(key)}
-              </span>
-            </span>
-          ))}
-        </nav>
+    <header className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900 lg:px-6">
+      <div className="flex min-w-0 items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          className="rounded-lg p-2 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 lg:hidden"
+          aria-label="Abrir menú"
+        >
+          <Menu size={20} />
+        </button>
+        <h1 className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          {pageTitle}
+        </h1>
       </div>
       <button
         type="button"
-        className="relative rounded-lg p-2 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-700"
-        title={alertCount > 0 ? `${alertCount} alertas` : 'Sin alertas'}
+        className="relative shrink-0 rounded-lg p-2 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-700 dark:hover:bg-zinc-800"
+        title={alertCount > 0 ? `${alertCount} ${t('nav.audit')}` : 'Sin alertas'}
       >
         <Bell size={16} />
         {alertCount > 0 && (
