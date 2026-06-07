@@ -28,6 +28,7 @@ THIRD_PARTY_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'django_filters',
+    'drf_spectacular',
 ]
 
 LOCAL_APPS = [
@@ -109,6 +110,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ],
     'EXCEPTION_HANDLER': 'shared.responses.custom_exception_handler',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 from datetime import timedelta
@@ -136,3 +138,40 @@ DEFAULT_FROM_EMAIL = env(
     'DEFAULT_FROM_EMAIL',
     default='Warehouse IQ <noreply@warehouse.local>',
 )
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SmashIACodeR API',
+    'DESCRIPTION': '''
+    API REST del sistema de gestión de inventarios y fidelización SmashIACodeR.
+    Desarrollado con Arquitectura Hexagonal (Puertos y Adaptadores).
+    Universidad Politécnica Estatal del Carchi — UPEC 2026.
+    ''',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {
+        'name': 'Michael Benavides',
+        'email': 'admin@smashiacoder.com',
+    },
+    'LICENSE': {
+        'name': 'Proyecto Académico UPEC',
+    },
+    'TAGS': [
+        {'name': 'Autenticación', 'description': 'Login, logout y gestión de sesión JWT'},
+        {'name': 'Usuarios', 'description': 'Gestión de usuarios y roles'},
+        {'name': 'Categorías', 'description': 'Categorías de productos'},
+        {'name': 'Ubicaciones', 'description': 'Ubicaciones y zonas del almacén'},
+        {'name': 'Productos', 'description': 'Gestión completa de productos'},
+        {'name': 'Lotes', 'description': 'Control de lotes con método FIFO'},
+        {'name': 'Movimientos', 'description': 'Entradas, salidas y traslados de inventario'},
+        {'name': 'Proveedores', 'description': 'Gestión de proveedores'},
+        {'name': 'Clientes', 'description': 'Gestión de clientes'},
+        {'name': 'Fidelización', 'description': 'Reglas de puntos y canjes'},
+        {'name': 'Dashboard', 'description': 'KPIs y métricas del sistema'},
+        {'name': 'Reportes', 'description': 'Generación de reportes PDF y Excel'},
+        {'name': 'Auditoría', 'description': 'Registro de acciones del sistema'},
+        {'name': 'Configuración', 'description': 'Parámetros del sistema'},
+        {'name': 'Chatbot', 'description': 'Asistente IA con Groq Llama 3.3'},
+    ],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SORT_OPERATIONS': False,
+}
