@@ -15,7 +15,7 @@ function InputInner({ label, error, hint, className, style, ...props }, ref) {
       <input
         ref={ref}
         className={cn(
-          'h-9 w-full rounded-lg border px-3 text-sm',
+          'h-11 w-full rounded-xl border px-4 py-3 text-sm',
           'placeholder:text-zinc-400 transition-all duration-200',
           'focus:border-[var(--accent-border)] focus:outline-none',
           'focus:[box-shadow:0_0_0_2px_var(--accent-glow)]',

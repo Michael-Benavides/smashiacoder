@@ -165,8 +165,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 items-start justify-center overflow-y-auto bg-zinc-50 p-4 pt-6 dark:bg-zinc-950 lg:items-center lg:p-12 lg:pt-12">
-        <div className="w-full max-w-md">
+      <div className="flex flex-1 items-start justify-center overflow-y-auto bg-zinc-50 px-6 py-8 dark:bg-zinc-950 lg:items-center lg:px-12 lg:py-12">
+        <div className="w-full max-w-sm lg:max-w-md">
           {/* Banner de branding solo en móvil */}
           <div
             className="relative mb-6 overflow-hidden rounded-2xl p-5 text-white lg:hidden"
@@ -224,7 +224,7 @@ export default function LoginPage() {
           </div>
 
           {/* Card del formulario */}
-          <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900 lg:p-10">
+          <div className="rounded-2xl border border-zinc-200 bg-white px-8 py-10 shadow-lg dark:border-zinc-800 dark:bg-zinc-900 lg:px-10 lg:py-12">
             <div className="mb-8">
               <h1 className="mb-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                 Bienvenido
@@ -240,7 +240,6 @@ export default function LoginPage() {
                 type="email"
                 placeholder="admin@smashiacoder.com"
                 error={errors.email?.message}
-                className="h-11 text-base"
                 {...register('email', { required: 'El correo es requerido' })}
               />
               <Input
@@ -248,7 +247,6 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 error={errors.password?.message}
-                className="h-11 text-base"
                 {...register('password', {
                   required: 'La contraseña es requerida',
                   minLength: { value: 8, message: 'Mínimo 8 caracteres' },
@@ -258,7 +256,7 @@ export default function LoginPage() {
                 type="submit"
                 variant="gold"
                 loading={loading}
-                className="mt-2 h-11 w-full text-base"
+                className="mt-2 h-11 w-full rounded-xl text-sm font-semibold"
               >
                 Iniciar sesión
               </Button>
