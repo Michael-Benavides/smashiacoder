@@ -7,8 +7,6 @@ import { login } from '@/api/auth'
 import { useAuthStore } from '@/store/authStore'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { useI18n } from '@/lib/i18n'
-
 const BRANDING_ITEMS = [
   { icon: '⚡', text: 'Control FIFO automatizado' },
   { icon: '📊', text: 'Dashboard en tiempo real' },
@@ -24,7 +22,6 @@ const IA_SHIMMER_STYLE = {
 }
 
 export default function LoginPage() {
-  const t = useI18n((s) => s.t)
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
   const user = useAuthStore((s) => s.user)
@@ -81,7 +78,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen flex-col lg:flex-row">
       <div
         className="relative hidden w-[420px] shrink-0 overflow-hidden lg:flex"
         style={{
@@ -168,75 +165,139 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center bg-zinc-50 p-6 dark:bg-zinc-950 lg:p-8">
-        <div className="w-full max-w-sm rounded-2xl border border-zinc-100 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:border-zinc-800 dark:bg-zinc-900 lg:max-w-md lg:p-10">
-          <div className="mb-8 flex items-center gap-2 lg:hidden">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500"
-              style={{ animation: 'pulse-glow 2s ease-in-out infinite' }}
-            >
-              <Zap size={16} className="text-white" />
+      <div className="flex flex-1 items-start justify-center overflow-y-auto bg-zinc-50 p-4 pt-6 dark:bg-zinc-950 lg:items-center lg:p-12 lg:pt-12">
+        <div className="w-full max-w-md">
+          {/* Banner de branding solo en móvil */}
+          <div
+            className="relative mb-6 overflow-hidden rounded-2xl p-5 text-white lg:hidden"
+            style={{
+              background: 'linear-gradient(-45deg, #09090B, #18181B, #1C1A14)',
+            }}
+          >
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute rounded-full bg-amber-400"
+                style={{
+                  width: `${3 + i}px`,
+                  height: `${3 + i}px`,
+                  left: `${20 + i * 20}%`,
+                  top: `${20 + (i % 2) * 40}%`,
+                  opacity: 0.3,
+                  animation: `float ${3 + i * 0.5}s ease-in-out infinite`,
+                  animationDelay: `${i * 0.3}s`,
+                }}
+              />
+            ))}
+
+            <div className="relative z-10 flex items-center justify-between">
+              <div>
+                <h2 className="mb-1 text-lg font-black">
+                  Smash<span className="text-amber-400">IA</span>CodeR
+                </h2>
+                <p className="text-xs leading-relaxed text-zinc-400">
+                  Gestión inteligente de inventarios
+                </p>
+              </div>
+              <div className="flex flex-col gap-1.5 text-right">
+                <span className="flex items-center justify-end gap-1 text-xs text-zinc-400">
+                  <span>⚡</span> FIFO automatizado
+                </span>
+                <span className="flex items-center justify-end gap-1 text-xs text-zinc-400">
+                  <span>📊</span> Dashboard en tiempo real
+                </span>
+                <span className="flex items-center justify-end gap-1 text-xs text-zinc-400">
+                  <span>🤖</span> Asistente IA
+                </span>
+              </div>
             </div>
-            <span className="font-black text-zinc-900 dark:text-zinc-100">
+          </div>
+
+          {/* Logo solo en móvil */}
+          <div className="mb-8 flex items-center gap-2.5 lg:hidden">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500">
+              <Zap size={18} className="text-white" />
+            </div>
+            <span className="text-lg font-black text-zinc-900 dark:text-zinc-100">
               Smash<span className="text-amber-500">IA</span>CodeR
             </span>
           </div>
-          <div className="mb-6">
-            <h1 className="mb-1 text-2xl font-bold text-zinc-900">{t('form.welcome')}</h1>
-            <p className="text-sm text-zinc-500">{t('form.loginSubtitle')}</p>
-          </div>
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-            <Input
-              label={t('form.email')}
-              type="email"
-              placeholder="admin@warehouse.com"
-              error={errors.email?.message}
-              {...register('email', { required: 'El correo es requerido' })}
-            />
-            <Input
-              label={t('form.password')}
-              type="password"
-              placeholder="••••••••"
-              error={errors.password?.message}
-              {...register('password', {
-                required: 'La contraseña es requerida',
-                minLength: { value: 8, message: 'Mínimo 8 caracteres' },
-              })}
-            />
-            <Button type="submit" variant="gold" loading={loading} className="mt-2 w-full">
-              {t('form.login')}
-            </Button>
-          </form>
 
-          <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800">
-            <p className="mb-2 text-xs font-semibold text-zinc-500">
-              Credenciales de prueba:
-            </p>
-            <div className="space-y-1.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setValue('email', 'admin@smashiacoder.com')
-                  setValue('password', 'Admin2024@')
-                }}
-                className="w-full rounded-lg p-2 text-left text-xs transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
+          {/* Card del formulario */}
+          <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900 lg:p-10">
+            <div className="mb-8">
+              <h1 className="mb-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+                Bienvenido
+              </h1>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Ingresa tus credenciales para continuar
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <Input
+                label="Correo electrónico"
+                type="email"
+                placeholder="admin@smashiacoder.com"
+                error={errors.email?.message}
+                className="h-11 text-base"
+                {...register('email', { required: 'El correo es requerido' })}
+              />
+              <Input
+                label="Contraseña"
+                type="password"
+                placeholder="••••••••"
+                error={errors.password?.message}
+                className="h-11 text-base"
+                {...register('password', {
+                  required: 'La contraseña es requerida',
+                  minLength: { value: 8, message: 'Mínimo 8 caracteres' },
+                })}
+              />
+              <Button
+                type="submit"
+                variant="gold"
+                loading={loading}
+                className="mt-2 h-11 w-full text-base"
               >
-                <span className="font-semibold text-amber-500">⚡ Admin</span>
-                <span className="ml-2 text-zinc-400">admin@smashiacoder.com</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setValue('email', 'usuario@smashiacoder.com')
-                  setValue('password', 'User2024@')
-                }}
-                className="w-full rounded-lg p-2 text-left text-xs transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
-              >
-                <span className="font-semibold text-zinc-500">👤 Usuario</span>
-                <span className="ml-2 text-zinc-400">usuario@smashiacoder.com</span>
-              </button>
+                Iniciar sesión
+              </Button>
+            </form>
+
+            <div className="mt-8 rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800">
+              <p className="mb-3 text-xs font-semibold text-zinc-500">
+                Credenciales de prueba:
+              </p>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setValue('email', 'admin@smashiacoder.com')
+                    setValue('password', 'Admin2024@')
+                  }}
+                  className="w-full rounded-lg border border-zinc-200 p-3 text-left text-xs transition-colors hover:bg-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-700"
+                >
+                  <span className="font-bold text-amber-500">⚡ Admin</span>
+                  <span className="ml-2 text-zinc-400">admin@smashiacoder.com</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setValue('email', 'usuario@smashiacoder.com')
+                    setValue('password', 'User2024@')
+                  }}
+                  className="w-full rounded-lg border border-zinc-200 p-3 text-left text-xs transition-colors hover:bg-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-700"
+                >
+                  <span className="font-bold text-zinc-500">👤 Usuario</span>
+                  <span className="ml-2 text-zinc-400">usuario@smashiacoder.com</span>
+                </button>
+              </div>
             </div>
           </div>
+
+          <p className="mt-6 text-center text-xs text-zinc-400">
+            © 2026 SmashIACodeR · UPEC
+          </p>
         </div>
       </div>
     </div>
