@@ -145,11 +145,16 @@ SPECTACULAR_SETTINGS = {
     API REST del sistema de gestión de inventarios y fidelización SmashIACodeR.
     Desarrollado con Arquitectura Hexagonal (Puertos y Adaptadores).
     Universidad Politécnica Estatal del Carchi — UPEC 2026.
+
+    Autores:
+    - Michael Benavides
+    - Johan Almeida
+    - Jhonatan Zambrano
     ''',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'CONTACT': {
-        'name': 'Michael Benavides',
+        'name': 'Michael Benavides, Johan Almeida, Jhonatan Zambrano',
         'email': 'admin@smashiacoder.com',
     },
     'LICENSE': {
