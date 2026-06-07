@@ -11,7 +11,13 @@ const variants = {
 
 export function Badge({ variant = 'default', className, children }) {
   return (
-    <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', variants[variant], className)}>
+    <span
+      className={cn(
+        'inline-flex animate-fade-in-up items-center rounded-md px-2 py-0.5 text-xs font-medium transition-all duration-200',
+        variants[variant],
+        className,
+      )}
+    >
       {children}
     </span>
   )

@@ -1,7 +1,9 @@
 # apps/seguridad/infrastructure/views.py
 from django.conf import settings as django_settings
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
+
+from .permissions import EsAdministrador, EsUsuarioActivo
 from rest_framework.views import APIView
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -11,6 +13,8 @@ from shared.exceptions import EntidadNoEncontradaException, ReglaNegocioExceptio
 from shared.responses import error_response, success_response
 
 from ..application.use_cases import (
+    ActualizarUsuarioUseCase,
+    CambiarPasswordUseCase,
     CrearRolUseCase,
     CrearUsuarioUseCase,
     LoginUseCase,
@@ -20,6 +24,8 @@ from ..application.use_cases import (
 from .models import RolORM, UsuarioORM
 from .repositories import DjangoRolRepository, DjangoUsuarioRepository
 from .serializers import (
+    ActualizarUsuarioSerializer,
+    CambiarPasswordSerializer,
     CrearRolSerializer,
     CrearUsuarioSerializer,
     LoginSerializer,
@@ -29,9 +35,20 @@ from .serializers import (
 
 
 def _usuario_a_dict(usuario) -> dict:
+    rol_nombre = None
+    try:
+        orm = UsuarioORM.objects.select_related('rol').get(pk=usuario.id)
+        rol_nombre = orm.rol.nombre if orm.rol_id else None
+    except UsuarioORM.DoesNotExist:
+        pass
     return {
-        "id": usuario.id, "nombre": usuario.nombre, "email": usuario.email,
-        "rol_id": usuario.rol_id, "activo": usuario.activo, "avatar": usuario.avatar
+        "id": usuario.id,
+        "nombre": usuario.nombre,
+        "email": usuario.email,
+        "rol_id": usuario.rol_id,
+        "rol_nombre": rol_nombre,
+        "activo": usuario.activo,
+        "avatar": usuario.avatar,
     }
 
 
@@ -91,6 +108,8 @@ class LoginView(APIView):
 
 
 class MeView(APIView):
+    permission_classes = [EsUsuarioActivo]
+
     def get(self, request):
         try:
             repo = DjangoUsuarioRepository()
@@ -101,6 +120,8 @@ class MeView(APIView):
 
 
 class LogoutView(APIView):
+    permission_classes = [EsUsuarioActivo]
+
     def post(self, request):
         try:
             token = RefreshToken(request.data.get("refresh_token"))
@@ -140,6 +161,8 @@ class RestablecerPasswordView(APIView):
 
 
 class RolListCreateView(APIView):
+    permission_classes = [EsAdministrador]
+
     def get(self, request):
         repo = DjangoRolRepository()
         roles = repo.listar()
@@ -162,6 +185,8 @@ class RolListCreateView(APIView):
 
 
 class UsuarioListCreateView(APIView):
+    permission_classes = [EsAdministrador]
+
     def get(self, request):
         repo = DjangoUsuarioRepository()
         usuarios = repo.listar()
@@ -179,3 +204,59 @@ class UsuarioListCreateView(APIView):
             return success_response(data=_usuario_a_dict(usuario), message="Usuario creado.", status_code=status.HTTP_201_CREATED)
         except (ReglaNegocioException, EntidadNoEncontradaException) as e:
             return error_response("No se pudo crear el usuario.", e.detail)
+
+
+class UsuarioDetailView(APIView):
+    """GET/PUT /seguridad/usuarios/<id> — perfil del usuario."""
+    permission_classes = [EsUsuarioActivo]
+
+    def get(self, request, id: int):
+        if request.user.id != id:
+            return error_response("No autorizado.", status_code=status.HTTP_403_FORBIDDEN)
+        repo = DjangoUsuarioRepository()
+        usuario = repo.obtener_por_id(id)
+        if not usuario:
+            return error_response("Usuario no encontrado.", status_code=status.HTTP_404_NOT_FOUND)
+        return success_response(data=_usuario_a_dict(usuario))
+
+    def put(self, request, id: int):
+        if request.user.id != id:
+            return error_response("No autorizado.", status_code=status.HTTP_403_FORBIDDEN)
+        serializer = ActualizarUsuarioSerializer(data=request.data, partial=True)
+        if not serializer.is_valid():
+            return error_response("Datos inválidos.", serializer.errors)
+        try:
+            repo = DjangoUsuarioRepository()
+            use_case = ActualizarUsuarioUseCase(repo)
+            usuario = use_case.ejecutar(id, nombre=serializer.validated_data.get('nombre'))
+            return success_response(
+                data=_usuario_a_dict(usuario),
+                message="Perfil actualizado.",
+            )
+        except EntidadNoEncontradaException as e:
+            return error_response("Usuario no encontrado.", e.detail, status.HTTP_404_NOT_FOUND)
+
+
+class CambiarPasswordView(APIView):
+    """POST /seguridad/usuarios/<id>/cambiar-password"""
+    permission_classes = [EsUsuarioActivo]
+
+    def post(self, request, id: int):
+        if request.user.id != id:
+            return error_response("No autorizado.", status_code=status.HTTP_403_FORBIDDEN)
+        serializer = CambiarPasswordSerializer(data=request.data)
+        if not serializer.is_valid():
+            return error_response("Datos inválidos.", serializer.errors)
+        try:
+            repo = DjangoUsuarioRepository()
+            use_case = CambiarPasswordUseCase(repo)
+            use_case.ejecutar(
+                id,
+                serializer.validated_data['password_actual'],
+                serializer.validated_data['nueva_password'],
+            )
+            return success_response(message="Contraseña actualizada exitosamente.")
+        except ReglaNegocioException as e:
+            return error_response("No se pudo cambiar la contraseña.", e.detail)
+        except EntidadNoEncontradaException as e:
+            return error_response("Usuario no encontrado.", e.detail, status.HTTP_404_NOT_FOUND)

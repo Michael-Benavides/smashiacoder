@@ -1,9 +1,10 @@
 # apps/seguridad/infrastructure/urls.py
 from django.urls import path
 from .views import (
+    CambiarPasswordView,
     LoginView, MeView, LogoutView,
     RecuperarPasswordView, RestablecerPasswordView,
-    RolListCreateView, UsuarioListCreateView
+    RolListCreateView, UsuarioDetailView, UsuarioListCreateView,
 )
 
 urlpatterns = [
@@ -14,4 +15,6 @@ urlpatterns = [
     path('restablecer', RestablecerPasswordView.as_view(), name='auth-restablecer'),
     path('roles', RolListCreateView.as_view(), name='roles-list'),
     path('usuarios', UsuarioListCreateView.as_view(), name='usuarios-list'),
+    path('usuarios/<int:id>', UsuarioDetailView.as_view(), name='usuarios-detail'),
+    path('usuarios/<int:id>/cambiar-password', CambiarPasswordView.as_view(), name='usuarios-cambiar-password'),
 ]

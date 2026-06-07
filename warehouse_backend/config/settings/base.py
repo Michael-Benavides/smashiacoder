@@ -99,7 +99,7 @@ REST_FRAMEWORK = {
         'apps.seguridad.infrastructure.authentication.WarehouseJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'apps.seguridad.infrastructure.permissions.EsUsuarioActivo',
     ),
     'DEFAULT_PAGINATION_CLASS': 'shared.pagination.ZarpronixPagination',
     'PAGE_SIZE': 20,
@@ -124,3 +124,15 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
 CORS_ALLOW_CREDENTIALS = True
+
+# ── Email (SMTP) ──────────────────────────────────────────────────────
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = env.int('EMAIL_PORT', default=587)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+DEFAULT_FROM_EMAIL = env(
+    'DEFAULT_FROM_EMAIL',
+    default='Warehouse IQ <noreply@warehouse.local>',
+)

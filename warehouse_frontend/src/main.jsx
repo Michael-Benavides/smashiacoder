@@ -4,7 +4,12 @@ import { RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
 import { router } from '@/router'
+import { initPreferences } from '@/lib/theme'
+import { initLanguage } from '@/lib/i18n'
 import '@/index.css'
+
+initPreferences()
+initLanguage()
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30000 } },

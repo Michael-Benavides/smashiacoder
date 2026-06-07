@@ -56,7 +56,7 @@ export default function TimelinePage() {
   })
 
   return (
-    <div>
+    <div className="space-y-6 animate-fade-in-up">
       <PageHeader
         title="Timeline de producto"
         description="Historial cronológico de movimientos por producto"

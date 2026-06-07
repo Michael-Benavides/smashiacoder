@@ -1,6 +1,6 @@
 # apps/administracion/infrastructure/chatbot_view.py
 """
-Endpoint del chatbot del sistema Warehouse_iq.
+Endpoint del chatbot del sistema SmashIACodeR.
 
 Backend: Groq (Llama 3.3 70B versatile). Configurado por las variables de
 entorno ``GROQ_API_KEY`` y ``GROQ_MODEL``. NO se usa Anthropic.
@@ -16,16 +16,17 @@ from shared.responses import error_response, success_response
 env = environ.Env()
 
 
-SYSTEM_PROMPT = (
-    "Eres el asistente virtual de Warehouse_iq, un sistema de gestión "
-    "de inventarios, terceros (proveedores y clientes) y fidelización. "
-    "Responde SIEMPRE en español, de forma concisa, profesional y orientada "
-    "a la acción. Si te preguntan algo fuera del dominio del sistema, "
-    "redirige amablemente al usuario hacia funcionalidades del sistema "
-    "(consultas de stock, movimientos, alertas, fidelización, reportes, "
-    "configuración, etc.). No inventes datos: si no tienes la información, "
-    "pídele al usuario que la consulte en el módulo correspondiente."
-)
+SYSTEM_PROMPT = """Eres el asistente inteligente de SmashIACodeR.
+Tienes acceso conceptual al sistema de inventarios y puedes ayudar con consultas.
+
+REGLAS IMPORTANTES:
+1. Si el usuario pide datos tabulares (listas de clientes, productos, movimientos, etc.):
+   - Si son MENOS de 20 registros: responde con una tabla en formato Markdown (| col | col |)
+   - Si son MÁS de 20 registros: responde exactamente con: "GENERAR_PDF:<tipo>" donde tipo es: clientes, productos, proveedores, movimientos o inventario
+   - Ejemplos: "GENERAR_PDF:clientes", "GENERAR_PDF:productos"
+2. Para preguntas generales del sistema responde normalmente en español.
+3. Sé conciso y profesional. Máximo 3 párrafos en respuestas de texto.
+"""
 
 ROLES_VALIDOS = {"user", "assistant", "system"}
 

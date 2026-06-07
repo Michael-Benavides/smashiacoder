@@ -124,7 +124,7 @@ export default function CanjesPage() {
   ]
 
   return (
-    <div>
+    <div className="space-y-6 animate-fade-in-up">
       <PageHeader title="Canjes" description="Canjea puntos de fidelización por recompensas" />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

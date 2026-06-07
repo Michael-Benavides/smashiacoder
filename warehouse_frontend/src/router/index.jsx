@@ -1,5 +1,7 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet, Link } from 'react-router-dom'
+import { ShieldOff } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
+import { usePermissions } from '@/hooks/usePermissions'
 import Layout from '@/components/layout/Layout'
 import LoginPage from '@/pages/auth/LoginPage'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
@@ -26,6 +28,34 @@ function ProtectedRoute() {
   return user ? <Outlet /> : <Navigate to="/login" replace />
 }
 
+function AdminRoute() {
+  const { isAdmin } = usePermissions()
+  if (!isAdmin) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50">
+          <ShieldOff size={28} className="text-red-400" />
+        </div>
+        <h2 className="text-lg font-semibold text-zinc-700">
+          Acceso restringido
+        </h2>
+        <p className="max-w-xs text-center text-sm text-zinc-400">
+          No tienes permisos para acceder a esta sección.
+          Contacta al administrador.
+        </p>
+        <Link
+          to="/dashboard"
+          className="rounded-lg px-4 py-2 text-sm transition-all active:scale-95"
+          style={{ backgroundColor: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
+        >
+          Volver al inicio
+        </Link>
+      </div>
+    )
+  }
+  return <Outlet />
+}
+
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   {
@@ -46,12 +76,17 @@ export const router = createBrowserRouter([
         { path: '/terceros/clientes', element: <ClientesPage /> },
         { path: '/fidelizacion/reglas', element: <ReglasPage /> },
         { path: '/fidelizacion/canjes', element: <CanjesPage /> },
-        { path: '/reportes', element: <ReportesPage /> },
         { path: '/almacen/layout', element: <LayoutAlmacenPage /> },
         { path: '/almacen/codigos', element: <CodigosPage /> },
-        { path: '/administracion/auditoria', element: <AuditoriaPage /> },
-        { path: '/administracion/configuracion', element: <ConfiguracionPage /> },
         { path: '/chatbot', element: <ChatbotPage /> },
+        {
+          element: <AdminRoute />,
+          children: [
+            { path: '/reportes', element: <ReportesPage /> },
+            { path: '/administracion/auditoria', element: <AuditoriaPage /> },
+            { path: '/administracion/configuracion', element: <ConfiguracionPage /> },
+          ],
+        },
       ],
     }],
   },

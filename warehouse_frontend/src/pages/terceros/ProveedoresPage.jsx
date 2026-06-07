@@ -120,19 +120,23 @@ export default function ProveedoresPage() {
     },
   ]
 
-  return (
-    <div>
-      <PageHeader title="Proveedores" description="Gestión de proveedores del almacén">
-        <Button onClick={openCreate}><Plus size={16} />Nuevo Proveedor</Button>
-      </PageHeader>
+  const stats = [
+    { label: 'Total', value: meta?.total ?? proveedores.length },
+    { label: 'Activos', value: proveedores.filter((p) => p.activo).length, variant: 'success' },
+    { label: 'Inactivos', value: proveedores.filter((p) => !p.activo).length, variant: 'muted' },
+  ]
 
-      <div className="mb-4 max-w-sm">
+  return (
+    <div className="space-y-6 animate-fade-in-up">
+      <PageHeader title="Proveedores" variant="list" stats={stats}>
         <SearchInput
-          placeholder="Buscar por nombre o RUC..."
+          className="w-48"
+          placeholder="Buscar..."
           value={search}
           onChange={(v) => { setSearch(v); setPage(1) }}
         />
-      </div>
+        <Button variant="gold" onClick={openCreate}><Plus size={16} />Nuevo Proveedor</Button>
+      </PageHeader>
 
       <DataTable columns={columns} data={proveedores} loading={isLoading} emptyTitle="Sin proveedores" />
       <Pagination meta={meta} onPageChange={setPage} />

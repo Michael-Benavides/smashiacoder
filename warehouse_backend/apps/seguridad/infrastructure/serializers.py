@@ -33,3 +33,16 @@ class RestablecerPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
     token = serializers.CharField()
     nueva_password = serializers.CharField(min_length=8)
+
+
+class CambiarPasswordSerializer(serializers.Serializer):
+    password_actual = serializers.CharField(min_length=8, write_only=True)
+    nueva_password = serializers.CharField(min_length=8, write_only=True)
+    confirmar_password = serializers.CharField(min_length=8, write_only=True)
+
+    def validate(self, data):
+        if data['nueva_password'] != data['confirmar_password']:
+            raise serializers.ValidationError({
+                'confirmar_password': 'Las contraseñas no coinciden.',
+            })
+        return data

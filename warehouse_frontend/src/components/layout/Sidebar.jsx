@@ -1,131 +1,262 @@
-import { NavLink, useNavigate } from 'react-router-dom'
-import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/authStore'
-import {
-  LayoutDashboard, Package, ArrowLeftRight, Users, Gift,
-  FileText, Map, QrCode, ShieldCheck, Settings, MessageCircle,
-  LogOut, Boxes, MapPin, TrendingUp
-} from 'lucide-react'
-
-const navGroups = [
-  {
-    label: null,
-    items: [{ to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' }]
-  },
-  {
-    label: 'Inventario',
-    items: [
-      { to: '/inventario/productos', icon: Package, label: 'Productos' },
-      { to: '/inventario/categorias', icon: Boxes, label: 'Categorías' },
-      { to: '/inventario/ubicaciones', icon: MapPin, label: 'Ubicaciones' },
-    ]
-  },
-  {
-    label: 'Operaciones',
-    items: [
-      { to: '/movimientos', icon: ArrowLeftRight, label: 'Movimientos' },
-      { to: '/movimientos/entrada', icon: TrendingUp, label: 'Entrada' },
-      { to: '/movimientos/salida', icon: TrendingUp, label: 'Salida', iconClass: 'rotate-180' },
-      { to: '/movimientos/traslado', icon: Map, label: 'Traslado' },
-    ]
-  },
-  {
-    label: 'Terceros',
-    items: [
-      { to: '/terceros/proveedores', icon: Users, label: 'Proveedores' },
-      { to: '/terceros/clientes', icon: Users, label: 'Clientes' },
-    ]
-  },
-  {
-    label: 'Fidelización',
-    items: [
-      { to: '/fidelizacion/reglas', icon: Gift, label: 'Reglas' },
-      { to: '/fidelizacion/canjes', icon: Gift, label: 'Canjes' },
-    ]
-  },
-  {
-    label: 'Almacén',
-    items: [
-      { to: '/almacen/layout', icon: Map, label: 'Layout' },
-      { to: '/almacen/codigos', icon: QrCode, label: 'Códigos / QR' },
-    ]
-  },
-  {
-    label: 'Reportes',
-    items: [
-      { to: '/reportes', icon: FileText, label: 'Reportes' },
-    ]
-  },
-  {
-    label: 'Administración',
-    items: [
-      { to: '/administracion/auditoria', icon: ShieldCheck, label: 'Auditoría' },
-      { to: '/administracion/configuracion', icon: Settings, label: 'Configuración' },
-      { to: '/chatbot', icon: MessageCircle, label: 'Asistente IA' },
-    ]
-  },
-]
-
-export default function Sidebar() {
-  const { user, logout } = useAuthStore()
-  const navigate = useNavigate()
-
-  const handleLogout = () => { logout(); navigate('/login') }
-
-  return (
-    <aside className="w-60 h-screen bg-white border-r border-zinc-200 flex flex-col shrink-0">
-      <div className="px-5 py-5 border-b border-zinc-100">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 bg-zinc-900 rounded-lg flex items-center justify-center">
-            <Package size={14} className="text-white" />
-          </div>
-          <span className="text-sm font-bold text-zinc-900 tracking-tight">Warehouse IQ</span>
-        </div>
-      </div>
-
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
-        {navGroups.map((group, gi) => (
-          <div key={gi}>
-            {group.label && (
-              <p className="px-2 mb-1.5 text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">
-                {group.label}
-              </p>
-            )}
-            <div className="space-y-0.5">
-              {group.items.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) => cn(
-                    'flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors duration-150',
-                    isActive
-                      ? 'bg-zinc-900 text-white font-medium'
-                      : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
-                  )}
-                >
-                  <item.icon size={15} className={item.iconClass} />
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-          </div>
-        ))}
-      </nav>
-
-      <div className="px-3 py-4 border-t border-zinc-100">
-        <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg">
-          <div className="w-7 h-7 rounded-full bg-zinc-200 flex items-center justify-center text-xs font-semibold text-zinc-600">
-            {user?.nombre?.[0]?.toUpperCase() ?? 'U'}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-zinc-900 truncate">{user?.nombre ?? 'Usuario'}</p>
-            <p className="text-[10px] text-zinc-500 truncate">{user?.email ?? ''}</p>
-          </div>
-          <button onClick={handleLogout} className="p-1.5 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-red-500 transition-colors">
-            <LogOut size={13} />
-          </button>
-        </div>
-      </div>
-    </aside>
-  )
-}
+import { useEffect, useMemo, useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
+import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
+import {
+  LayoutDashboard, Package, ArrowLeftRight, Users, Gift,
+  ShieldCheck, Settings, MessageCircle, Boxes, MapPin,
+  Map, QrCode, TrendingUp, ChevronRight, Warehouse, FileBarChart, Zap,
+} from 'lucide-react'
+import { BrandName } from '@/components/shared/BrandName'
+import { usePermissions } from '@/hooks/usePermissions'
+import UserMenu from './UserMenu'
+
+const STORAGE_KEY = 'wi_sidebar_groups'
+
+const GROUP_ICONS = {
+  'nav.inventory': Boxes,
+  'nav.operations': ArrowLeftRight,
+  'nav.thirdParties': Users,
+  'nav.loyalty': Gift,
+  'nav.warehouse': Warehouse,
+  'nav.reports': FileBarChart,
+  'nav.admin': ShieldCheck,
+}
+
+const navGroups = [
+  {
+    labelKey: 'nav.inventory',
+    items: [
+      { to: '/inventario/productos', icon: Package, labelKey: 'nav.products' },
+      { to: '/inventario/categorias', icon: Boxes, labelKey: 'nav.categories' },
+      { to: '/inventario/ubicaciones', icon: MapPin, labelKey: 'nav.locations' },
+    ],
+  },
+  {
+    labelKey: 'nav.operations',
+    items: [
+      { to: '/movimientos', icon: ArrowLeftRight, labelKey: 'nav.movements' },
+      { to: '/movimientos/entrada', icon: TrendingUp, labelKey: 'nav.entry' },
+      { to: '/movimientos/salida', icon: TrendingUp, labelKey: 'nav.exit', iconClass: 'rotate-180' },
+      { to: '/movimientos/traslado', icon: Map, labelKey: 'nav.transfer' },
+    ],
+  },
+  {
+    labelKey: 'nav.thirdParties',
+    items: [
+      { to: '/terceros/proveedores', icon: Users, labelKey: 'nav.suppliers' },
+      { to: '/terceros/clientes', icon: Users, labelKey: 'nav.clients' },
+    ],
+  },
+  {
+    labelKey: 'nav.loyalty',
+    items: [
+      { to: '/fidelizacion/reglas', icon: Gift, labelKey: 'nav.rules' },
+      { to: '/fidelizacion/canjes', icon: Gift, labelKey: 'nav.redemptions' },
+    ],
+  },
+  {
+    labelKey: 'nav.warehouse',
+    items: [
+      { to: '/almacen/layout', icon: Map, labelKey: 'nav.layout' },
+      { to: '/almacen/codigos', icon: QrCode, labelKey: 'nav.codes' },
+    ],
+  },
+  {
+    labelKey: 'nav.reports',
+    adminOnly: true,
+    items: [
+      { to: '/reportes', icon: FileBarChart, labelKey: 'nav.reports' },
+    ],
+  },
+  {
+    labelKey: 'nav.admin',
+    adminOnly: true,
+    items: [
+      { to: '/administracion/auditoria', icon: ShieldCheck, labelKey: 'nav.audit' },
+      { to: '/administracion/configuracion', icon: Settings, labelKey: 'nav.settings' },
+    ],
+  },
+]
+
+const activeNavStyle = {
+  backgroundColor: 'var(--sidebar-active-bg)',
+  color: 'var(--sidebar-active-color)',
+  borderLeftColor: 'var(--accent-color)',
+}
+
+function loadGroupState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch { /* ignore */ }
+  return {}
+}
+
+function isRouteActive(pathname, to) {
+  return pathname === to || pathname.startsWith(`${to}/`)
+}
+
+function TopNavItem({ to, icon: Icon, label }) {
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) => cn(
+        'mb-1 flex min-h-[40px] items-center gap-3 rounded-xl px-3 py-2.5',
+        'text-[14px] transition-all duration-150 active:scale-95',
+        isActive ? 'font-semibold shadow-inner' : 'font-medium text-zinc-300 hover:bg-zinc-800/80 hover:text-white',
+      )}
+      style={({ isActive }) => (isActive ? activeNavStyle : undefined)}
+    >
+      {({ isActive }) => (
+        <>
+          <div
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+            style={isActive
+              ? { backgroundColor: 'color-mix(in srgb, var(--accent-color) 20%, transparent)' }
+              : undefined}
+          >
+            <Icon
+              size={17}
+              className={isActive ? 'text-[var(--accent-color)]' : 'text-zinc-400'}
+            />
+          </div>
+          {label}
+        </>
+      )}
+    </NavLink>
+  )
+}
+
+export default function Sidebar() {
+  const { pathname } = useLocation()
+  const t = useI18n((s) => s.t)
+  const { isAdmin } = usePermissions()
+  const [expanded, setExpanded] = useState(loadGroupState)
+
+  const gruposFiltrados = useMemo(
+    () => navGroups.filter((g) => !g.adminOnly || isAdmin),
+    [isAdmin],
+  )
+
+  const activeGroupLabel = useMemo(() => {
+    for (const group of gruposFiltrados) {
+      if (group.items.some((item) => isRouteActive(pathname, item.to))) {
+        return group.labelKey
+      }
+    }
+    return null
+  }, [pathname, gruposFiltrados])
+
+  useEffect(() => {
+    if (activeGroupLabel) {
+      setExpanded((prev) => {
+        if (prev[activeGroupLabel]) return prev
+        const next = { ...prev, [activeGroupLabel]: true }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+        return next
+      })
+    }
+  }, [activeGroupLabel])
+
+  function toggleGroup(labelKey) {
+    setExpanded((prev) => {
+      const next = { ...prev, [labelKey]: !prev[labelKey] }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+      return next
+    })
+  }
+
+  return (
+    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-[#1F1F23] bg-[#0F0F11]">
+      <div className="border-b border-[#1F1F23] px-5 py-5">
+        <div className="flex items-center gap-3">
+          <div
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+            style={{ backgroundColor: 'var(--accent-color)', animation: 'pulse-glow 2s ease-in-out infinite' }}
+          >
+            <Zap size={15} className="text-white" />
+          </div>
+          <BrandName className="font-black tracking-tight text-white" />
+        </div>
+      </div>
+
+      <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-4">
+        <TopNavItem to="/dashboard" icon={LayoutDashboard} label={t('nav.dashboard')} />
+        <TopNavItem to="/chatbot" icon={MessageCircle} label={t('nav.assistant')} />
+
+        {gruposFiltrados.map((group) => {
+          const GroupIcon = GROUP_ICONS[group.labelKey]
+          const isOpen = expanded[group.labelKey] || group.labelKey === activeGroupLabel
+
+          return (
+            <div key={group.labelKey} className="mb-1">
+              <button
+                type="button"
+                onClick={() => toggleGroup(group.labelKey)}
+                className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-zinc-300 transition-all duration-200 hover:bg-zinc-800/80 hover:text-white"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-800 transition-colors duration-200 group-hover:bg-zinc-700">
+                  <GroupIcon
+                    size={16}
+                    className="text-zinc-400 transition-colors duration-200 group-hover:text-[var(--accent-color)]"
+                  />
+                </div>
+                <span className="flex-1 text-left text-[13.5px] font-semibold tracking-wide">
+                  {t(group.labelKey)}
+                </span>
+                <ChevronRight
+                  size={14}
+                  className={cn(
+                    'text-zinc-600 transition-transform duration-300',
+                    isOpen && 'rotate-90 text-[var(--accent-color)]',
+                  )}
+                />
+              </button>
+
+              {isOpen && (
+                <div className="submenu-open relative ml-4 border-l border-zinc-700/50 pl-4">
+                  {group.items.map((item) => (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      className={({ isActive }) => cn(
+                        'relative mb-0.5 flex min-h-[40px] items-center gap-2.5 rounded-lg px-3 py-2',
+                        'text-[13px] transition-all duration-150 active:scale-95',
+                        isActive
+                          ? 'border-l-2 pl-[9px] font-semibold sidebar-item-active'
+                          : 'font-medium text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-100',
+                      )}
+                      style={({ isActive }) => (isActive ? activeNavStyle : undefined)}
+                    >
+                      {({ isActive }) => (
+                        <>
+                          <span
+                            className={cn(
+                              'absolute left-[-4.5px] rounded-full',
+                              isActive
+                                ? 'h-1.5 w-1.5 shrink-0 animate-pulse'
+                                : 'h-2 w-2 border-2 border-zinc-600 bg-zinc-900',
+                            )}
+                            style={isActive ? { backgroundColor: 'var(--accent-color)' } : undefined}
+                          />
+                          <item.icon
+                            size={15}
+                            className={cn(item.iconClass, isActive && 'text-[var(--accent-color)]')}
+                          />
+                          <span>{t(item.labelKey)}</span>
+                        </>
+                      )}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </nav>
+
+      <UserMenu />
+    </aside>
+  )
+}

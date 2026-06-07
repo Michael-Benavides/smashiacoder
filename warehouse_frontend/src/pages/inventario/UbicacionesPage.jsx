@@ -169,22 +169,26 @@ export default function UbicacionesPage() {
     },
   ]
 
+  const stats = [
+    { label: 'Total', value: filtered.length },
+    { label: 'Activas', value: filtered.filter((u) => u.activo).length, variant: 'success' },
+    { label: 'Inactivas', value: filtered.filter((u) => !u.activo).length, variant: 'muted' },
+  ]
+
   return (
     <div>
-      <PageHeader title="Ubicaciones" description="Gestiona las zonas y ubicaciones del almacén">
-        <Button onClick={openCreate}>
+      <PageHeader title="Ubicaciones" variant="list" stats={stats}>
+        <SearchInput
+          className="w-48"
+          placeholder="Buscar..."
+          value={search}
+          onChange={setSearch}
+        />
+        <Button variant="gold" onClick={openCreate}>
           <Plus size={16} />
           Nueva Ubicación
         </Button>
       </PageHeader>
-
-      <div className="mb-4 max-w-sm">
-        <SearchInput
-          placeholder="Buscar ubicación..."
-          value={search}
-          onChange={setSearch}
-        />
-      </div>
 
       <DataTable
         columns={columns}

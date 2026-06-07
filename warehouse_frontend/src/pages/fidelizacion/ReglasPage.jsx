@@ -148,19 +148,23 @@ export default function ReglasPage() {
     },
   ]
 
-  return (
-    <div>
-      <PageHeader title="Reglas de fidelización" description="Configura puntos y recompensas por nivel">
-        <Button onClick={openCreate}><Plus size={16} />Nueva Regla</Button>
-      </PageHeader>
+  const stats = [
+    { label: 'Total', value: meta?.total ?? reglas.length },
+    { label: 'Activas', value: reglas.filter((r) => r.activo).length, variant: 'success' },
+    { label: 'Inactivas', value: reglas.filter((r) => !r.activo).length, variant: 'muted' },
+  ]
 
-      <div className="mb-4 max-w-sm">
+  return (
+    <div className="space-y-6 animate-fade-in-up">
+      <PageHeader title="Reglas de fidelización" variant="list" stats={stats}>
         <SearchInput
-          placeholder="Buscar regla..."
+          className="w-48"
+          placeholder="Buscar..."
           value={search}
           onChange={(v) => { setSearch(v); setPage(1) }}
         />
-      </div>
+        <Button variant="gold" onClick={openCreate}><Plus size={16} />Nueva Regla</Button>
+      </PageHeader>
 
       <DataTable columns={columns} data={reglas} loading={isLoading} emptyTitle="Sin reglas" />
       <Pagination meta={meta} onPageChange={setPage} />

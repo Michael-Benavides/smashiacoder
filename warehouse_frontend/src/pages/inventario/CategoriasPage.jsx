@@ -159,22 +159,26 @@ export default function CategoriasPage() {
     },
   ]
 
+  const stats = [
+    { label: 'Total', value: filtered.length },
+    { label: 'Activas', value: filtered.filter((c) => c.activo).length, variant: 'success' },
+    { label: 'Inactivas', value: filtered.filter((c) => !c.activo).length, variant: 'muted' },
+  ]
+
   return (
-    <div>
-      <PageHeader title="Categorías" description="Organiza el catálogo de productos por categorías">
-        <Button onClick={openCreate}>
+    <div className="space-y-6 animate-fade-in-up">
+      <PageHeader title="Categorías" variant="list" stats={stats}>
+        <SearchInput
+          className="w-48"
+          placeholder="Buscar..."
+          value={search}
+          onChange={setSearch}
+        />
+        <Button variant="gold" onClick={openCreate}>
           <Plus size={16} />
           Nueva Categoría
         </Button>
       </PageHeader>
-
-      <div className="mb-4 max-w-sm">
-        <SearchInput
-          placeholder="Buscar categoría..."
-          value={search}
-          onChange={setSearch}
-        />
-      </div>
 
       <DataTable
         columns={columns}

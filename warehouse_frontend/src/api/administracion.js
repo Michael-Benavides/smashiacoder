@@ -15,8 +15,22 @@ export const getConfiguracion = () => client.get('/administracion/configuracion'
 export const updateConfiguracion = (clave, valor) =>
   client.put(`/administracion/configuracion/${clave}`, { valor })
 
+export const createConfiguracion = (data) =>
+  client.post('/administracion/configuracion', data)
+
+export const enviarReporte = (tipo, formato, email, params = {}) =>
+  client.post(`/administracion/reportes/${tipo}/enviar`, { email, formato, ...params })
+
 export const enviarMensajeChatbot = (mensaje, historial = []) =>
   client.post('/administracion/chatbot/mensaje', { mensaje, historial })
 
-export const downloadReporte = (tipo, formato) =>
-  client.get(`/administracion/reportes/${tipo}/${formato}`, { responseType: 'blob' })
+export const downloadReporte = (tipo, formato, params = {}) =>
+  client.get(`/administracion/reportes/${tipo}/${formato}`, { responseType: 'blob', params })
+
+export const REPORTE_TIPOS = [
+  'general',
+  'inventario',
+  'movimientos',
+  'clientes',
+  'proveedores',
+]

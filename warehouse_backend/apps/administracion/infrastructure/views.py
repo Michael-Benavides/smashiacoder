@@ -7,12 +7,14 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.views import APIView
 
+from apps.seguridad.infrastructure.permissions import EsAdministrador
 from shared.pagination import ZarpronixPagination
 from shared.responses import error_response, success_response
 
 from apps.inventario.infrastructure.models import (
     AlertaORM,
     CategoriaORM,
+    LoteORM,
     MovimientoORM,
     ProductoORM,
 )
@@ -95,6 +97,7 @@ class AuditoriaListView(APIView):
         - fecha_desde: ISO date / datetime (incluye desde 00:00).
         - fecha_hasta: ISO date / datetime (incluye hasta 23:59:59.999).
     """
+    permission_classes = [EsAdministrador]
 
     def get(self, request):
         entidad = request.query_params.get('entidad', '').strip() or None
@@ -124,6 +127,7 @@ class AuditoriaListView(APIView):
 class ConfiguracionListCreateView(APIView):
     """GET /administracion/configuracion
        POST /administracion/configuracion"""
+    permission_classes = [EsAdministrador]
 
     def get(self, request):
         repo = DjangoConfiguracionRepository()
@@ -165,6 +169,7 @@ class ConfiguracionListCreateView(APIView):
 class ConfiguracionDetailView(APIView):
     """GET /administracion/configuracion/<clave>
        PUT /administracion/configuracion/<clave>"""
+    permission_classes = [EsAdministrador]
 
     def get(self, request, clave: str):
         repo = DjangoConfiguracionRepository()
@@ -262,6 +267,67 @@ class DashboardResumenView(APIView):
             'producto', 'tipo_movimiento',
         ).order_by('-fecha')[:10]
 
+        productos_activos = list(
+            ProductoORM.objects.filter(activo=True, stock_minimo__gt=0)
+        )
+        productos_activos.sort(
+            key=lambda p: p.stock_actual / p.stock_minimo if p.stock_minimo else 999,
+        )
+        productos_menor_stock = [
+            {
+                **_producto_stock_bajo_a_dict(p),
+                "ratio": round(p.stock_actual / p.stock_minimo, 2) if p.stock_minimo else 0,
+                "estado": (
+                    "AGOTADO" if p.stock_actual <= 0
+                    else "CRÍTICO" if p.stock_actual <= p.stock_minimo
+                    else "OK"
+                ),
+            }
+            for p in productos_activos[:5]
+        ]
+
+        ultimos_clientes_qs = ClienteORM.objects.filter(activo=True).order_by('-created_at')[:5]
+        ultimos_clientes = [
+            {
+                "id": c.id,
+                "nombre": c.nombre,
+                "nivel_fidelidad": c.nivel_fidelidad,
+                "puntos_fidelizacion": c.puntos_fidelizacion,
+                "created_at": c.created_at.isoformat() if c.created_at else None,
+            }
+            for c in ultimos_clientes_qs
+        ]
+
+        hoy = timezone.now().date()
+        limite_vencimiento = hoy + timedelta(days=30)
+        valor_total = (
+            ProductoORM.objects.filter(activo=True).aggregate(
+                total=Sum(F('stock_actual') * F('precio_compra')),
+            )['total']
+            or 0
+        )
+        entradas_hoy = MovimientoORM.objects.filter(
+            fecha__date=hoy,
+            tipo_movimiento__tipo='entrada',
+        ).exists()
+        lotes_por_vencer = [
+            {
+                "producto": lote.producto.nombre,
+                "producto_id": lote.producto_id,
+                "numero_lote": lote.numero_lote,
+                "fecha_vencimiento": lote.fecha_vencimiento.isoformat(),
+                "cantidad": lote.cantidad,
+                "dias_restantes": (lote.fecha_vencimiento - hoy).days,
+            }
+            for lote in LoteORM.objects.select_related('producto').filter(
+                activo=True,
+                cantidad__gt=0,
+                fecha_vencimiento__isnull=False,
+                fecha_vencimiento__gte=hoy,
+                fecha_vencimiento__lte=limite_vencimiento,
+            ).order_by('fecha_vencimiento')[:20]
+        ]
+
         data = {
             "total_productos_activos": ProductoORM.objects.filter(activo=True).count(),
             "total_clientes_activos": ClienteORM.objects.filter(activo=True).count(),
@@ -270,9 +336,14 @@ class DashboardResumenView(APIView):
             "productos_stock_bajo": [
                 _producto_stock_bajo_a_dict(p) for p in productos_bajo_qs
             ],
+            "productos_menor_stock": productos_menor_stock,
+            "ultimos_clientes": ultimos_clientes,
             "movimientos_recientes": [
                 _movimiento_reciente_a_dict(m) for m in movimientos_qs
             ],
+            "valor_total_inventario": float(valor_total),
+            "entradas_hoy": entradas_hoy,
+            "lotes_por_vencer": lotes_por_vencer,
         }
         return success_response(data=data)
 

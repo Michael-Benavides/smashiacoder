@@ -5,7 +5,6 @@ import { es } from 'date-fns/locale'
 import PageHeader from '@/components/layout/PageHeader'
 import { DataTable } from '@/components/shared/DataTable'
 import { Pagination } from '@/components/shared/Pagination'
-import { Badge } from '@/components/ui/Badge'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { getAuditoria } from '@/api/administracion'
@@ -24,13 +23,14 @@ const ENTIDADES = [
   'regla_fidelizacion',
 ]
 
-const ACCION_BADGE = {
-  crear: 'success',
-  actualizar: 'info',
-  eliminar: 'danger',
-  desactivar: 'warning',
-  login: 'default',
-  logout: 'default',
+const ACCION_STYLES = {
+  crear: 'bg-green-50 text-green-700 border border-green-200',
+  create: 'bg-green-50 text-green-700 border border-green-200',
+  actualizar: 'bg-blue-50 text-blue-700 border border-blue-200',
+  update: 'bg-blue-50 text-blue-700 border border-blue-200',
+  eliminar: 'bg-red-50 text-red-700 border border-red-200',
+  delete: 'bg-red-50 text-red-700 border border-red-200',
+  login: 'bg-amber-50 text-amber-700 border border-amber-200',
 }
 
 function formatFecha(iso) {
@@ -106,8 +106,12 @@ export default function AuditoriaPage() {
       header: 'Acción',
       render: (val) => {
         const key = val?.toLowerCase?.() ?? ''
-        const variant = ACCION_BADGE[key] ?? 'default'
-        return <Badge variant={variant}>{val ?? '—'}</Badge>
+        const style = ACCION_STYLES[key] ?? 'bg-zinc-100 text-zinc-700 border border-zinc-200'
+        return (
+          <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${style}`}>
+            {val ?? '—'}
+          </span>
+        )
       },
     },
     { key: 'entidad', header: 'Entidad' },
@@ -124,7 +128,7 @@ export default function AuditoriaPage() {
   ], [])
 
   return (
-    <div>
+    <div className="space-y-6 animate-fade-in-up">
       <PageHeader
         title="Auditoría"
         description="Registro de acciones realizadas en el sistema"

@@ -1,4 +1,5 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
@@ -228,11 +229,21 @@ export default function ProductosPage() {
     toast.error(err.response?.data?.error?.message ?? 'Error en la operación')
   }
 
+  const location = useLocation()
+  const navigate = useNavigate()
+
   function openCreate() {
     setEditing(null)
     reset(EMPTY_FORM)
     setModalOpen(true)
   }
+
+  useEffect(() => {
+    if (location.state?.openCreate) {
+      openCreate()
+      navigate(location.pathname, { replace: true, state: {} })
+    }
+  }, [location.state?.openCreate])
 
   function openEdit(row) {
     setEditing(row)
@@ -344,22 +355,28 @@ export default function ProductosPage() {
     },
   ]
 
+  const stats = [
+    { label: 'Total', value: meta?.total ?? productos.length },
+    { label: 'Activos', value: productos.filter((p) => p.activo).length, variant: 'success' },
+    { label: 'Inactivos', value: productos.filter((p) => !p.activo).length, variant: 'muted' },
+  ]
+
   return (
-    <div>
-      <PageHeader title="Productos" description="Catálogo de productos y control de stock">
-        <Button onClick={openCreate}>
+    <div className="space-y-6 animate-fade-in-up">
+      <PageHeader title="Productos" variant="list" stats={stats}>
+        <SearchInput
+          className="w-48"
+          placeholder="Buscar..."
+          value={search}
+          onChange={setSearch}
+        />
+        <Button variant="gold" onClick={openCreate}>
           <Plus size={16} />
           Nuevo Producto
         </Button>
       </PageHeader>
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <SearchInput
-          className="w-full max-w-xs"
-          placeholder="Buscar por código o nombre..."
-          value={search}
-          onChange={setSearch}
-        />
         <select
           className="h-9 rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-900"
           value={categoriaFilter}

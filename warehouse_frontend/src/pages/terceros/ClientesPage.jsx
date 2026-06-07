@@ -1,4 +1,5 @@
-﻿import { useState } from 'react'
+﻿import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Coins, Pencil, Plus, Trash2 } from 'lucide-react'
@@ -26,10 +27,10 @@ import { cn } from '@/lib/utils'
 const EMPTY = { nombre: '', identificacion: '', email: '', telefono: '', direccion: '' }
 
 const NIVEL_STYLES = {
-  Bronce: 'bg-amber-50 text-amber-800 border-amber-200',
-  Plata: 'bg-zinc-100 text-zinc-700 border-zinc-200',
-  Oro: 'bg-yellow-50 text-yellow-800 border-yellow-200',
-  Platino: 'bg-violet-50 text-violet-700 border-violet-200',
+  Bronce: 'bg-amber-50 text-amber-700 border border-amber-200 shadow-sm shadow-amber-500/20',
+  Plata: 'bg-zinc-100 text-zinc-600 border border-zinc-300 shadow-sm',
+  Oro: 'bg-yellow-50 text-yellow-700 border border-yellow-300 shadow-sm shadow-yellow-500/20',
+  Platino: 'bg-violet-50 text-violet-700 border border-violet-200 shadow-sm shadow-violet-500/20',
 }
 
 function NivelBadge({ nivel }) {
@@ -106,7 +107,17 @@ export default function ClientesPage() {
     },
   })
 
+  const location = useLocation()
+  const navigate = useNavigate()
+
   function openCreate() { setEditing(null); reset(EMPTY); setModalOpen(true) }
+
+  useEffect(() => {
+    if (location.state?.openCreate) {
+      openCreate()
+      navigate(location.pathname, { replace: true, state: {} })
+    }
+  }, [location.state?.openCreate])
   function openEdit(row) {
     setEditing(row)
     reset({
@@ -173,19 +184,23 @@ export default function ClientesPage() {
     },
   ]
 
-  return (
-    <div>
-      <PageHeader title="Clientes" description="Clientes y programa de fidelización">
-        <Button onClick={openCreate}><Plus size={16} />Nuevo Cliente</Button>
-      </PageHeader>
+  const stats = [
+    { label: 'Total', value: meta?.total ?? clientes.length },
+    { label: 'Activos', value: clientes.filter((c) => c.activo).length, variant: 'success' },
+    { label: 'Inactivos', value: clientes.filter((c) => !c.activo).length, variant: 'muted' },
+  ]
 
-      <div className="mb-4 max-w-sm">
+  return (
+    <div className="space-y-6 animate-fade-in-up">
+      <PageHeader title="Clientes" variant="list" stats={stats}>
         <SearchInput
-          placeholder="Buscar por nombre o identificación..."
+          className="w-48"
+          placeholder="Buscar..."
           value={search}
           onChange={(v) => { setSearch(v); setPage(1) }}
         />
-      </div>
+        <Button variant="gold" onClick={openCreate}><Plus size={16} />Nuevo Cliente</Button>
+      </PageHeader>
 
       <DataTable columns={columns} data={clientes} loading={isLoading} emptyTitle="Sin clientes" />
       <Pagination meta={meta} onPageChange={setPage} />

@@ -1,4 +1,5 @@
 import { downloadReporte } from '@/api/administracion'
+import { mapReporteTipo } from '@/lib/reportTypes'
 
 function parseFilename(contentDisposition, fallback) {
   if (!contentDisposition) return fallback
@@ -18,13 +19,14 @@ export function triggerBlobDownload(blob, filename) {
   URL.revokeObjectURL(url)
 }
 
-export async function fetchAndDownloadReport(tipo, formato) {
+export async function fetchAndDownloadReport(tipo, formato, params = {}) {
+  const tipoReal = mapReporteTipo(tipo)
   try {
-    const res = await downloadReporte(tipo, formato)
+    const res = await downloadReporte(tipoReal, formato, params)
     const ext = formato === 'pdf' ? 'pdf' : 'xlsx'
     const filename = parseFilename(
       res.headers['content-disposition'],
-      `reporte_${tipo}_${Date.now()}.${ext}`
+      `reporte_${tipoReal}_${Date.now()}.${ext}`
     )
     triggerBlobDownload(res.data, filename)
     return filename

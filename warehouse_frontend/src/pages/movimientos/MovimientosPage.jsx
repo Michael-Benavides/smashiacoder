@@ -6,13 +6,21 @@ import PageHeader from '@/components/layout/PageHeader'
 import { DataTable } from '@/components/shared/DataTable'
 import { Pagination } from '@/components/shared/Pagination'
 import { toPaginationMeta } from '@/lib/pagination'
-import { Badge } from '@/components/ui/Badge'
 import { getMovimientos } from '@/api/inventario'
 
 const TIPO_BADGE = {
-  entrada: { variant: 'success', label: 'Entrada' },
-  salida: { variant: 'danger', label: 'Salida' },
-  traslado: { variant: 'info', label: 'Traslado' },
+  entrada: {
+    label: 'Entrada',
+    className: 'bg-green-50 text-green-700 border border-green-200 shadow-sm shadow-green-500/20',
+  },
+  salida: {
+    label: 'Salida',
+    className: 'bg-red-50 text-red-700 border border-red-200 shadow-sm shadow-red-500/20',
+  },
+  traslado: {
+    label: 'Traslado',
+    className: 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm shadow-blue-500/20',
+  },
 }
 
 const PAGE_SIZE = 20
@@ -103,8 +111,12 @@ export default function MovimientosPage() {
       key: 'tipo',
       header: 'Tipo',
       render: (val) => {
-        const cfg = TIPO_BADGE[val] ?? { variant: 'default', label: val ?? '—' }
-        return <Badge variant={cfg.variant}>{cfg.label}</Badge>
+        const cfg = TIPO_BADGE[val] ?? { label: val ?? '—', className: 'bg-zinc-100 text-zinc-700 border border-zinc-200' }
+        return (
+          <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${cfg.className}`}>
+            {cfg.label}
+          </span>
+        )
       },
     },
     {
@@ -129,7 +141,7 @@ export default function MovimientosPage() {
   ], [])
 
   return (
-    <div>
+    <div className="space-y-6 animate-fade-in-up">
       <PageHeader title="Movimientos" description="Historial de entradas, salidas y traslados" />
 
       <div className="mb-4 flex flex-wrap items-end gap-3">

@@ -77,7 +77,7 @@ export default function LayoutAlmacenPage() {
   const isLoading = loadingUbicaciones || loadingProductos
 
   return (
-    <div className="relative">
+    <div className="relative space-y-6 animate-fade-in-up">
       <PageHeader
         title="Layout del almacén"
         description="Vista interactiva de ubicaciones agrupadas por zona"
@@ -121,7 +121,8 @@ export default function LayoutAlmacenPage() {
                         type="button"
                         onClick={() => setSelectedUbicacion(u)}
                         className={cn(
-                          'rounded-xl border-2 p-3 text-left transition-all',
+                          'cursor-pointer rounded-xl border-2 p-3 text-left transition-all duration-200',
+                          'hover:z-10 hover:scale-105 hover:shadow-lg',
                           CELL_STYLES[occ.level],
                           isSelected && 'ring-2 ring-zinc-900 ring-offset-2'
                         )}
@@ -157,7 +158,7 @@ export default function LayoutAlmacenPage() {
               </section>
             ))}
 
-            <div className="flex flex-wrap gap-4 rounded-lg border border-zinc-200 bg-white p-4 text-xs text-zinc-600">
+            <div className="flex flex-wrap gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-xs text-zinc-600">
               <span className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded bg-green-200" /> &lt; 50% ocupación
               </span>
@@ -171,10 +172,10 @@ export default function LayoutAlmacenPage() {
           </div>
 
           {selectedUbicacion && (
-            <aside className="fixed right-0 top-0 z-30 flex h-full w-full max-w-sm flex-col border-l border-zinc-200 bg-white shadow-xl lg:top-auto lg:h-[calc(100vh-4rem)]">
-              <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-4">
+            <aside className="fixed right-0 top-0 z-30 flex h-full w-full max-w-sm flex-col border-l border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl lg:top-auto lg:h-[calc(100vh-4rem)]">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] px-5 py-4">
                 <div>
-                  <h3 className="font-semibold text-zinc-900">{selectedUbicacion.nombre}</h3>
+                  <h3 className="font-semibold text-[var(--color-text-primary)]">{selectedUbicacion.nombre}</h3>
                   <p className="text-xs text-zinc-500">{selectedUbicacion.zona}</p>
                 </div>
                 <button

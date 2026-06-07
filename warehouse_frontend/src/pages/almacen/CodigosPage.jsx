@@ -204,7 +204,7 @@ export default function CodigosPage() {
   }
 
   return (
-    <div>
+    <div className="space-y-6 animate-fade-in-up">
       <PageHeader
         title="Códigos QR y Barras"
         description="Genera etiquetas para productos y lotes"
@@ -247,6 +247,7 @@ export default function CodigosPage() {
             <div
               ref={barcodeWrapRef}
               className="flex min-h-[120px] flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 p-6"
+              style={{ animation: 'fadeInUp 0.5s ease forwards' }}
             >
               {selectedProducto ? (
                 <>
@@ -312,7 +313,10 @@ export default function CodigosPage() {
               )}
             </div>
 
-            <div className="flex min-h-[220px] flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 p-6">
+            <div
+              className="flex min-h-[220px] flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 p-6"
+              style={{ animation: 'fadeInUp 0.5s ease forwards' }}
+            >
               {selectedLote && selectedProducto ? (
                 <>
                   <canvas ref={qrCanvasRef} />

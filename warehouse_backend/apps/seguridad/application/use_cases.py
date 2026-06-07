@@ -70,6 +70,44 @@ class RestablecerPasswordUseCase:
         self._repo.limpiar_token_reset(usuario.id)
 
 
+class ActualizarUsuarioUseCase:
+    def __init__(self, usuario_repo: UsuarioRepositoryPort):
+        self._repo = usuario_repo
+
+    def ejecutar(self, usuario_id: int, nombre: Optional[str] = None) -> UsuarioDomain:
+        usuario = self._repo.obtener_por_id(usuario_id)
+        if not usuario:
+            raise EntidadNoEncontradaException(detail={"id": "Usuario no encontrado."})
+        if nombre is not None:
+            usuario.nombre = nombre.strip()
+        return self._repo.actualizar(usuario)
+
+
+class CambiarPasswordUseCase:
+    def __init__(self, usuario_repo: UsuarioRepositoryPort):
+        self._repo = usuario_repo
+
+    def ejecutar(
+        self,
+        usuario_id: int,
+        password_actual: str,
+        nueva_password: str,
+    ) -> None:
+        if len(nueva_password) < 8:
+            raise ReglaNegocioException(
+                detail={"nueva_password": "La contraseña debe tener mínimo 8 caracteres."},
+            )
+        usuario = self._repo.obtener_por_id(usuario_id)
+        if not usuario:
+            raise EntidadNoEncontradaException(detail={"id": "Usuario no encontrado."})
+        if not bcrypt.checkpw(password_actual.encode(), usuario.password_hash.encode()):
+            raise ReglaNegocioException(
+                detail={"password_actual": "La contraseña actual es incorrecta."},
+            )
+        usuario.password_hash = bcrypt.hashpw(nueva_password.encode(), bcrypt.gensalt()).decode()
+        self._repo.actualizar(usuario)
+
+
 class CrearRolUseCase:
     def __init__(self, rol_repo: RolRepositoryPort):
         self._repo = rol_repo

@@ -1,8 +1,10 @@
 import axios from 'axios'
 
-const apiBase = import.meta.env.VITE_API_BASE_URL
-  ? `${import.meta.env.VITE_API_BASE_URL}/api`
-  : '/api'
+// Desarrollo: siempre /api (proxy Vite). Producción: VITE_API_BASE_URL en el build (Render).
+const apiBase =
+  import.meta.env.PROD && import.meta.env.VITE_API_BASE_URL
+    ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')}/api`
+    : '/api'
 
 const client = axios.create({
   baseURL: apiBase,
