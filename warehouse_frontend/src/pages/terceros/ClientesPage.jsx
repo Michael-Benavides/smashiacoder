@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { useT } from '@/hooks/useT'
 import {
   actualizarPuntos,
   createCliente,
@@ -43,6 +44,7 @@ function NivelBadge({ nivel }) {
 }
 
 export default function ClientesPage() {
+  const { t } = useT()
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -77,26 +79,26 @@ export default function ClientesPage() {
 
   const createMutation = useMutation({
     mutationFn: createCliente,
-    onSuccess: (res) => { toast.success(res.data.message ?? 'Cliente creado'); invalidate(); closeModal() },
+    onSuccess: (res) => { toast.success(res.data.message ?? t('Cliente creado')); invalidate(); closeModal() },
     onError: (err) => { applyApiErrors(err, setError); toast.error(apiErrorMessage(err)) },
   })
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => updateCliente(id, data),
-    onSuccess: (res) => { toast.success(res.data.message ?? 'Cliente actualizado'); invalidate(); closeModal() },
+    onSuccess: (res) => { toast.success(res.data.message ?? t('Cliente actualizado')); invalidate(); closeModal() },
     onError: (err) => { applyApiErrors(err, setError); toast.error(apiErrorMessage(err)) },
   })
 
   const deleteMutation = useMutation({
     mutationFn: deleteCliente,
-    onSuccess: (res) => { toast.success(res.data.message ?? 'Cliente desactivado'); invalidate(); setDeleteTarget(null) },
+    onSuccess: (res) => { toast.success(res.data.message ?? t('Cliente desactivado')); invalidate(); setDeleteTarget(null) },
     onError: (err) => toast.error(apiErrorMessage(err)),
   })
 
   const puntosMutation = useMutation({
     mutationFn: ({ id, puntos }) => actualizarPuntos(id, puntos),
     onSuccess: (res) => {
-      toast.success(res.data.message ?? 'Puntos actualizados')
+      toast.success(res.data.message ?? t('Puntos actualizados'))
       invalidate()
       setPuntosModal(null)
       puntosForm.reset({ puntos_a_sumar: '' })
@@ -150,31 +152,31 @@ export default function ClientesPage() {
     })
   }
 
-  const columns = [
-    { key: 'nombre', header: 'Nombre' },
-    { key: 'identificacion', header: 'Identificación', render: (v) => v || '—' },
-    { key: 'email', header: 'Email', render: (v) => v || '—' },
+  const columns = useMemo(() => [
+    { key: 'nombre', header: t('Nombre') },
+    { key: 'identificacion', header: t('Identificación'), render: (v) => v || '—' },
+    { key: 'email', header: t('Email'), render: (v) => v || '—' },
     {
       key: 'puntos_fidelizacion',
-      header: 'Puntos',
+      header: t('Puntos'),
       render: (v) => <span className="tabular-nums font-medium">{v ?? 0}</span>,
     },
     {
       key: 'nivel_fidelidad',
-      header: 'Nivel',
+      header: t('Nivel'),
       render: (v) => <NivelBadge nivel={v} />,
     },
     {
       key: 'activo',
-      header: 'Estado',
-      render: (v) => <Badge variant={v ? 'success' : 'default'}>{v ? 'Activo' : 'Inactivo'}</Badge>,
+      header: t('Estado'),
+      render: (v) => <Badge variant={v ? 'success' : 'default'}>{v ? t('Activo') : t('Inactivo')}</Badge>,
     },
     {
       key: 'acciones',
-      header: 'Acciones',
+      header: t('Acciones'),
       render: (_, row) => (
         <div className="flex gap-1">
-          <Button variant="ghost" size="icon" onClick={() => { setPuntosModal(row); puntosForm.reset({ puntos_a_sumar: '' }) }} title="Ajustar puntos">
+          <Button variant="ghost" size="icon" onClick={() => { setPuntosModal(row); puntosForm.reset({ puntos_a_sumar: '' }) }} title={t('Ajustar puntos')}>
             <Coins size={15} />
           </Button>
           <Button variant="ghost" size="icon" onClick={() => openEdit(row)}><Pencil size={15} /></Button>
@@ -182,40 +184,40 @@ export default function ClientesPage() {
         </div>
       ),
     },
-  ]
+  ], [t, puntosForm])
 
-  const stats = [
-    { label: 'Total', value: meta?.total ?? clientes.length },
-    { label: 'Activos', value: clientes.filter((c) => c.activo).length, variant: 'success' },
-    { label: 'Inactivos', value: clientes.filter((c) => !c.activo).length, variant: 'muted' },
-  ]
+  const stats = useMemo(() => [
+    { label: t('Total'), value: meta?.total ?? clientes.length },
+    { label: t('Activos'), value: clientes.filter((c) => c.activo).length, variant: 'success' },
+    { label: t('Inactivos'), value: clientes.filter((c) => !c.activo).length, variant: 'muted' },
+  ], [meta?.total, clientes, t])
 
   return (
     <div className="space-y-6 animate-fade-in-up">
-      <PageHeader title="Clientes" variant="list" stats={stats}>
+      <PageHeader title={t('Clientes')} variant="list" stats={stats}>
         <SearchInput
           className="w-48"
-          placeholder="Buscar..."
+          placeholder={t('Buscar...')}
           value={search}
           onChange={(v) => { setSearch(v); setPage(1) }}
         />
-        <Button variant="gold" onClick={openCreate}><Plus size={16} />Nuevo Cliente</Button>
+        <Button variant="gold" onClick={openCreate}><Plus size={16} />{t('Nuevo Cliente')}</Button>
       </PageHeader>
 
-      <DataTable columns={columns} data={clientes} loading={isLoading} emptyTitle="Sin clientes" />
+      <DataTable columns={columns} data={clientes} loading={isLoading} emptyTitle={t('Sin clientes')} />
       <Pagination meta={meta} onPageChange={setPage} />
 
-      <Modal open={modalOpen} onClose={closeModal} title={editing ? 'Editar cliente' : 'Nuevo cliente'}>
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? t('Editar cliente') : t('Nuevo cliente')}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input label="Nombre" error={errors.nombre?.message} {...register('nombre', { required: 'Requerido' })} />
-          <Input label="Identificación" error={errors.identificacion?.message} {...register('identificacion')} />
-          <Input label="Email" type="email" error={errors.email?.message} {...register('email')} />
-          <Input label="Teléfono" error={errors.telefono?.message} {...register('telefono')} />
-          <Input label="Dirección" error={errors.direccion?.message} {...register('direccion')} />
+          <Input label={t('Nombre')} error={errors.nombre?.message} {...register('nombre', { required: t('Requerido') })} />
+          <Input label={t('Identificación')} error={errors.identificacion?.message} {...register('identificacion')} />
+          <Input label={t('Email')} type="email" error={errors.email?.message} {...register('email')} />
+          <Input label={t('Teléfono')} error={errors.telefono?.message} {...register('telefono')} />
+          <Input label={t('Dirección')} error={errors.direccion?.message} {...register('direccion')} />
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={closeModal}>Cancelar</Button>
+            <Button type="button" variant="outline" onClick={closeModal}>{t('Cancelar')}</Button>
             <Button type="submit" loading={createMutation.isPending || updateMutation.isPending}>
-              {editing ? 'Guardar' : 'Crear'}
+              {editing ? t('Guardar') : t('Crear')}
             </Button>
           </div>
         </form>
@@ -224,26 +226,26 @@ export default function ClientesPage() {
       <Modal
         open={!!puntosModal}
         onClose={() => setPuntosModal(null)}
-        title={`Ajustar puntos — ${puntosModal?.nombre ?? ''}`}
+        title={`${t('Ajustar puntos')} — ${puntosModal?.nombre ?? ''}`}
         size="sm"
       >
         {puntosModal && (
           <form onSubmit={puntosForm.handleSubmit(onPuntosSubmit)} className="space-y-4">
             <p className="text-sm text-zinc-600">
-              Puntos actuales: <strong>{puntosModal.puntos_fidelizacion}</strong>
-              {' · '}Nivel: <NivelBadge nivel={puntosModal.nivel_fidelidad} />
+              {t('Puntos actuales')}: <strong>{puntosModal.puntos_fidelizacion}</strong>
+              {' · '}{t('Nivel')}: <NivelBadge nivel={puntosModal.nivel_fidelidad} />
             </p>
             <Input
-              label="Puntos a sumar/restar"
+              label={t('Puntos a sumar/restar')}
               type="number"
-              placeholder="Ej. 50 o -20"
-              hint="Usa valores negativos para restar puntos"
+              placeholder={t('Ej. 50 o -20')}
+              hint={t('Usa valores negativos para restar puntos')}
               error={puntosForm.formState.errors.puntos_a_sumar?.message}
-              {...puntosForm.register('puntos_a_sumar', { required: 'Ingresa la cantidad' })}
+              {...puntosForm.register('puntos_a_sumar', { required: t('Ingresa la cantidad') })}
             />
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setPuntosModal(null)}>Cancelar</Button>
-              <Button type="submit" loading={puntosMutation.isPending}>Aplicar</Button>
+              <Button type="button" variant="outline" onClick={() => setPuntosModal(null)}>{t('Cancelar')}</Button>
+              <Button type="submit" loading={puntosMutation.isPending}>{t('Aplicar')}</Button>
             </div>
           </form>
         )}
@@ -253,8 +255,8 @@ export default function ClientesPage() {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => deleteMutation.mutate(deleteTarget.id)}
-        title="Desactivar cliente"
-        description={`¿Desactivar "${deleteTarget?.nombre}"?`}
+        title={t('Desactivar cliente')}
+        description={`${t('¿Desactivar')} "${deleteTarget?.nombre}"?`}
         loading={deleteMutation.isPending}
       />
     </div>

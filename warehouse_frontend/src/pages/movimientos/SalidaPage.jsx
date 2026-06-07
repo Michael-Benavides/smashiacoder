@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { useT } from '@/hooks/useT'
 import { getProductos, registrarSalida } from '@/api/inventario'
 import { getClientes } from '@/api/terceros'
 import { applyApiErrors, apiErrorMessage } from '@/lib/formUtils'
@@ -21,6 +22,7 @@ const EMPTY = {
 }
 
 export default function SalidaPage() {
+  const { t } = useT()
   const queryClient = useQueryClient()
   const { register, handleSubmit, reset, control, watch, setError, formState: { errors } } = useForm({
     defaultValues: EMPTY,
@@ -65,10 +67,10 @@ export default function SalidaPage() {
 
   const clienteOptions = useMemo(
     () => [
-      { value: '', label: 'Sin cliente' },
+      { value: '', label: t('Sin cliente') },
       ...clientes.map((c) => ({ value: String(c.id), label: c.nombre })),
     ],
-    [clientes]
+    [clientes, t]
   )
 
   const mutation = useMutation({
@@ -77,7 +79,7 @@ export default function SalidaPage() {
       const movs = res.data.data
       const stockNuevo = Array.isArray(movs) ? movs[movs.length - 1]?.stock_nuevo : movs?.stock_nuevo
       toast.success(
-        `${res.data.message ?? 'Salida registrada'} — Stock nuevo: ${stockNuevo ?? '—'}`
+        `${res.data.message ?? t('Salida registrada')} — ${t('Stock nuevo')}: ${stockNuevo ?? '—'}`
       )
       queryClient.invalidateQueries({ queryKey: ['productos'] })
       queryClient.invalidateQueries({ queryKey: ['movimientos'] })
@@ -86,7 +88,7 @@ export default function SalidaPage() {
     },
     onError: (err) => {
       applyApiErrors(err, setError)
-      toast.error(apiErrorMessage(err, 'Error al registrar salida'))
+      toast.error(apiErrorMessage(err, t('Error al registrar salida')))
     },
   })
 
@@ -103,8 +105,8 @@ export default function SalidaPage() {
   return (
     <div>
       <PageHeader
-        title="Salida de inventario"
-        description="Registra egreso de mercancía aplicando FIFO en los lotes"
+        title={t('Salida de inventario')}
+        description={t('Registra egreso de mercancía aplicando FIFO en los lotes')}
       />
 
       <Card className="max-w-xl">
@@ -113,21 +115,21 @@ export default function SalidaPage() {
             <Controller
               name="producto_id"
               control={control}
-              rules={{ required: 'Selecciona un producto' }}
+              rules={{ required: t('Selecciona un producto') }}
               render={({ field }) => (
                 <SearchableSelect
-                  label="Producto"
+                  label={t('Producto')}
                   options={productoOptions}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Buscar producto..."
+                  placeholder={t('Buscar producto...')}
                   error={errors.producto_id?.message}
                   renderOption={(opt) => (
                     <span>
                       {opt.label}
                       {opt.raw && (
                         <Badge variant={opt.raw.stock_actual <= opt.raw.stock_minimo ? 'danger' : 'success'} className="ml-2">
-                          Stock: {opt.raw.stock_actual}
+                          {t('Stock')}: {opt.raw.stock_actual}
                         </Badge>
                       )}
                     </span>
@@ -138,25 +140,25 @@ export default function SalidaPage() {
 
             {selectedProducto && (
               <p className="text-sm text-zinc-600">
-                Stock disponible:{' '}
+                {t('Stock disponible')}:{' '}
                 <span className="font-semibold text-zinc-900">{stockDisponible}</span>{' '}
                 {selectedProducto.unidad_medida}
               </p>
             )}
 
             <Input
-              label="Cantidad"
+              label={t('Cantidad')}
               type="number"
               min={1}
               max={stockDisponible || undefined}
               placeholder="1"
-              error={errors.cantidad?.message || (excedeStock ? `No puede superar el stock disponible (${stockDisponible})` : undefined)}
+              error={errors.cantidad?.message || (excedeStock ? `${t('No puede superar el stock disponible')} (${stockDisponible})` : undefined)}
               {...register('cantidad', {
-                required: 'La cantidad es requerida',
-                min: { value: 1, message: 'Mínimo 1 unidad' },
+                required: t('La cantidad es requerida'),
+                min: { value: 1, message: t('Mínimo 1 unidad') },
                 validate: (v) =>
                   !selectedProducto || Number(v) <= stockDisponible
-                    || `Máximo ${stockDisponible} unidades disponibles`,
+                    || `${t('Máximo')} ${stockDisponible} ${t('unidades disponibles')}`,
               })}
             />
 
@@ -165,22 +167,22 @@ export default function SalidaPage() {
               control={control}
               render={({ field }) => (
                 <SearchableSelect
-                  label="Cliente (opcional)"
+                  label={t('Cliente (opcional)')}
                   options={clienteOptions}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Sin cliente"
+                  placeholder={t('Sin cliente')}
                   error={errors.cliente_id?.message}
                 />
               )}
             />
 
             <div>
-              <label className="text-sm font-medium text-zinc-700">Observaciones</label>
+              <label className="text-sm font-medium text-zinc-700">{t('Observaciones')}</label>
               <textarea
                 className="mt-1.5 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
                 rows={3}
-                placeholder="Notas adicionales..."
+                placeholder={t('Notas adicionales...')}
                 {...register('observaciones')}
               />
             </div>
@@ -192,7 +194,7 @@ export default function SalidaPage() {
               className="w-full"
             >
               <ArrowUpRight size={16} />
-              Registrar salida
+              {t('Registrar salida')}
             </Button>
           </form>
         </CardContent>

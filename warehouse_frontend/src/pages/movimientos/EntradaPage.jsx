@@ -8,6 +8,7 @@ import { SearchableSelect } from '@/components/shared/SearchableSelect'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { useT } from '@/hooks/useT'
 import { getProductos, registrarEntrada } from '@/api/inventario'
 import { getProveedores } from '@/api/terceros'
 import { applyApiErrors, apiErrorMessage } from '@/lib/formUtils'
@@ -22,6 +23,7 @@ const EMPTY = {
 }
 
 export default function EntradaPage() {
+  const { t } = useT()
   const queryClient = useQueryClient()
   const { register, handleSubmit, reset, control, setError, formState: { errors } } = useForm({
     defaultValues: EMPTY,
@@ -54,10 +56,10 @@ export default function EntradaPage() {
 
   const proveedorOptions = useMemo(
     () => [
-      { value: '', label: 'Sin proveedor' },
+      { value: '', label: t('Sin proveedor') },
       ...proveedores.map((p) => ({ value: String(p.id), label: p.nombre })),
     ],
-    [proveedores]
+    [proveedores, t]
   )
 
   const mutation = useMutation({
@@ -65,7 +67,7 @@ export default function EntradaPage() {
     onSuccess: (res) => {
       const mov = res.data.data
       toast.success(
-        `${res.data.message ?? 'Entrada registrada'} — Stock nuevo: ${mov?.stock_nuevo ?? '—'}`
+        `${res.data.message ?? t('Entrada registrada')} — ${t('Stock nuevo')}: ${mov?.stock_nuevo ?? '—'}`
       )
       queryClient.invalidateQueries({ queryKey: ['productos'] })
       queryClient.invalidateQueries({ queryKey: ['movimientos'] })
@@ -74,7 +76,7 @@ export default function EntradaPage() {
     },
     onError: (err) => {
       applyApiErrors(err, setError)
-      toast.error(apiErrorMessage(err, 'Error al registrar entrada'))
+      toast.error(apiErrorMessage(err, t('Error al registrar entrada')))
     },
   })
 
@@ -92,8 +94,8 @@ export default function EntradaPage() {
   return (
     <div>
       <PageHeader
-        title="Entrada de inventario"
-        description="Registra ingreso de mercancía y crea un nuevo lote FIFO"
+        title={t('Entrada de inventario')}
+        description={t('Registra ingreso de mercancía y crea un nuevo lote FIFO')}
       />
 
       <Card className="max-w-xl">
@@ -102,36 +104,36 @@ export default function EntradaPage() {
             <Controller
               name="producto_id"
               control={control}
-              rules={{ required: 'Selecciona un producto' }}
+              rules={{ required: t('Selecciona un producto') }}
               render={({ field }) => (
                 <SearchableSelect
-                  label="Producto"
+                  label={t('Producto')}
                   options={productoOptions}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Buscar producto..."
-                  searchPlaceholder="Código o nombre..."
+                  placeholder={t('Buscar producto...')}
+                  searchPlaceholder={t('Código o nombre...')}
                   error={errors.producto_id?.message}
                 />
               )}
             />
 
             <Input
-              label="Número de lote"
+              label={t('Número de lote')}
               placeholder="LOTE-2026-001"
               error={errors.numero_lote?.message}
-              {...register('numero_lote', { required: 'El número de lote es requerido' })}
+              {...register('numero_lote', { required: t('El número de lote es requerido') })}
             />
 
             <Input
-              label="Cantidad"
+              label={t('Cantidad')}
               type="number"
               min={1}
               placeholder="1"
               error={errors.cantidad?.message}
               {...register('cantidad', {
-                required: 'La cantidad es requerida',
-                min: { value: 1, message: 'Mínimo 1 unidad' },
+                required: t('La cantidad es requerida'),
+                min: { value: 1, message: t('Mínimo 1 unidad') },
               })}
             />
 
@@ -140,29 +142,29 @@ export default function EntradaPage() {
               control={control}
               render={({ field }) => (
                 <SearchableSelect
-                  label="Proveedor (opcional)"
+                  label={t('Proveedor (opcional)')}
                   options={proveedorOptions}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Sin proveedor"
+                  placeholder={t('Sin proveedor')}
                   error={errors.proveedor_id?.message}
                 />
               )}
             />
 
             <Input
-              label="Fecha de vencimiento (opcional)"
+              label={t('Fecha de vencimiento (opcional)')}
               type="date"
               error={errors.fecha_vencimiento?.message}
               {...register('fecha_vencimiento')}
             />
 
             <div>
-              <label className="text-sm font-medium text-zinc-700">Observaciones</label>
+              <label className="text-sm font-medium text-zinc-700">{t('Observaciones')}</label>
               <textarea
                 className="mt-1.5 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
                 rows={3}
-                placeholder="Notas adicionales..."
+                placeholder={t('Notas adicionales...')}
                 {...register('observaciones')}
               />
               {errors.observaciones?.message && (
@@ -172,7 +174,7 @@ export default function EntradaPage() {
 
             <Button type="submit" loading={mutation.isPending} className="w-full">
               <ArrowDownLeft size={16} />
-              Registrar entrada
+              {t('Registrar entrada')}
             </Button>
           </form>
         </CardContent>

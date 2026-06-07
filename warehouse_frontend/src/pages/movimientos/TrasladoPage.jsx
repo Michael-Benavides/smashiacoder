@@ -8,6 +8,7 @@ import { SearchableSelect } from '@/components/shared/SearchableSelect'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { useT } from '@/hooks/useT'
 import { getProductos, getUbicaciones, registrarTraslado } from '@/api/inventario'
 import { applyApiErrors, apiErrorMessage } from '@/lib/formUtils'
 
@@ -20,6 +21,7 @@ const EMPTY = {
 }
 
 export default function TrasladoPage() {
+  const { t } = useT()
   const queryClient = useQueryClient()
   const { register, handleSubmit, reset, control, watch, setValue, setError, formState: { errors } } = useForm({
     defaultValues: EMPTY,
@@ -76,7 +78,7 @@ export default function TrasladoPage() {
   const mutation = useMutation({
     mutationFn: (data) => registrarTraslado(data),
     onSuccess: (res) => {
-      toast.success(res.data.message ?? 'Traslado registrado')
+      toast.success(res.data.message ?? t('Traslado registrado'))
       queryClient.invalidateQueries({ queryKey: ['productos'] })
       queryClient.invalidateQueries({ queryKey: ['movimientos'] })
       reset(EMPTY)
@@ -87,7 +89,7 @@ export default function TrasladoPage() {
       if (details?.ubicacion) {
         setError('ubicacion_destino_id', { message: details.ubicacion })
       }
-      toast.error(apiErrorMessage(err, 'Error al registrar traslado'))
+      toast.error(apiErrorMessage(err, t('Error al registrar traslado')))
     },
   })
 
@@ -105,8 +107,8 @@ export default function TrasladoPage() {
   return (
     <div>
       <PageHeader
-        title="Traslado de inventario"
-        description="Mueve stock entre ubicaciones del almacén"
+        title={t('Traslado de inventario')}
+        description={t('Mueve stock entre ubicaciones del almacén')}
       />
 
       <Card className="max-w-xl">
@@ -115,14 +117,14 @@ export default function TrasladoPage() {
             <Controller
               name="producto_id"
               control={control}
-              rules={{ required: 'Selecciona un producto' }}
+              rules={{ required: t('Selecciona un producto') }}
               render={({ field }) => (
                 <SearchableSelect
-                  label="Producto"
+                  label={t('Producto')}
                   options={productoOptions}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Buscar producto..."
+                  placeholder={t('Buscar producto...')}
                   error={errors.producto_id?.message}
                 />
               )}
@@ -131,14 +133,14 @@ export default function TrasladoPage() {
             <Controller
               name="ubicacion_origen_id"
               control={control}
-              rules={{ required: 'Selecciona el origen' }}
+              rules={{ required: t('Selecciona el origen') }}
               render={({ field }) => (
                 <SearchableSelect
-                  label="Ubicación origen"
+                  label={t('Ubicación origen')}
                   options={ubicacionOptions}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Origen..."
+                  placeholder={t('Origen...')}
                   error={errors.ubicacion_origen_id?.message}
                 />
               )}
@@ -148,39 +150,39 @@ export default function TrasladoPage() {
               name="ubicacion_destino_id"
               control={control}
               rules={{
-                required: 'Selecciona el destino',
+                required: t('Selecciona el destino'),
                 validate: (v) =>
-                  !origenId || String(v) !== String(origenId) || 'El destino debe ser distinto al origen',
+                  !origenId || String(v) !== String(origenId) || t('El destino debe ser distinto al origen'),
               }}
               render={({ field }) => (
                 <SearchableSelect
-                  label="Ubicación destino"
+                  label={t('Ubicación destino')}
                   options={ubicacionOptions}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Destino..."
+                  placeholder={t('Destino...')}
                   error={
                     errors.ubicacion_destino_id?.message
-                    || (mismoOrigenDestino ? 'El origen y destino deben ser distintos' : undefined)
+                    || (mismoOrigenDestino ? t('El origen y destino deben ser distintos') : undefined)
                   }
                 />
               )}
             />
 
             <Input
-              label="Cantidad"
+              label={t('Cantidad')}
               type="number"
               min={1}
               placeholder="1"
               error={errors.cantidad?.message}
               {...register('cantidad', {
-                required: 'La cantidad es requerida',
-                min: { value: 1, message: 'Mínimo 1 unidad' },
+                required: t('La cantidad es requerida'),
+                min: { value: 1, message: t('Mínimo 1 unidad') },
               })}
             />
 
             <div>
-              <label className="text-sm font-medium text-zinc-700">Observaciones</label>
+              <label className="text-sm font-medium text-zinc-700">{t('Observaciones')}</label>
               <textarea
                 className="mt-1.5 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
                 rows={3}
@@ -195,7 +197,7 @@ export default function TrasladoPage() {
               className="w-full"
             >
               <ArrowLeftRight size={16} />
-              Registrar traslado
+              {t('Registrar traslado')}
             </Button>
           </form>
         </CardContent>

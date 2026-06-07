@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import PageHeader from '@/components/layout/PageHeader'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { useT } from '@/hooks/useT'
 import { getLotesProducto, getProductos } from '@/api/inventario'
 
 function formatFecha(iso) {
@@ -55,6 +56,7 @@ function downloadBlob(blob, filename) {
 }
 
 export default function CodigosPage() {
+  const { t } = useT()
   const barcodeSvgRef = useRef(null)
   const barcodeWrapRef = useRef(null)
   const qrCanvasRef = useRef(null)
@@ -129,7 +131,7 @@ export default function CodigosPage() {
       let extra = 0
       const wrap = barcodeWrapRef.current
       if (wrap && (showNombre || showPrecio)) {
-        const lines = [showNombre && selectedProducto.nombre, showPrecio && `Precio: $${selectedProducto.precio_venta}`].filter(Boolean)
+        const lines = [showNombre && selectedProducto.nombre, showPrecio && `${t('Precio')}: $${selectedProducto.precio_venta}`].filter(Boolean)
         extra = lines.length * 22 + 10
       }
       const blob = await svgToPngBlob(barcodeSvgRef.current, extra)
@@ -150,15 +152,15 @@ export default function CodigosPage() {
         ctx.textAlign = 'center'
         let y = img.height - extra + 18
         if (showNombre) { ctx.fillText(selectedProducto.nombre, canvas.width / 2, y); y += 22 }
-        if (showPrecio) ctx.fillText(`Precio: $${selectedProducto.precio_venta}`, canvas.width / 2, y)
+        if (showPrecio) ctx.fillText(`${t('Precio')}: $${selectedProducto.precio_venta}`, canvas.width / 2, y)
         const finalBlob = await new Promise((r) => canvas.toBlob(r, 'image/png'))
         downloadBlob(finalBlob, `barcode_${selectedProducto.codigo}.png`)
       } else {
         downloadBlob(blob, `barcode_${selectedProducto.codigo}.png`)
       }
-      toast.success('Código de barras descargado')
+      toast.success(t('Código de barras descargado'))
     } catch {
-      toast.error('Error al generar la imagen')
+      toast.error(t('Error al generar la imagen'))
     }
   }
 
@@ -167,7 +169,7 @@ export default function CodigosPage() {
     qrCanvasRef.current.toBlob((blob) => {
       if (blob) {
         downloadBlob(blob, `qr_${selectedLote.numero_lote}.png`)
-        toast.success('QR descargado')
+        toast.success(t('QR descargado'))
       }
     })
   }
@@ -176,13 +178,13 @@ export default function CodigosPage() {
     if (!selectedLote || !selectedProducto) return
     const win = window.open('', '_blank', 'width=400,height=500')
     if (!win) {
-      toast.error('Permite ventanas emergentes para imprimir')
+      toast.error(t('Permite ventanas emergentes para imprimir'))
       return
     }
     const qrDataUrl = qrCanvasRef.current?.toDataURL('image/png') ?? ''
     win.document.write(`
       <!DOCTYPE html>
-      <html><head><title>Etiqueta ${selectedLote.numero_lote}</title>
+      <html><head><title>${t('Etiqueta')} ${selectedLote.numero_lote}</title>
       <style>
         body { font-family: sans-serif; padding: 24px; text-align: center; }
         h2 { margin: 0 0 8px; font-size: 16px; }
@@ -190,12 +192,12 @@ export default function CodigosPage() {
         img { margin: 12px 0; }
       </style></head><body>
         <h2>${selectedProducto.nombre}</h2>
-        <p>Código: ${selectedProducto.codigo}</p>
-        <p>Lote: ${selectedLote.numero_lote}</p>
+        <p>${t('Código')}: ${selectedProducto.codigo}</p>
+        <p>${t('Lote')}: ${selectedLote.numero_lote}</p>
         <img src="${qrDataUrl}" width="180" />
-        <p>Ingreso: ${formatFecha(selectedLote.fecha_ingreso)}</p>
-        <p>Vence: ${formatFecha(selectedLote.fecha_vencimiento)}</p>
-        <p>Cantidad: ${selectedLote.cantidad} uds.</p>
+        <p>${t('Ingreso')}: ${formatFecha(selectedLote.fecha_ingreso)}</p>
+        <p>${t('Vence')}: ${formatFecha(selectedLote.fecha_vencimiento)}</p>
+        <p>${t('Cantidad')}: ${selectedLote.cantidad} ${t('uds.')}</p>
       </body></html>
     `)
     win.document.close()
@@ -206,8 +208,8 @@ export default function CodigosPage() {
   return (
     <div className="space-y-6 animate-fade-in-up">
       <PageHeader
-        title="Códigos QR y Barras"
-        description="Genera etiquetas para productos y lotes"
+        title={t('Códigos QR y Barras')}
+        description={t('Genera etiquetas para productos y lotes')}
       />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -215,18 +217,18 @@ export default function CodigosPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Barcode size={18} />
-              Código de barras
+              {t('Código de barras')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-zinc-700">Producto</label>
+              <label className="text-sm font-medium text-zinc-700">{t('Producto')}</label>
               <select
                 className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
                 value={productoId}
                 onChange={(e) => setProductoId(e.target.value)}
               >
-                <option value="">Seleccionar producto...</option>
+                <option value="">{t('Seleccionar producto...')}</option>
                 {productos.map((p) => (
                   <option key={p.id} value={p.id}>{p.codigo} — {p.nombre}</option>
                 ))}
@@ -236,11 +238,11 @@ export default function CodigosPage() {
             <div className="flex flex-wrap gap-4 text-sm">
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked={showNombre} onChange={(e) => setShowNombre(e.target.checked)} />
-                Mostrar nombre
+                {t('Mostrar nombre')}
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked={showPrecio} onChange={(e) => setShowPrecio(e.target.checked)} />
-                Mostrar precio
+                {t('Mostrar precio')}
               </label>
             </div>
 
@@ -256,17 +258,17 @@ export default function CodigosPage() {
                     <p className="mt-2 text-sm font-medium text-zinc-800">{selectedProducto.nombre}</p>
                   )}
                   {showPrecio && (
-                    <p className="text-sm text-zinc-600">Precio: ${selectedProducto.precio_venta}</p>
+                    <p className="text-sm text-zinc-600">{t('Precio')}: ${selectedProducto.precio_venta}</p>
                   )}
                 </>
               ) : (
-                <p className="text-sm text-zinc-400">Selecciona un producto para generar el código</p>
+                <p className="text-sm text-zinc-400">{t('Selecciona un producto para generar el código')}</p>
               )}
             </div>
 
             <Button onClick={downloadBarcodePng} disabled={!selectedProducto} className="w-full">
               <Download size={16} />
-              Descargar PNG
+              {t('Descargar PNG')}
             </Button>
           </CardContent>
         </Card>
@@ -275,18 +277,18 @@ export default function CodigosPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <QrCode size={18} />
-              Código QR (lote)
+              {t('Código QR (lote)')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-zinc-700">Producto</label>
+              <label className="text-sm font-medium text-zinc-700">{t('Producto')}</label>
               <select
                 className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
                 value={productoId}
                 onChange={(e) => setProductoId(e.target.value)}
               >
-                <option value="">Seleccionar producto...</option>
+                <option value="">{t('Seleccionar producto...')}</option>
                 {productos.map((p) => (
                   <option key={p.id} value={p.id}>{p.codigo} — {p.nombre}</option>
                 ))}
@@ -294,22 +296,22 @@ export default function CodigosPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-zinc-700">Lote</label>
+              <label className="text-sm font-medium text-zinc-700">{t('Lote')}</label>
               <select
                 className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
                 value={loteId}
                 onChange={(e) => setLoteId(e.target.value)}
                 disabled={!productoId}
               >
-                <option value="">Seleccionar lote...</option>
+                <option value="">{t('Seleccionar lote...')}</option>
                 {lotes.map((l) => (
                   <option key={l.id} value={l.id}>
-                    {l.numero_lote} — {l.cantidad} uds.
+                    {l.numero_lote} — {l.cantidad} {t('uds.')}
                   </option>
                 ))}
               </select>
               {productoId && lotes.length === 0 && (
-                <p className="mt-1 text-xs text-zinc-500">Sin lotes. Registra una entrada primero.</p>
+                <p className="mt-1 text-xs text-zinc-500">{t('Sin lotes. Registra una entrada primero.')}</p>
               )}
             </div>
 
@@ -322,23 +324,23 @@ export default function CodigosPage() {
                   <canvas ref={qrCanvasRef} />
                   <div className="mt-3 text-center text-xs text-zinc-600">
                     <p className="font-medium">{selectedLote.numero_lote}</p>
-                    <p>Ingreso: {formatFecha(selectedLote.fecha_ingreso)}</p>
-                    <p>Cantidad: {selectedLote.cantidad}</p>
+                    <p>{t('Ingreso')}: {formatFecha(selectedLote.fecha_ingreso)}</p>
+                    <p>{t('Cantidad')}: {selectedLote.cantidad}</p>
                   </div>
                 </>
               ) : (
-                <p className="text-sm text-zinc-400">Selecciona producto y lote</p>
+                <p className="text-sm text-zinc-400">{t('Selecciona producto y lote')}</p>
               )}
             </div>
 
             <div className="flex gap-2">
               <Button onClick={downloadQrPng} disabled={!selectedLote} variant="outline" className="flex-1">
                 <Download size={16} />
-                Descargar PNG
+                {t('Descargar PNG')}
               </Button>
               <Button onClick={printQrLabel} disabled={!selectedLote} className="flex-1">
                 <Printer size={16} />
-                Imprimir etiqueta
+                {t('Imprimir etiqueta')}
               </Button>
             </div>
           </CardContent>

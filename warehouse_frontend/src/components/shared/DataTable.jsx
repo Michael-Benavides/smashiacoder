@@ -3,12 +3,25 @@ import { LoadingSpinner } from './LoadingSpinner'
 import { EmptyState } from './EmptyState'
 import { Package } from 'lucide-react'
 import { useDarkMode } from '@/hooks/useDarkMode'
+import { useT } from '@/hooks/useT'
 
-export function DataTable({ columns, data, loading, emptyTitle = 'Sin resultados', emptyDescription = 'No hay datos para mostrar.', onRowClick }) {
+export function DataTable({ columns, data, loading, emptyTitle, emptyDescription, onRowClick }) {
   const isDark = useDarkMode()
+  const { t } = useT()
+
+  const resolvedEmptyTitle = emptyTitle ?? t('Sin resultados')
+  const resolvedEmptyDescription = emptyDescription ?? t('No hay datos para mostrar.')
 
   if (loading) return <LoadingSpinner />
-  if (!data?.length) return <EmptyState icon={Package} title={emptyTitle} description={emptyDescription} />
+  if (!data?.length) {
+    return (
+      <EmptyState
+        icon={Package}
+        title={resolvedEmptyTitle}
+        description={resolvedEmptyDescription}
+      />
+    )
+  }
 
   const headRow = isDark ? 'border-zinc-700 bg-zinc-800' : 'border-zinc-200 bg-zinc-900'
   const rowHover = isDark ? 'hover:bg-amber-500/5' : 'hover:bg-amber-50/30'

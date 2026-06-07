@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+﻿import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { useT } from '@/hooks/useT'
 import {
   createProveedor,
   deleteProveedor,
@@ -24,6 +25,7 @@ import { applyApiErrors, apiErrorMessage } from '@/lib/formUtils'
 const EMPTY = { nombre: '', ruc_nit: '', telefono: '', email: '', direccion: '' }
 
 export default function ProveedoresPage() {
+  const { t } = useT()
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -56,20 +58,20 @@ export default function ProveedoresPage() {
 
   const createMutation = useMutation({
     mutationFn: createProveedor,
-    onSuccess: (res) => { toast.success(res.data.message ?? 'Proveedor creado'); invalidate(); closeModal() },
+    onSuccess: (res) => { toast.success(res.data.message ?? t('Proveedor creado')); invalidate(); closeModal() },
     onError: (err) => { applyApiErrors(err, setError); toast.error(apiErrorMessage(err)) },
   })
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => updateProveedor(id, data),
-    onSuccess: (res) => { toast.success(res.data.message ?? 'Proveedor actualizado'); invalidate(); closeModal() },
+    onSuccess: (res) => { toast.success(res.data.message ?? t('Proveedor actualizado')); invalidate(); closeModal() },
     onError: (err) => { applyApiErrors(err, setError); toast.error(apiErrorMessage(err)) },
   })
 
   const deleteMutation = useMutation({
     mutationFn: deleteProveedor,
-    onSuccess: (res) => { toast.success(res.data.message ?? 'Proveedor desactivado'); invalidate(); setDeleteTarget(null) },
-    onError: (err) => toast.error(apiErrorMessage(err, 'Error al eliminar')),
+    onSuccess: (res) => { toast.success(res.data.message ?? t('Proveedor desactivado')); invalidate(); setDeleteTarget(null) },
+    onError: (err) => toast.error(apiErrorMessage(err, t('Error al eliminar'))),
   })
 
   function openCreate() { setEditing(null); reset(EMPTY); setModalOpen(true) }
@@ -98,19 +100,19 @@ export default function ProveedoresPage() {
     else createMutation.mutate(payload)
   }
 
-  const columns = [
-    { key: 'nombre', header: 'Nombre' },
-    { key: 'ruc_nit', header: 'RUC/NIT', render: (v) => v || '—' },
-    { key: 'telefono', header: 'Teléfono', render: (v) => v || '—' },
-    { key: 'email', header: 'Email', render: (v) => v || '—' },
+  const columns = useMemo(() => [
+    { key: 'nombre', header: t('Nombre') },
+    { key: 'ruc_nit', header: t('RUC/NIT'), render: (v) => v || '—' },
+    { key: 'telefono', header: t('Teléfono'), render: (v) => v || '—' },
+    { key: 'email', header: t('Email'), render: (v) => v || '—' },
     {
       key: 'activo',
-      header: 'Estado',
-      render: (v) => <Badge variant={v ? 'success' : 'default'}>{v ? 'Activo' : 'Inactivo'}</Badge>,
+      header: t('Estado'),
+      render: (v) => <Badge variant={v ? 'success' : 'default'}>{v ? t('Activo') : t('Inactivo')}</Badge>,
     },
     {
       key: 'acciones',
-      header: 'Acciones',
+      header: t('Acciones'),
       render: (_, row) => (
         <div className="flex gap-1">
           <Button variant="ghost" size="icon" onClick={() => openEdit(row)}><Pencil size={15} /></Button>
@@ -118,40 +120,40 @@ export default function ProveedoresPage() {
         </div>
       ),
     },
-  ]
+  ], [t])
 
-  const stats = [
-    { label: 'Total', value: meta?.total ?? proveedores.length },
-    { label: 'Activos', value: proveedores.filter((p) => p.activo).length, variant: 'success' },
-    { label: 'Inactivos', value: proveedores.filter((p) => !p.activo).length, variant: 'muted' },
-  ]
+  const stats = useMemo(() => [
+    { label: t('Total'), value: meta?.total ?? proveedores.length },
+    { label: t('Activos'), value: proveedores.filter((p) => p.activo).length, variant: 'success' },
+    { label: t('Inactivos'), value: proveedores.filter((p) => !p.activo).length, variant: 'muted' },
+  ], [meta?.total, proveedores, t])
 
   return (
     <div className="space-y-6 animate-fade-in-up">
-      <PageHeader title="Proveedores" variant="list" stats={stats}>
+      <PageHeader title={t('Proveedores')} variant="list" stats={stats}>
         <SearchInput
           className="w-48"
-          placeholder="Buscar..."
+          placeholder={t('Buscar...')}
           value={search}
           onChange={(v) => { setSearch(v); setPage(1) }}
         />
-        <Button variant="gold" onClick={openCreate}><Plus size={16} />Nuevo Proveedor</Button>
+        <Button variant="gold" onClick={openCreate}><Plus size={16} />{t('Nuevo Proveedor')}</Button>
       </PageHeader>
 
-      <DataTable columns={columns} data={proveedores} loading={isLoading} emptyTitle="Sin proveedores" />
+      <DataTable columns={columns} data={proveedores} loading={isLoading} emptyTitle={t('Sin proveedores')} />
       <Pagination meta={meta} onPageChange={setPage} />
 
-      <Modal open={modalOpen} onClose={closeModal} title={editing ? 'Editar proveedor' : 'Nuevo proveedor'}>
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? t('Editar proveedor') : t('Nuevo proveedor')}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input label="Nombre" error={errors.nombre?.message} {...register('nombre', { required: 'Requerido' })} />
-          <Input label="RUC/NIT" error={errors.ruc_nit?.message} {...register('ruc_nit')} />
-          <Input label="Teléfono" error={errors.telefono?.message} {...register('telefono')} />
-          <Input label="Email" type="email" error={errors.email?.message} {...register('email')} />
-          <Input label="Dirección" error={errors.direccion?.message} {...register('direccion')} />
+          <Input label={t('Nombre')} error={errors.nombre?.message} {...register('nombre', { required: t('Requerido') })} />
+          <Input label={t('RUC/NIT')} error={errors.ruc_nit?.message} {...register('ruc_nit')} />
+          <Input label={t('Teléfono')} error={errors.telefono?.message} {...register('telefono')} />
+          <Input label={t('Email')} type="email" error={errors.email?.message} {...register('email')} />
+          <Input label={t('Dirección')} error={errors.direccion?.message} {...register('direccion')} />
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={closeModal}>Cancelar</Button>
+            <Button type="button" variant="outline" onClick={closeModal}>{t('Cancelar')}</Button>
             <Button type="submit" loading={createMutation.isPending || updateMutation.isPending}>
-              {editing ? 'Guardar' : 'Crear'}
+              {editing ? t('Guardar') : t('Crear')}
             </Button>
           </div>
         </form>
@@ -161,8 +163,8 @@ export default function ProveedoresPage() {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => deleteMutation.mutate(deleteTarget.id)}
-        title="Desactivar proveedor"
-        description={`¿Desactivar "${deleteTarget?.nombre}"?`}
+        title={t('Desactivar proveedor')}
+        description={`${t('¿Desactivar')} "${deleteTarget?.nombre}"?`}
         loading={deleteMutation.isPending}
       />
     </div>

@@ -1,27 +1,15 @@
-﻿import { useMemo, useState } from 'react'
+﻿import { useCallback, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { MapPin, Package, X } from 'lucide-react'
 import PageHeader from '@/components/layout/PageHeader'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardContent } from '@/components/ui/Card'
+import { useT } from '@/hooks/useT'
 import { getProductos, getUbicaciones } from '@/api/inventario'
 import { cn } from '@/lib/utils'
 
 const MAX_PRODUCTOS_CAP = 8
-
-function getOcupacion(productosEnUbicacion) {
-  const count = productosEnUbicacion.length
-  const hasStockBajo = productosEnUbicacion.some(
-    (p) => p.stock_bajo || p.stock_actual <= p.stock_minimo
-  )
-  const pct = Math.min(100, (count / MAX_PRODUCTOS_CAP) * 100)
-
-  if (hasStockBajo) return { pct, level: 'danger', label: 'Stock bajo' }
-  if (pct < 50) return { pct, level: 'low', label: 'Disponible' }
-  if (pct < 80) return { pct, level: 'medium', label: 'Moderado' }
-  return { pct, level: 'high', label: 'Alta ocupación' }
-}
 
 const CELL_STYLES = {
   low: 'bg-green-50 border-green-200 hover:bg-green-100',
@@ -31,7 +19,21 @@ const CELL_STYLES = {
 }
 
 export default function LayoutAlmacenPage() {
+  const { t } = useT()
   const [selectedUbicacion, setSelectedUbicacion] = useState(null)
+
+  const getOcupacion = useCallback((productosEnUbicacion) => {
+    const count = productosEnUbicacion.length
+    const hasStockBajo = productosEnUbicacion.some(
+      (p) => p.stock_bajo || p.stock_actual <= p.stock_minimo
+    )
+    const pct = Math.min(100, (count / MAX_PRODUCTOS_CAP) * 100)
+
+    if (hasStockBajo) return { pct, level: 'danger', label: t('Stock bajo') }
+    if (pct < 50) return { pct, level: 'low', label: t('Disponible') }
+    if (pct < 80) return { pct, level: 'medium', label: t('Moderado') }
+    return { pct, level: 'high', label: t('Alta ocupación') }
+  }, [t])
 
   const { data: ubicaciones = [], isLoading: loadingUbicaciones } = useQuery({
     queryKey: ['ubicaciones', 'layout'],
@@ -62,13 +64,13 @@ export default function LayoutAlmacenPage() {
   const zonas = useMemo(() => {
     const groups = new Map()
     ubicaciones.forEach((u) => {
-      const zona = u.zona?.trim() || 'Sin zona'
+      const zona = u.zona?.trim() || t('Sin zona')
       const list = groups.get(zona) ?? []
       list.push(u)
       groups.set(zona, list)
     })
     return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b))
-  }, [ubicaciones])
+  }, [ubicaciones, t])
 
   const selectedProductos = selectedUbicacion
     ? productosPorUbicacion.get(selectedUbicacion.id) ?? []
@@ -79,8 +81,8 @@ export default function LayoutAlmacenPage() {
   return (
     <div className="relative space-y-6 animate-fade-in-up">
       <PageHeader
-        title="Layout del almacén"
-        description="Vista interactiva de ubicaciones agrupadas por zona"
+        title={t('Layout del almacén')}
+        description={t('Vista interactiva de ubicaciones agrupadas por zona')}
       />
 
       {isLoading ? (
@@ -88,7 +90,7 @@ export default function LayoutAlmacenPage() {
       ) : ubicaciones.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-sm text-zinc-500">
-            No hay ubicaciones registradas. Crea ubicaciones en Inventario → Ubicaciones.
+            {t('No hay ubicaciones registradas. Crea ubicaciones en Inventario → Ubicaciones.')}
           </CardContent>
         </Card>
       ) : (
@@ -104,9 +106,9 @@ export default function LayoutAlmacenPage() {
                 <div className="mb-4 flex items-center gap-2">
                   <MapPin size={16} className="text-zinc-500" />
                   <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-700">
-                    Zona: {zona}
+                    {t('Zona')}: {zona}
                   </h2>
-                  <Badge variant="info">{items.length} ubicaciones</Badge>
+                  <Badge variant="info">{items.length} {t('ubicaciones')}</Badge>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -160,13 +162,13 @@ export default function LayoutAlmacenPage() {
 
             <div className="flex flex-wrap gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-xs text-zinc-600">
               <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded bg-green-200" /> &lt; 50% ocupación
+                <span className="h-3 w-3 rounded bg-green-200" /> {t('< 50% ocupación')}
               </span>
               <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded bg-amber-200" /> 50–80%
+                <span className="h-3 w-3 rounded bg-amber-200" /> {t('50–80%')}
               </span>
               <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded bg-red-200" /> &gt; 80% o stock bajo
+                <span className="h-3 w-3 rounded bg-red-200" /> {t('> 80% o stock bajo')}
               </span>
             </div>
           </div>
@@ -188,7 +190,7 @@ export default function LayoutAlmacenPage() {
               </div>
               <div className="flex-1 overflow-y-auto p-5">
                 {selectedProductos.length === 0 ? (
-                  <p className="text-sm text-zinc-500">Sin productos asignados a esta ubicación.</p>
+                  <p className="text-sm text-zinc-500">{t('Sin productos asignados a esta ubicación.')}</p>
                 ) : (
                   <ul className="space-y-3">
                     {selectedProductos.map((p) => {
@@ -199,7 +201,7 @@ export default function LayoutAlmacenPage() {
                           <p className="text-xs text-zinc-500">{p.codigo}</p>
                           <div className="mt-2">
                             <Badge variant={bajo ? 'danger' : 'success'}>
-                              Stock: {p.stock_actual} {p.unidad_medida}
+                              {t('Stock')}: {p.stock_actual} {p.unidad_medida}
                             </Badge>
                           </div>
                         </li>

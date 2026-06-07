@@ -7,6 +7,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { Pagination } from '@/components/shared/Pagination'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { useT } from '@/hooks/useT'
 import { getAuditoria } from '@/api/administracion'
 import { toPaginationMeta } from '@/lib/pagination'
 
@@ -42,12 +43,12 @@ function formatFecha(iso) {
   }
 }
 
-function JsonBlock({ title, data }) {
+function JsonBlock({ title, data, emptyLabel }) {
   if (!data || (typeof data === 'object' && Object.keys(data).length === 0)) {
     return (
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">{title}</p>
-        <p className="text-sm text-zinc-500">Sin datos</p>
+        <p className="text-sm text-zinc-500">{emptyLabel}</p>
       </div>
     )
   }
@@ -62,6 +63,7 @@ function JsonBlock({ title, data }) {
 }
 
 export default function AuditoriaPage() {
+  const { t } = useT()
   const [page, setPage] = useState(1)
   const [entidad, setEntidad] = useState('')
   const [usuarioId, setUsuarioId] = useState('')
@@ -93,17 +95,17 @@ export default function AuditoriaPage() {
   const columns = useMemo(() => [
     {
       key: 'fecha',
-      header: 'Fecha',
+      header: t('Fecha'),
       render: (val) => formatFecha(val),
     },
     {
       key: 'usuario_nombre',
-      header: 'Usuario',
+      header: t('Usuario'),
       render: (val, row) => val ?? (row.usuario_id ? `#${row.usuario_id}` : '—'),
     },
     {
       key: 'accion',
-      header: 'Acción',
+      header: t('Acción'),
       render: (val) => {
         const key = val?.toLowerCase?.() ?? ''
         const style = ACCION_STYLES[key] ?? 'bg-zinc-100 text-zinc-700 border border-zinc-200'
@@ -114,7 +116,7 @@ export default function AuditoriaPage() {
         )
       },
     },
-    { key: 'entidad', header: 'Entidad' },
+    { key: 'entidad', header: t('Entidad') },
     {
       key: 'entidad_id',
       header: 'ID',
@@ -125,24 +127,24 @@ export default function AuditoriaPage() {
       header: 'IP',
       render: (val) => val || '—',
     },
-  ], [])
+  ], [t])
 
   return (
     <div className="space-y-6 animate-fade-in-up">
       <PageHeader
-        title="Auditoría"
-        description="Registro de acciones realizadas en el sistema"
+        title={t('Auditoría')}
+        description={t('Registro de acciones realizadas en el sistema')}
       />
 
       <div className="mb-4 flex flex-wrap items-end gap-3">
         <div>
-          <label className="mb-1 block text-xs font-medium text-zinc-500">Entidad</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-500">{t('Entidad')}</label>
           <select
             className="h-9 rounded-lg border border-zinc-300 bg-white px-3 text-sm"
             value={entidad}
             onChange={(e) => { setEntidad(e.target.value); setPage(1) }}
           >
-            <option value="">Todas</option>
+            <option value="">{t('Todas')}</option>
             {ENTIDADES.filter(Boolean).map((e) => (
               <option key={e} value={e}>{e}</option>
             ))}
@@ -150,7 +152,7 @@ export default function AuditoriaPage() {
         </div>
         <div className="w-32">
           <Input
-            label="Usuario ID"
+            label={t('Usuario ID')}
             type="number"
             min={1}
             value={usuarioId}
@@ -159,7 +161,7 @@ export default function AuditoriaPage() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-zinc-500">Desde</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-500">{t('Desde')}</label>
           <input
             type="date"
             className="h-9 rounded-lg border border-zinc-300 bg-white px-3 text-sm"
@@ -168,7 +170,7 @@ export default function AuditoriaPage() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-zinc-500">Hasta</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-500">{t('Hasta')}</label>
           <input
             type="date"
             className="h-9 rounded-lg border border-zinc-300 bg-white px-3 text-sm"
@@ -183,8 +185,8 @@ export default function AuditoriaPage() {
         data={registros}
         loading={isLoading}
         onRowClick={setSelected}
-        emptyTitle="Sin registros de auditoría"
-        emptyDescription="Las acciones del sistema aparecerán aquí."
+        emptyTitle={t('Sin registros de auditoría')}
+        emptyDescription={t('Las acciones del sistema aparecerán aquí.')}
       />
 
       <Pagination meta={meta} onPageChange={setPage} />
@@ -192,19 +194,19 @@ export default function AuditoriaPage() {
       <Modal
         open={!!selected}
         onClose={() => setSelected(null)}
-        title={`Detalle — ${selected?.accion ?? ''} ${selected?.entidad ?? ''}`}
+        title={`${t('Detalle')} — ${selected?.accion ?? ''} ${selected?.entidad ?? ''}`}
         size="lg"
       >
         {selected && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <p><span className="text-zinc-500">Usuario:</span> {selected.usuario_nombre ?? selected.usuario_id}</p>
-              <p><span className="text-zinc-500">Fecha:</span> {formatFecha(selected.fecha)}</p>
-              <p><span className="text-zinc-500">Entidad:</span> {selected.entidad} #{selected.entidad_id}</p>
+              <p><span className="text-zinc-500">{t('Usuario')}:</span> {selected.usuario_nombre ?? selected.usuario_id}</p>
+              <p><span className="text-zinc-500">{t('Fecha')}:</span> {formatFecha(selected.fecha)}</p>
+              <p><span className="text-zinc-500">{t('Entidad')}:</span> {selected.entidad} #{selected.entidad_id}</p>
               <p><span className="text-zinc-500">IP:</span> {selected.ip || '—'}</p>
             </div>
-            <JsonBlock title="Datos anteriores" data={selected.datos_anteriores} />
-            <JsonBlock title="Datos nuevos" data={selected.datos_nuevos} />
+            <JsonBlock title={t('Datos anteriores')} data={selected.datos_anteriores} emptyLabel={t('Sin datos')} />
+            <JsonBlock title={t('Datos nuevos')} data={selected.datos_nuevos} emptyLabel={t('Sin datos')} />
           </div>
         )}
       </Modal>

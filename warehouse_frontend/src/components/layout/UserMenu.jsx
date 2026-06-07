@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -8,6 +8,7 @@ import {
 import toast from 'react-hot-toast'
 import { useAuthStore } from '@/store/authStore'
 import { usePermissions } from '@/hooks/usePermissions'
+import { useT } from '@/hooks/useT'
 import { updateUsuario, cambiarPassword } from '@/api/auth'
 import { getAlertas } from '@/api/administracion'
 import { applyDarkMode } from '@/lib/theme'
@@ -20,6 +21,7 @@ import ConfiguracionPanel from '@/components/administracion/ConfiguracionPanel'
 import { cn } from '@/lib/utils'
 
 export default function UserMenu() {
+  const { t } = useT()
   const { user, logout, updateUser } = useAuthStore()
   const { isAdmin } = usePermissions()
   const navigate = useNavigate()
@@ -81,7 +83,7 @@ export default function UserMenu() {
   function handleThemeToggle() {
     const next = isDark ? 'light' : 'dark'
     applyDarkMode(next)
-    toast.success(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado')
+    toast.success(next === 'dark' ? t('Modo oscuro activado') : t('Modo claro activado'))
   }
 
   async function onSaveProfile(data) {
@@ -91,7 +93,7 @@ export default function UserMenu() {
       if (data.nombre?.trim() && data.nombre !== user.nombre) {
         const res = await updateUsuario(user.id, { nombre: data.nombre.trim() })
         updateUser(res.data.data)
-        toast.success('Perfil actualizado')
+        toast.success(t('Perfil actualizado'))
       }
       if (data.nueva_password) {
         await cambiarPassword(user.id, {
@@ -99,60 +101,60 @@ export default function UserMenu() {
           nueva_password: data.nueva_password,
           confirmar_password: data.confirmar_password,
         })
-        toast.success('Contraseña actualizada')
+        toast.success(t('Contraseña actualizada'))
         profileForm.setValue('password_actual', '')
         profileForm.setValue('nueva_password', '')
         profileForm.setValue('confirmar_password', '')
       }
       if (!data.nueva_password && data.nombre?.trim() === user.nombre) {
-        toast.success('Sin cambios')
+        toast.success(t('Sin cambios'))
       }
       setShowProfile(false)
     } catch (err) {
-      toast.error(apiErrorMessage(err, 'Error al guardar'))
+      toast.error(apiErrorMessage(err, t('Error al guardar')))
     } finally {
       setSaving(false)
     }
   }
 
-  const menuOptions = [
+  const menuOptions = useMemo(() => [
     {
       icon: User,
-      label: 'Mi Perfil',
-      description: 'Editar nombre y contraseña',
+      label: t('Mi Perfil'),
+      description: t('Editar nombre y contraseña'),
       action: () => { setShowProfile(true); setMenuOpen(false) },
       color: 'text-zinc-700 dark:text-zinc-300',
     },
     {
       icon: Settings,
-      label: 'Configuración',
-      description: 'Apariencia, idioma y sistema',
+      label: t('Configuración'),
+      description: t('Apariencia, idioma y sistema'),
       action: () => { setShowSettings(true); setMenuOpen(false) },
       color: 'text-zinc-700 dark:text-zinc-300',
     },
     {
       icon: isDark ? Sun : Moon,
-      label: isDark ? 'Modo Claro' : 'Modo Oscuro',
-      description: 'Cambiar tema de la interfaz',
+      label: isDark ? t('Modo Claro') : t('Modo Oscuro'),
+      description: t('Cambiar tema de la interfaz'),
       action: () => { handleThemeToggle(); setMenuOpen(false) },
       color: 'text-zinc-700 dark:text-zinc-300',
     },
     {
       icon: Bell,
-      label: 'Notificaciones',
-      description: `${alertCount} alertas pendientes`,
+      label: t('Notificaciones'),
+      description: `${alertCount} ${t('alertas pendientes')}`,
       action: () => { navigate('/administracion/auditoria'); setMenuOpen(false) },
       color: alertCount > 0 ? 'text-amber-500' : 'text-zinc-700 dark:text-zinc-300',
     },
     {
       icon: LogOut,
-      label: 'Cerrar Sesión',
-      description: 'Salir de la cuenta',
+      label: t('Cerrar Sesión'),
+      description: t('Salir de la cuenta'),
       action: handleLogout,
       color: 'text-red-500',
       divider: true,
     },
-  ]
+  ], [alertCount, isDark, t])
 
   return (
     <>
@@ -170,10 +172,10 @@ export default function UserMenu() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[13px] font-semibold text-zinc-100">
-              {user?.nombre ?? 'Usuario'}
+              {user?.nombre ?? t('Usuario')}
             </p>
             <p className="truncate text-[11px] text-zinc-500">
-              {user?.email ?? 'Usuario'}
+              {user?.email ?? t('Usuario')}
             </p>
             <div className="mt-1 flex items-center gap-2">
               <span
@@ -185,7 +187,7 @@ export default function UserMenu() {
                   ? { backgroundColor: 'var(--accent-light)', color: 'var(--accent-color)' }
                   : undefined}
               >
-                {isAdmin ? '⚡ Admin' : '👤 Usuario'}
+                {isAdmin ? `⚡ ${t('Admin')}` : `👤 ${t('Usuario')}`}
               </span>
             </div>
           </div>
@@ -224,46 +226,46 @@ export default function UserMenu() {
         )}
       </div>
 
-      <Modal open={showProfile} onClose={() => setShowProfile(false)} title="Mi Perfil">
+      <Modal open={showProfile} onClose={() => setShowProfile(false)} title={t('Mi Perfil')}>
         <form onSubmit={profileForm.handleSubmit(onSaveProfile)} className="space-y-4">
           <Input
-            label="Nombre"
+            label={t('Nombre')}
             error={profileForm.formState.errors.nombre?.message}
-            {...profileForm.register('nombre', { required: 'El nombre es requerido' })}
+            {...profileForm.register('nombre', { required: t('El nombre es requerido') })}
           />
-          <Input label="Email" value={user?.email ?? ''} readOnly disabled />
+          <Input label={t('Email')} value={user?.email ?? ''} readOnly disabled />
           <div className="border-t border-zinc-100 pt-4 dark:border-zinc-800">
-            <p className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">Cambiar contraseña</p>
+            <p className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">{t('Cambiar contraseña')}</p>
             <div className="space-y-3">
               <Input
-                label="Contraseña actual"
+                label={t('Contraseña actual')}
                 type="password"
                 {...profileForm.register('password_actual')}
               />
               <Input
-                label="Nueva contraseña"
+                label={t('Nueva contraseña')}
                 type="password"
                 {...profileForm.register('nueva_password', {
-                  minLength: { value: 8, message: 'Mínimo 8 caracteres' },
+                  minLength: { value: 8, message: t('Mínimo 8 caracteres') },
                 })}
               />
               <Input
-                label="Confirmar contraseña"
+                label={t('Confirmar contraseña')}
                 type="password"
                 error={profileForm.formState.errors.confirmar_password?.message}
                 {...profileForm.register('confirmar_password', {
                   validate: (v, form) =>
-                    !form.nueva_password || v === form.nueva_password || 'No coinciden',
+                    !form.nueva_password || v === form.nueva_password || t('No coinciden'),
                 })}
               />
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setShowProfile(false)}>
-              Cancelar
+              {t('Cancelar')}
             </Button>
             <Button type="submit" variant="gold" loading={saving}>
-              Guardar cambios
+              {t('Guardar cambios')}
             </Button>
           </div>
         </form>
@@ -272,7 +274,7 @@ export default function UserMenu() {
       <Modal
         open={showSettings}
         onClose={() => setShowSettings(false)}
-        title="Configuración"
+        title={t('Configuración')}
         size="lg"
       >
         <div className="max-h-[70vh] overflow-y-auto">

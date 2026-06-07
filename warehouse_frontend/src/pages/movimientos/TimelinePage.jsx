@@ -8,13 +8,8 @@ import { SearchableSelect } from '@/components/shared/SearchableSelect'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardContent } from '@/components/ui/Card'
+import { useT } from '@/hooks/useT'
 import { getProductos, getTimeline } from '@/api/inventario'
-
-const TIPO_CONFIG = {
-  entrada: { variant: 'success', label: 'Entrada', Icon: ArrowDownLeft, color: 'border-green-200 bg-green-50' },
-  salida: { variant: 'danger', label: 'Salida', Icon: ArrowUpRight, color: 'border-red-200 bg-red-50' },
-  traslado: { variant: 'info', label: 'Traslado', Icon: ArrowLeftRight, color: 'border-blue-200 bg-blue-50' },
-}
 
 function formatFecha(iso) {
   if (!iso) return '—'
@@ -26,7 +21,14 @@ function formatFecha(iso) {
 }
 
 export default function TimelinePage() {
+  const { t } = useT()
   const [productoId, setProductoId] = useState('')
+
+  const tipoConfig = useMemo(() => ({
+    entrada: { variant: 'success', label: t('Entrada'), Icon: ArrowDownLeft, color: 'border-green-200 bg-green-50' },
+    salida: { variant: 'danger', label: t('Salida'), Icon: ArrowUpRight, color: 'border-red-200 bg-red-50' },
+    traslado: { variant: 'info', label: t('Traslado'), Icon: ArrowLeftRight, color: 'border-blue-200 bg-blue-50' },
+  }), [t])
 
   const { data: productos = [] } = useQuery({
     queryKey: ['productos', 'activos'],
@@ -58,25 +60,25 @@ export default function TimelinePage() {
   return (
     <div className="space-y-6 animate-fade-in-up">
       <PageHeader
-        title="Timeline de producto"
-        description="Historial cronológico de movimientos por producto"
+        title={t('Timeline de producto')}
+        description={t('Historial cronológico de movimientos por producto')}
       />
 
       <div className="mb-6 max-w-md">
         <SearchableSelect
-          label="Producto"
+          label={t('Producto')}
           options={productoOptions}
           value={productoId}
           onChange={setProductoId}
-          placeholder="Seleccionar producto..."
-          searchPlaceholder="Código o nombre..."
+          placeholder={t('Seleccionar producto...')}
+          searchPlaceholder={t('Código o nombre...')}
         />
       </div>
 
       {!productoId ? (
         <Card>
           <CardContent className="py-12 text-center text-sm text-zinc-500">
-            Selecciona un producto para ver su línea de tiempo.
+            {t('Selecciona un producto para ver su línea de tiempo.')}
           </CardContent>
         </Card>
       ) : isLoading ? (
@@ -84,7 +86,7 @@ export default function TimelinePage() {
       ) : timeline.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-sm text-zinc-500">
-            {selectedProducto?.nombre} no tiene movimientos registrados.
+            {selectedProducto?.nombre} {t('no tiene movimientos registrados.')}
           </CardContent>
         </Card>
       ) : (
@@ -92,7 +94,7 @@ export default function TimelinePage() {
           <div className="absolute left-5 top-2 bottom-2 w-px bg-zinc-200" />
           <ul className="space-y-4">
             {[...timeline].reverse().map((event) => {
-              const cfg = TIPO_CONFIG[event.tipo] ?? {
+              const cfg = tipoConfig[event.tipo] ?? {
                 variant: 'default',
                 label: event.tipo,
                 Icon: Clock,
@@ -110,22 +112,22 @@ export default function TimelinePage() {
                         <div className="flex items-center gap-2">
                           <Badge variant={cfg.variant}>{cfg.label}</Badge>
                           <span className="text-sm font-semibold text-zinc-900">
-                            {event.cantidad} uds.
+                            {event.cantidad} {t('uds.')}
                           </span>
                         </div>
                         <time className="text-xs text-zinc-500">{formatFecha(event.fecha)}</time>
                       </div>
                       <p className="mt-2 text-sm text-zinc-600">
-                        Stock: {event.stock_anterior} → <span className="font-medium">{event.stock_nuevo}</span>
+                        {t('Stock')}: {event.stock_anterior} → <span className="font-medium">{event.stock_nuevo}</span>
                       </p>
                       {event.lote_numero && (
-                        <p className="mt-1 text-xs text-zinc-500">Lote: {event.lote_numero}</p>
+                        <p className="mt-1 text-xs text-zinc-500">{t('Lote')}: {event.lote_numero}</p>
                       )}
                       {event.observaciones && (
                         <p className="mt-2 text-sm text-zinc-500">{event.observaciones}</p>
                       )}
                       <p className="mt-2 text-xs text-zinc-400">
-                        Usuario #{event.usuario_id ?? '—'}
+                        {t('Usuario')} #{event.usuario_id ?? '—'}
                       </p>
                     </CardContent>
                   </Card>

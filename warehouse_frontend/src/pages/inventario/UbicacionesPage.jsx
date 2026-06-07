@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { useT } from '@/hooks/useT'
 import {
   createUbicacion,
   deleteUbicacion,
@@ -25,6 +26,7 @@ function getFieldError(details, field) {
 }
 
 export default function UbicacionesPage() {
+  const { t } = useT()
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
@@ -59,7 +61,7 @@ export default function UbicacionesPage() {
   const createMutation = useMutation({
     mutationFn: (data) => createUbicacion(data),
     onSuccess: (res) => {
-      toast.success(res.data.message ?? 'Ubicación creada')
+      toast.success(res.data.message ?? t('Ubicación creada'))
       invalidate()
       closeModal()
     },
@@ -69,7 +71,7 @@ export default function UbicacionesPage() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => updateUbicacion(id, data),
     onSuccess: (res) => {
-      toast.success(res.data.message ?? 'Ubicación actualizada')
+      toast.success(res.data.message ?? t('Ubicación actualizada'))
       invalidate()
       closeModal()
     },
@@ -79,12 +81,12 @@ export default function UbicacionesPage() {
   const deleteMutation = useMutation({
     mutationFn: (id) => deleteUbicacion(id),
     onSuccess: (res) => {
-      toast.success(res.data.message ?? 'Ubicación eliminada')
+      toast.success(res.data.message ?? t('Ubicación eliminada'))
       invalidate()
       setDeleteTarget(null)
     },
     onError: (err) => {
-      toast.error(err.response?.data?.error?.message ?? 'Error al eliminar')
+      toast.error(err.response?.data?.error?.message ?? t('Error al eliminar'))
     },
   })
 
@@ -96,7 +98,7 @@ export default function UbicacionesPage() {
         if (msg) setError(field, { message: msg })
       })
     }
-    toast.error(err.response?.data?.error?.message ?? 'Error en la operación')
+    toast.error(err.response?.data?.error?.message ?? t('Error en la operación'))
   }
 
   function openCreate() {
@@ -131,62 +133,62 @@ export default function UbicacionesPage() {
 
   const saving = createMutation.isPending || updateMutation.isPending
 
-  const columns = [
-    { key: 'nombre', header: 'Nombre' },
+  const columns = useMemo(() => [
+    { key: 'nombre', header: t('Nombre') },
     {
       key: 'descripcion',
-      header: 'Descripción',
+      header: t('Descripción'),
       render: (val) => val || '—',
     },
     {
       key: 'zona',
-      header: 'Zona',
+      header: t('Zona'),
       render: (val) => (val ? <Badge variant="info">{val}</Badge> : '—'),
     },
     {
       key: 'activo',
-      header: 'Estado',
+      header: t('Estado'),
       render: (val) => (
         <Badge variant={val ? 'success' : 'default'}>
-          {val ? 'Activo' : 'Inactivo'}
+          {val ? t('Activo') : t('Inactivo')}
         </Badge>
       ),
     },
     {
       key: 'acciones',
-      header: 'Acciones',
+      header: t('Acciones'),
       className: 'w-28',
       render: (_, row) => (
         <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-          <Button variant="ghost" size="icon" onClick={() => openEdit(row)} title="Editar">
+          <Button variant="ghost" size="icon" onClick={() => openEdit(row)} title={t('Editar')}>
             <Pencil size={15} />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => setDeleteTarget(row)} title="Eliminar">
+          <Button variant="ghost" size="icon" onClick={() => setDeleteTarget(row)} title={t('Eliminar')}>
             <Trash2 size={15} className="text-red-600" />
           </Button>
         </div>
       ),
     },
-  ]
+  ], [t])
 
-  const stats = [
-    { label: 'Total', value: filtered.length },
-    { label: 'Activas', value: filtered.filter((u) => u.activo).length, variant: 'success' },
-    { label: 'Inactivas', value: filtered.filter((u) => !u.activo).length, variant: 'muted' },
-  ]
+  const stats = useMemo(() => [
+    { label: t('Total'), value: filtered.length },
+    { label: t('Activas'), value: filtered.filter((u) => u.activo).length, variant: 'success' },
+    { label: t('Inactivas'), value: filtered.filter((u) => !u.activo).length, variant: 'muted' },
+  ], [filtered, t])
 
   return (
     <div>
-      <PageHeader title="Ubicaciones" variant="list" stats={stats}>
+      <PageHeader title={t('Ubicaciones')} variant="list" stats={stats}>
         <SearchInput
           className="w-48"
-          placeholder="Buscar..."
+          placeholder={t('Buscar...')}
           value={search}
           onChange={setSearch}
         />
         <Button variant="gold" onClick={openCreate}>
           <Plus size={16} />
-          Nueva Ubicación
+          {t('Nueva Ubicación')}
         </Button>
       </PageHeader>
 
@@ -194,40 +196,40 @@ export default function UbicacionesPage() {
         columns={columns}
         data={filtered}
         loading={isLoading}
-        emptyTitle="Sin ubicaciones"
-        emptyDescription="Crea la primera ubicación para asignar productos en el almacén."
+        emptyTitle={t('Sin ubicaciones')}
+        emptyDescription={t('Crea la primera ubicación para asignar productos en el almacén.')}
       />
 
       <Modal
         open={modalOpen}
         onClose={closeModal}
-        title={editing ? 'Editar ubicación' : 'Nueva ubicación'}
+        title={editing ? t('Editar ubicación') : t('Nueva ubicación')}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
-            label="Nombre"
-            placeholder="Ej. Estante A-01"
+            label={t('Nombre')}
+            placeholder={t('Ej. Estante A-01')}
             error={errors.nombre?.message}
-            {...register('nombre', { required: 'El nombre es requerido' })}
+            {...register('nombre', { required: t('El nombre es requerido') })}
           />
           <Input
-            label="Zona"
-            placeholder="Ej. Zona Fría"
+            label={t('Zona')}
+            placeholder={t('Ej. Zona Fría')}
             error={errors.zona?.message}
-            {...register('zona', { required: 'La zona es requerida' })}
+            {...register('zona', { required: t('La zona es requerida') })}
           />
           <Input
-            label="Descripción"
-            placeholder="Descripción opcional"
+            label={t('Descripción')}
+            placeholder={t('Descripción opcional')}
             error={errors.descripcion?.message}
             {...register('descripcion')}
           />
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={closeModal}>
-              Cancelar
+              {t('Cancelar')}
             </Button>
             <Button type="submit" loading={saving}>
-              {editing ? 'Guardar cambios' : 'Crear ubicación'}
+              {editing ? t('Guardar cambios') : t('Crear ubicación')}
             </Button>
           </div>
         </form>
@@ -237,8 +239,8 @@ export default function UbicacionesPage() {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => deleteMutation.mutate(deleteTarget.id)}
-        title="Eliminar ubicación"
-        description={`¿Eliminar "${deleteTarget?.nombre}"? Esta acción no se puede deshacer.`}
+        title={t('Eliminar ubicación')}
+        description={`${t('¿Eliminar')} "${deleteTarget?.nombre}"? ${t('Esta acción no se puede deshacer.')}`}
         loading={deleteMutation.isPending}
       />
     </div>

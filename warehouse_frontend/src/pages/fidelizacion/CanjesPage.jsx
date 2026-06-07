@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { useT } from '@/hooks/useT'
 import { canjearPuntos } from '@/api/fidelizacion'
 import { getClientes } from '@/api/terceros'
 import { applyApiErrors, apiErrorMessage } from '@/lib/formUtils'
@@ -36,6 +37,7 @@ function formatFecha(iso) {
 }
 
 export default function CanjesPage() {
+  const { t } = useT()
   const queryClient = useQueryClient()
   const [recentCanjes, setRecentCanjes] = useState([])
 
@@ -81,7 +83,7 @@ export default function CanjesPage() {
     onSuccess: (res) => {
       const { canje, cliente } = res.data.data ?? {}
       toast.success(
-        `${res.data.message ?? 'Canje registrado'} — Puntos restantes: ${cliente?.puntos_fidelizacion ?? '—'}`
+        `${res.data.message ?? t('Canje registrado')} — ${t('Puntos restantes')}: ${cliente?.puntos_fidelizacion ?? '—'}`
       )
       if (canje) {
         setRecentCanjes((prev) => [{ ...canje, cliente_nombre: cliente?.nombre }, ...prev])
@@ -91,7 +93,7 @@ export default function CanjesPage() {
     },
     onError: (err) => {
       applyApiErrors(err, setError)
-      toast.error(apiErrorMessage(err, 'Error al canjear puntos'))
+      toast.error(apiErrorMessage(err, t('Error al canjear puntos')))
     },
   })
 
@@ -104,28 +106,28 @@ export default function CanjesPage() {
     })
   }
 
-  const canjesColumns = [
+  const canjesColumns = useMemo(() => [
     {
       key: 'fecha',
-      header: 'Fecha',
+      header: t('Fecha'),
       render: (val) => formatFecha(val),
     },
     {
       key: 'cliente_id',
-      header: 'Cliente',
+      header: t('Cliente'),
       render: (val, row) => row.cliente_nombre ?? clienteMap.get(val) ?? `#${val}`,
     },
     {
       key: 'puntos_canjeados',
-      header: 'Puntos',
+      header: t('Puntos'),
       render: (val) => <Badge variant="warning">-{val}</Badge>,
     },
-    { key: 'recompensa', header: 'Recompensa' },
-  ]
+    { key: 'recompensa', header: t('Recompensa') },
+  ], [t, clienteMap])
 
   return (
     <div className="space-y-6 animate-fade-in-up">
-      <PageHeader title="Canjes" description="Canjea puntos de fidelización por recompensas" />
+      <PageHeader title={t('Canjes')} description={t('Canjea puntos de fidelización por recompensas')} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
@@ -134,14 +136,14 @@ export default function CanjesPage() {
               <Controller
                 name="cliente_id"
                 control={control}
-                rules={{ required: 'Selecciona un cliente' }}
+                rules={{ required: t('Selecciona un cliente') }}
                 render={({ field }) => (
                   <SearchableSelect
-                    label="Cliente"
+                    label={t('Cliente')}
                     options={clienteOptions}
                     value={field.value}
                     onChange={field.onChange}
-                    placeholder="Buscar cliente..."
+                    placeholder={t('Buscar cliente...')}
                     error={errors.cliente_id?.message}
                     renderOption={(opt) => (
                       <span className="flex items-center justify-between gap-2">
@@ -162,35 +164,35 @@ export default function CanjesPage() {
 
               {selectedCliente && (
                 <p className="text-sm text-zinc-600">
-                  Puntos disponibles:{' '}
+                  {t('Puntos disponibles')}:{' '}
                   <strong className="text-zinc-900">{puntosDisponibles}</strong>
-                  {' · '}Nivel: {selectedCliente.nivel_fidelidad}
+                  {' · '}{t('Nivel')}: {selectedCliente.nivel_fidelidad}
                 </p>
               )}
 
               <Input
-                label="Puntos a canjear"
+                label={t('Puntos a canjear')}
                 type="number"
                 min={1}
                 max={puntosDisponibles || undefined}
                 error={
                   errors.puntos_a_canjear?.message
-                  || (excedePuntos ? `No puede superar los ${puntosDisponibles} puntos disponibles` : undefined)
+                  || (excedePuntos ? `${t('No puede superar los')} ${puntosDisponibles} ${t('puntos disponibles')}` : undefined)
                 }
                 {...register('puntos_a_canjear', {
-                  required: 'Requerido',
-                  min: { value: 1, message: 'Mínimo 1 punto' },
+                  required: t('Requerido'),
+                  min: { value: 1, message: t('Mínimo 1 punto') },
                   validate: (v) =>
                     !selectedCliente || Number(v) <= puntosDisponibles
-                    || `Máximo ${puntosDisponibles} puntos`,
+                    || `${t('Máximo')} ${puntosDisponibles} ${t('puntos')}`,
                 })}
               />
 
               <Input
-                label="Recompensa"
-                placeholder="Ej. Descuento 10%"
+                label={t('Recompensa')}
+                placeholder={t('Ej. Descuento 10%')}
                 error={errors.recompensa?.message}
-                {...register('recompensa', { required: 'La recompensa es requerida' })}
+                {...register('recompensa', { required: t('La recompensa es requerida') })}
               />
 
               <Button
@@ -200,19 +202,19 @@ export default function CanjesPage() {
                 className="w-full"
               >
                 <Gift size={16} />
-                Registrar canje
+                {t('Registrar canje')}
               </Button>
             </form>
           </CardContent>
         </Card>
 
         <div>
-          <h2 className="mb-3 text-sm font-semibold text-zinc-900">Canjes recientes</h2>
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900">{t('Canjes recientes')}</h2>
           <DataTable
             columns={canjesColumns}
             data={recentCanjes}
-            emptyTitle="Sin canjes en esta sesión"
-            emptyDescription="Los canjes registrados aparecerán aquí."
+            emptyTitle={t('Sin canjes en esta sesión')}
+            emptyDescription={t('Los canjes registrados aparecerán aquí.')}
           />
         </div>
       </div>

@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { useT } from '@/hooks/useT'
 import {
   buscarProductos,
   createProducto,
@@ -84,6 +85,7 @@ const EMPTY_FORM = {
 }
 
 export default function ProductosPage() {
+  const { t } = useT()
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -189,7 +191,7 @@ export default function ProductosPage() {
   const createMutation = useMutation({
     mutationFn: (data) => createProducto(data),
     onSuccess: (res) => {
-      toast.success(res.data.message ?? 'Producto creado')
+      toast.success(res.data.message ?? t('Producto creado'))
       invalidate()
       closeModal()
     },
@@ -199,7 +201,7 @@ export default function ProductosPage() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => updateProducto(id, data),
     onSuccess: (res) => {
-      toast.success(res.data.message ?? 'Producto actualizado')
+      toast.success(res.data.message ?? t('Producto actualizado'))
       invalidate()
       closeModal()
     },
@@ -209,12 +211,12 @@ export default function ProductosPage() {
   const deleteMutation = useMutation({
     mutationFn: (id) => deleteProducto(id),
     onSuccess: (res) => {
-      toast.success(res.data.message ?? 'Producto eliminado')
+      toast.success(res.data.message ?? t('Producto eliminado'))
       invalidate()
       setDeleteTarget(null)
     },
     onError: (err) => {
-      toast.error(err.response?.data?.error?.message ?? 'Error al eliminar')
+      toast.error(err.response?.data?.error?.message ?? t('Error al eliminar'))
     },
   })
 
@@ -226,7 +228,7 @@ export default function ProductosPage() {
         if (msg) setError(field, { message: msg })
       })
     }
-    toast.error(err.response?.data?.error?.message ?? 'Error en la operación')
+    toast.error(err.response?.data?.error?.message ?? t('Error en la operación'))
   }
 
   const location = useLocation()
@@ -296,18 +298,18 @@ export default function ProductosPage() {
 
   const saving = createMutation.isPending || updateMutation.isPending
 
-  const columns = [
-    { key: 'codigo', header: 'Código' },
-    { key: 'nombre', header: 'Nombre' },
+  const columns = useMemo(() => [
+    { key: 'codigo', header: t('Código') },
+    { key: 'nombre', header: t('Nombre') },
     {
       key: 'categoria_id',
-      header: 'Categoría',
+      header: t('Categoría'),
       className: 'hide-mobile',
       render: (val) => categoriaMap.get(val) ?? '—',
     },
     {
       key: 'stock_actual',
-      header: 'Stock Actual',
+      header: t('Stock Actual'),
       render: (val, row) => {
         const bajo = row.stock_actual <= row.stock_minimo
         return (
@@ -319,63 +321,63 @@ export default function ProductosPage() {
     },
     {
       key: 'stock_minimo',
-      header: 'Stock Mínimo',
+      header: t('Stock Mínimo'),
       className: 'hide-mobile',
       render: (val, row) => `${val} ${row.unidad_medida}`,
     },
     {
       key: 'precio_venta',
-      header: 'Precio Venta',
+      header: t('Precio Venta'),
       className: 'hide-mobile',
       render: (val) => formatPrecio(val),
     },
     {
       key: 'activo',
-      header: 'Estado',
+      header: t('Estado'),
       render: (val) => (
         <Badge variant={val ? 'success' : 'default'}>
-          {val ? 'Activo' : 'Inactivo'}
+          {val ? t('Activo') : t('Inactivo')}
         </Badge>
       ),
     },
     {
       key: 'acciones',
-      header: 'Acciones',
+      header: t('Acciones'),
       className: 'w-36',
       render: (_, row) => (
         <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-          <Button variant="ghost" size="icon" onClick={() => openLotes(row)} title="Ver lotes">
+          <Button variant="ghost" size="icon" onClick={() => openLotes(row)} title={t('Ver lotes')}>
             <Layers size={15} />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => openEdit(row)} title="Editar">
+          <Button variant="ghost" size="icon" onClick={() => openEdit(row)} title={t('Editar')}>
             <Pencil size={15} />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => setDeleteTarget(row)} title="Eliminar">
+          <Button variant="ghost" size="icon" onClick={() => setDeleteTarget(row)} title={t('Eliminar')}>
             <Trash2 size={15} className="text-red-600" />
           </Button>
         </div>
       ),
     },
-  ]
+  ], [t, categoriaMap])
 
-  const stats = [
-    { label: 'Total', value: meta?.total ?? productos.length },
-    { label: 'Activos', value: productos.filter((p) => p.activo).length, variant: 'success' },
-    { label: 'Inactivos', value: productos.filter((p) => !p.activo).length, variant: 'muted' },
-  ]
+  const stats = useMemo(() => [
+    { label: t('Total'), value: meta?.total ?? productos.length },
+    { label: t('Activos'), value: productos.filter((p) => p.activo).length, variant: 'success' },
+    { label: t('Inactivos'), value: productos.filter((p) => !p.activo).length, variant: 'muted' },
+  ], [meta?.total, productos, t])
 
   return (
     <div className="space-y-6 animate-fade-in-up">
-      <PageHeader title="Productos" variant="list" stats={stats}>
+      <PageHeader title={t('Productos')} variant="list" stats={stats}>
         <SearchInput
           className="w-48"
-          placeholder="Buscar..."
+          placeholder={t('Buscar...')}
           value={search}
           onChange={setSearch}
         />
         <Button variant="gold" onClick={openCreate}>
           <Plus size={16} />
-          Nuevo Producto
+          {t('Nuevo Producto')}
         </Button>
       </PageHeader>
 
@@ -385,7 +387,7 @@ export default function ProductosPage() {
           value={categoriaFilter}
           onChange={(e) => { setCategoriaFilter(e.target.value); setPage(1) }}
         >
-          <option value="">Todas las categorías</option>
+          <option value="">{t('Todas las categorías')}</option>
           {categorias.map((c) => (
             <option key={c.id} value={String(c.id)}>
               {c.nombre}
@@ -399,8 +401,8 @@ export default function ProductosPage() {
         data={productos}
         loading={isLoading}
         onRowClick={openLotes}
-        emptyTitle="Sin productos"
-        emptyDescription="Crea el primer producto o registra una entrada de inventario."
+        emptyTitle={t('Sin productos')}
+        emptyDescription={t('Crea el primer producto o registra una entrada de inventario.')}
       />
 
       <Pagination meta={meta} onPageChange={setPage} />
@@ -408,82 +410,82 @@ export default function ProductosPage() {
       <Modal
         open={modalOpen}
         onClose={closeModal}
-        title={editing ? 'Editar producto' : 'Nuevo producto'}
+        title={editing ? t('Editar producto') : t('Nuevo producto')}
         size="lg"
       >
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input
-            label="Código"
+            label={t('Código')}
             placeholder="PROD-001"
             error={errors.codigo?.message}
-            {...register('codigo', { required: 'El código es requerido' })}
+            {...register('codigo', { required: t('El código es requerido') })}
           />
           <Input
-            label="Nombre"
-            placeholder="Nombre del producto"
+            label={t('Nombre')}
+            placeholder={t('Nombre del producto')}
             error={errors.nombre?.message}
-            {...register('nombre', { required: 'El nombre es requerido' })}
+            {...register('nombre', { required: t('El nombre es requerido') })}
           />
           <div className="sm:col-span-2">
             <Input
-              label="Descripción"
-              placeholder="Descripción opcional"
+              label={t('Descripción')}
+              placeholder={t('Descripción opcional')}
               error={errors.descripcion?.message}
               {...register('descripcion')}
             />
           </div>
           <SelectField
-            label="Categoría"
-            placeholder="Seleccionar categoría"
+            label={t('Categoría')}
+            placeholder={t('Seleccionar categoría')}
             options={categoriaOptions}
             error={errors.categoria_id?.message}
-            {...register('categoria_id', { required: 'La categoría es requerida' })}
+            {...register('categoria_id', { required: t('La categoría es requerida') })}
           />
           <SelectField
-            label="Ubicación"
-            placeholder="Seleccionar ubicación"
+            label={t('Ubicación')}
+            placeholder={t('Seleccionar ubicación')}
             options={ubicacionOptions}
             error={errors.ubicacion_id?.message}
-            {...register('ubicacion_id', { required: 'La ubicación es requerida' })}
+            {...register('ubicacion_id', { required: t('La ubicación es requerida') })}
           />
           <Input
-            label="Precio compra"
+            label={t('Precio compra')}
             type="number"
             step="0.01"
             min="0"
             placeholder="0.00"
             error={errors.precio_compra?.message}
-            {...register('precio_compra', { required: 'El precio de compra es requerido' })}
+            {...register('precio_compra', { required: t('El precio de compra es requerido') })}
           />
           <Input
-            label="Precio venta"
+            label={t('Precio venta')}
             type="number"
             step="0.01"
             min="0"
             placeholder="0.00"
             error={errors.precio_venta?.message}
-            {...register('precio_venta', { required: 'El precio de venta es requerido' })}
+            {...register('precio_venta', { required: t('El precio de venta es requerido') })}
           />
           <Input
-            label="Unidad de medida"
-            placeholder="Ej. unidad, kg, caja"
+            label={t('Unidad de medida')}
+            placeholder={t('Ej. unidad, kg, caja')}
             error={errors.unidad_medida?.message}
-            {...register('unidad_medida', { required: 'La unidad es requerida' })}
+            {...register('unidad_medida', { required: t('La unidad es requerida') })}
           />
           <Input
-            label="Stock mínimo"
+            label={t('Stock mínimo')}
             type="number"
             min="0"
             placeholder="0"
             error={errors.stock_minimo?.message}
-            {...register('stock_minimo', { required: 'El stock mínimo es requerido' })}
+            {...register('stock_minimo', { required: t('El stock mínimo es requerido') })}
           />
           <div className="flex justify-end gap-2 pt-2 sm:col-span-2">
             <Button type="button" variant="outline" onClick={closeModal}>
-              Cancelar
+              {t('Cancelar')}
             </Button>
             <Button type="submit" loading={saving}>
-              {editing ? 'Guardar cambios' : 'Crear producto'}
+              {editing ? t('Guardar cambios') : t('Crear producto')}
             </Button>
           </div>
         </form>
@@ -492,14 +494,14 @@ export default function ProductosPage() {
       <Modal
         open={!!lotesProducto}
         onClose={() => setLotesProducto(null)}
-        title={`Lotes — ${lotesProducto?.nombre ?? ''}`}
+        title={`${t('Lotes')} — ${lotesProducto?.nombre ?? ''}`}
         size="lg"
       >
         {loadingLotes ? (
           <LoadingSpinner className="min-h-[120px]" />
         ) : !lotes.length ? (
           <p className="py-8 text-center text-sm text-zinc-500">
-            Este producto no tiene lotes registrados.
+            {t('Este producto no tiene lotes registrados.')}
           </p>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-zinc-200">
@@ -507,19 +509,19 @@ export default function ProductosPage() {
               <thead>
                 <tr className="border-b border-zinc-200 bg-zinc-50">
                   <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Nº Lote
+                    {t('Nº Lote')}
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Ingreso
+                    {t('Ingreso')}
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Vencimiento
+                    {t('Vencimiento')}
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Cantidad
+                    {t('Cantidad')}
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Estado
+                    {t('Estado')}
                   </th>
                 </tr>
               </thead>
@@ -532,7 +534,7 @@ export default function ProductosPage() {
                     <td className="px-4 py-2 text-zinc-600">{l.cantidad}</td>
                     <td className="px-4 py-2">
                       <Badge variant={l.activo ? 'success' : 'default'}>
-                        {l.activo ? 'Activo' : 'Inactivo'}
+                        {l.activo ? t('Activo') : t('Inactivo')}
                       </Badge>
                     </td>
                   </tr>
@@ -547,8 +549,8 @@ export default function ProductosPage() {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => deleteMutation.mutate(deleteTarget.id)}
-        title="Eliminar producto"
-        description={`¿Eliminar "${deleteTarget?.nombre}"? Esta acción no se puede deshacer.`}
+        title={t('Eliminar producto')}
+        description={`${t('¿Eliminar')} "${deleteTarget?.nombre}"? ${t('Esta acción no se puede deshacer.')}`}
         loading={deleteMutation.isPending}
       />
     </div>

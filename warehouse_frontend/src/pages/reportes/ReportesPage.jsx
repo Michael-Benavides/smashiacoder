@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+﻿import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
   FileSpreadsheet, FileText, Mail, Package, ArrowLeftRight, Users,
@@ -10,60 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { useT } from '@/hooks/useT'
 import { enviarReporte } from '@/api/administracion'
 import { fetchAndDownloadReport } from '@/lib/download'
 import { apiErrorMessage } from '@/lib/formUtils'
-
-const REPORTS = [
-  {
-    tipo: 'general',
-    title: 'Informe General de Bodega',
-    description:
-      'Resumen ejecutivo con valor del inventario, stock crítico, distribución por categoría, top movimientos del mes y alertas pendientes.',
-    icon: Warehouse,
-    color: 'text-zinc-800 bg-zinc-200',
-    highlights: ['Resumen ejecutivo', 'Stock crítico', 'Alertas activas'],
-  },
-  {
-    tipo: 'inventario',
-    title: 'Informe de Inventario',
-    description:
-      'Detalle completo de productos con precios, valor en inventario, estado (OK/CRÍTICO/AGOTADO) y subtotales por categoría.',
-    icon: Package,
-    color: 'text-emerald-800 bg-emerald-100',
-    highlights: ['Valor inventario', 'Estado por producto', 'Subtotales'],
-  },
-  {
-    tipo: 'movimientos',
-    title: 'Informe de Movimientos',
-    description:
-      'Entradas, salidas y traslados del período con resumen, gráfico ASCII diario (PDF) y detalle por producto y usuario.',
-    icon: ArrowLeftRight,
-    color: 'text-blue-800 bg-blue-100',
-    highlights: ['Filtro por fechas', 'Gráfico ASCII', 'Detalle completo'],
-    hasDateFilter: true,
-  },
-  {
-    tipo: 'clientes',
-    title: 'Clientes y Fidelización',
-    description:
-      'Distribución por nivel de membresía, puntos en circulación, top 10 clientes y historial de canjes recientes.',
-    icon: Users,
-    color: 'text-violet-800 bg-violet-100',
-    highlights: ['Niveles Bronce–Platino', 'Top puntos', 'Canjes'],
-  },
-  {
-    tipo: 'proveedores',
-    title: 'Informe de Proveedores',
-    description:
-      'Proveedores activos con productos suministrados y total de unidades recibidas según movimientos de entrada.',
-    icon: Truck,
-    color: 'text-orange-800 bg-orange-100',
-    highlights: ['Proveedores activos', 'Productos suministrados', 'Unidades recibidas'],
-  },
-]
-
-const REPORT_OPTIONS = REPORTS.map((r) => ({ value: r.tipo, label: r.title }))
 
 function firstDayOfMonth() {
   const d = new Date()
@@ -75,6 +25,7 @@ function todayISO() {
 }
 
 export default function ReportesPage() {
+  const { t } = useT()
   const [loadingKey, setLoadingKey] = useState(null)
   const [emailModal, setEmailModal] = useState(null)
   const [sendingEmail, setSendingEmail] = useState(false)
@@ -82,6 +33,55 @@ export default function ReportesPage() {
     fecha_desde: firstDayOfMonth(),
     fecha_hasta: todayISO(),
   })
+
+  const reports = useMemo(() => [
+    {
+      tipo: 'general',
+      title: t('Informe General de Bodega'),
+      description: t('Resumen ejecutivo con valor del inventario, stock crítico, distribución por categoría, top movimientos del mes y alertas pendientes.'),
+      icon: Warehouse,
+      color: 'text-zinc-800 bg-zinc-200',
+      highlights: [t('Resumen ejecutivo'), t('Stock crítico'), t('Alertas activas')],
+    },
+    {
+      tipo: 'inventario',
+      title: t('Informe de Inventario'),
+      description: t('Detalle completo de productos con precios, valor en inventario, estado (OK/CRÍTICO/AGOTADO) y subtotales por categoría.'),
+      icon: Package,
+      color: 'text-emerald-800 bg-emerald-100',
+      highlights: [t('Valor inventario'), t('Estado por producto'), t('Subtotales')],
+    },
+    {
+      tipo: 'movimientos',
+      title: t('Informe de Movimientos'),
+      description: t('Entradas, salidas y traslados del período con resumen, gráfico ASCII diario (PDF) y detalle por producto y usuario.'),
+      icon: ArrowLeftRight,
+      color: 'text-blue-800 bg-blue-100',
+      highlights: [t('Filtro por fechas'), t('Gráfico ASCII'), t('Detalle completo')],
+      hasDateFilter: true,
+    },
+    {
+      tipo: 'clientes',
+      title: t('Clientes y Fidelización'),
+      description: t('Distribución por nivel de membresía, puntos en circulación, top 10 clientes y historial de canjes recientes.'),
+      icon: Users,
+      color: 'text-violet-800 bg-violet-100',
+      highlights: [t('Niveles Bronce–Platino'), t('Top puntos'), t('Canjes')],
+    },
+    {
+      tipo: 'proveedores',
+      title: t('Informe de Proveedores'),
+      description: t('Proveedores activos con productos suministrados y total de unidades recibidas según movimientos de entrada.'),
+      icon: Truck,
+      color: 'text-orange-800 bg-orange-100',
+      highlights: [t('Proveedores activos'), t('Productos suministrados'), t('Unidades recibidas')],
+    },
+  ], [t])
+
+  const reportOptions = useMemo(
+    () => reports.map((r) => ({ value: r.tipo, label: r.title })),
+    [reports]
+  )
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
     defaultValues: { email: '', tipo: 'general', formato: 'pdf' },
@@ -106,9 +106,9 @@ export default function ReportesPage() {
     setLoadingKey(key)
     try {
       const filename = await fetchAndDownloadReport(tipo, formato, getParams(tipo))
-      toast.success(`Descarga iniciada: ${filename}`)
+      toast.success(`${t('Descarga iniciada')}: ${filename}`)
     } catch (err) {
-      toast.error(err.message ?? 'Error al descargar el reporte')
+      toast.error(err.message ?? t('Error al descargar el reporte'))
     } finally {
       setLoadingKey(null)
     }
@@ -118,10 +118,10 @@ export default function ReportesPage() {
     setSendingEmail(true)
     try {
       await enviarReporte(data.tipo, data.formato, data.email, getParams(data.tipo))
-      toast.success(`Reporte enviado a ${data.email}`)
+      toast.success(`${t('Reporte enviado a')} ${data.email}`)
       setEmailModal(null)
     } catch (err) {
-      toast.error(apiErrorMessage(err, 'Error al enviar el reporte'))
+      toast.error(apiErrorMessage(err, t('Error al enviar el reporte')))
     } finally {
       setSendingEmail(false)
     }
@@ -130,12 +130,12 @@ export default function ReportesPage() {
   return (
     <div className="space-y-6 animate-fade-in-up">
       <PageHeader
-        title="Informes Gerenciales"
-        description="Reportes profesionales de bodega en PDF y Excel con envío por correo"
+        title={t('Informes Gerenciales')}
+        description={t('Reportes profesionales de bodega en PDF y Excel con envío por correo')}
       />
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {REPORTS.map(({ tipo, title, description, icon: Icon, color, highlights, hasDateFilter }) => (
+        {reports.map(({ tipo, title, description, icon: Icon, color, highlights, hasDateFilter }) => (
           <Card
             key={tipo}
             className="group flex cursor-pointer flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-amber-500/10"
@@ -166,11 +166,11 @@ export default function ReportesPage() {
                 <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 space-y-2">
                   <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-600">
                     <Calendar size={13} />
-                    Período del informe
+                    {t('Período del informe')}
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-[10px] text-zinc-500">Desde</label>
+                      <label className="text-[10px] text-zinc-500">{t('Desde')}</label>
                       <input
                         type="date"
                         value={dateFilters.fecha_desde}
@@ -179,7 +179,7 @@ export default function ReportesPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] text-zinc-500">Hasta</label>
+                      <label className="text-[10px] text-zinc-500">{t('Hasta')}</label>
                       <input
                         type="date"
                         value={dateFilters.fecha_hasta}
@@ -221,7 +221,7 @@ export default function ReportesPage() {
                 onClick={() => openEmailModal(tipo)}
               >
                 <Mail size={15} />
-                Enviar por correo
+                {t('Enviar por correo')}
               </Button>
             </CardContent>
           </Card>
@@ -231,44 +231,42 @@ export default function ReportesPage() {
       <div className="mt-6 flex items-start gap-2 rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600">
         <BarChart3 size={18} className="mt-0.5 shrink-0 text-zinc-500" />
         <p>
-          Todos los informes incluyen portada profesional con logo, fecha y período.
-          Los archivos Excel tienen hoja de resumen ejecutivo, formato de moneda y
-          resaltado condicional para stock crítico.
+          {t('Todos los informes incluyen portada profesional con logo, fecha y período. Los archivos Excel tienen hoja de resumen ejecutivo, formato de moneda y resaltado condicional para stock crítico.')}
         </p>
       </div>
 
       <Modal
         open={!!emailModal}
         onClose={() => setEmailModal(null)}
-        title="Enviar informe por correo"
+        title={t('Enviar informe por correo')}
       >
         <form onSubmit={handleSubmit(onSendEmail)} className="space-y-4">
           <Input
-            label="Correo electrónico"
+            label={t('Correo electrónico')}
             type="email"
             placeholder="correo@ejemplo.com"
             error={errors.email?.message}
             {...register('email', {
-              required: 'El correo es requerido',
+              required: t('El correo es requerido'),
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Correo inválido',
+                message: t('Correo inválido'),
               },
             })}
           />
           <div>
-            <label className="text-sm font-medium text-zinc-700">Tipo de informe</label>
+            <label className="text-sm font-medium text-zinc-700">{t('Tipo de informe')}</label>
             <select
               className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
               {...register('tipo', { required: true })}
             >
-              {REPORT_OPTIONS.map((o) => (
+              {reportOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="text-sm font-medium text-zinc-700">Formato</label>
+            <label className="text-sm font-medium text-zinc-700">{t('Formato')}</label>
             <select
               className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
               {...register('formato', { required: true })}
@@ -279,11 +277,11 @@ export default function ReportesPage() {
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setEmailModal(null)}>
-              Cancelar
+              {t('Cancelar')}
             </Button>
             <Button type="submit" loading={sendingEmail}>
               <Mail size={15} />
-              Enviar
+              {t('Enviar')}
             </Button>
           </div>
         </form>
