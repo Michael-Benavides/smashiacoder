@@ -231,8 +231,8 @@ El proyecto implementa **Arquitectura Hexagonal** estricta:
 
 ## 👨‍💻 Desarrollado por
 
-**Michael B.C.**  
-Ingeniería en Computación — UPEC  
+**Michael Benavides**, **Johan Almeida**, **Jhonatan Zambrano**  
+Lenguajes de Programación — UPEC  
 Proyecto de Prácticas 2026
 
 ---
