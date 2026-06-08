@@ -330,7 +330,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
+          <div className={cn('rounded-2xl border !p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
             <span className="rounded-full bg-red-50 px-5 py-5 text-xs font-semibold text-red-600">
               {t('STOCK CRÍTICO')}
             </span>
@@ -348,7 +348,7 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
+          <div className={cn('rounded-2xl border !p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
             <span className="rounded-full bg-amber-50 px-5 py-5 text-xs font-semibold text-amber-600">
               {t('INVENTARIO')}
             </span>
@@ -366,7 +366,7 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
+          <div className={cn('rounded-2xl border !p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
             <span className="rounded-full bg-blue-50 px-5 py-5 text-xs font-semibold text-blue-600">
               {t('VENCIMIENTOS')}
             </span>

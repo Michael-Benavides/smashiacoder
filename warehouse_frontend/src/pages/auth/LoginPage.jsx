@@ -166,7 +166,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="flex min-h-screen flex-1 items-center justify-center overflow-y-auto bg-zinc-950 p-6 lg:min-h-0 lg:p-12">
+      <div className="flex min-h-screen flex-1 items-center justify-center overflow-y-auto bg-[#FAFAFA] p-6 lg:min-h-0 lg:p-12">
         <div className="mx-auto w-full max-w-sm">
           {/* Banner de branding solo en móvil */}
           <div
@@ -215,7 +215,7 @@ export default function LoginPage() {
           </div>
 
           {/* Card principal del formulario */}
-          <div className="mx-auto w-full max-w-sm rounded-3xl border border-zinc-700/50 bg-zinc-900/95 px-10 py-10 shadow-2xl backdrop-blur-sm">
+          <div className="mx-auto w-full max-w-sm rounded-3xl border border-zinc-700/50 bg-zinc-900/95 !p-8 shadow-2xl backdrop-blur-sm">
             <div className="mb-8 flex flex-col items-center">
               <div
                 className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-lg shadow-amber-500/30"
@@ -235,7 +235,7 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-1.5">
+              <div className="space-y-4">
                 <label className="text-sm font-medium text-zinc-300">
                   {t('Correo electrónico')}
                 </label>
@@ -256,7 +256,7 @@ export default function LoginPage() {
                 )}
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-4">
                 <label className="text-sm font-medium text-zinc-300">
                   {t('Contraseña')}
                 </label>
@@ -284,7 +284,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className={cn(
-                  'mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold',
+                  'flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold',
                   'bg-amber-500 text-zinc-900 shadow-lg shadow-amber-500/25',
                   'transition-all duration-150 hover:bg-amber-400 active:scale-95',
                   'disabled:cursor-not-allowed disabled:opacity-70',
