@@ -100,7 +100,7 @@ export function ChatbotMessage({ msg, locale = es }) {
         ) : (
           <p className="whitespace-pre-wrap">{msg.content}</p>
         )}
-        <time className="mt-1 block text-[10px] opacity-60">
+        <time className="mt-1 block text-xs opacity-60">
           {format(msg.timestamp, 'HH:mm', { locale })}
         </time>
       </div>

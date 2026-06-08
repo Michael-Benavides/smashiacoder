@@ -99,7 +99,7 @@ export default function ChatbotPanel({
           </div>
           <div>
             <h2 className="text-sm font-semibold text-zinc-900">{t('Asistente SmashIACodeR')}</h2>
-            <Badge variant="success" className="mt-0.5 text-[10px]">{t('En línea')}</Badge>
+            <Badge variant="success" className="mt-0.5">{t('En línea')}</Badge>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -151,7 +151,7 @@ export default function ChatbotPanel({
           </Button>
         </div>
         {!compact && (
-          <p className={cn('mt-1 text-right text-[10px]', charsLeft < 200 ? 'text-amber-600' : 'text-zinc-400')}>
+          <p className={cn('mt-1 text-right text-xs', charsLeft < 200 ? 'text-amber-600' : 'text-zinc-400')}>
             {input.length} / {MAX_CHARS}
           </p>
         )}

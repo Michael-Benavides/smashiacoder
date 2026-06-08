@@ -171,16 +171,16 @@ export default function UserMenu() {
             {user?.nombre?.[0]?.toUpperCase() ?? 'U'}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-semibold text-zinc-100">
+            <p className="truncate text-sm font-semibold text-zinc-100">
               {user?.nombre ?? t('Usuario')}
             </p>
-            <p className="truncate text-[11px] text-zinc-500">
+            <p className="truncate text-xs text-zinc-500">
               {user?.email ?? t('Usuario')}
             </p>
             <div className="mt-1 flex items-center gap-2">
               <span
                 className={cn(
-                  'rounded-full px-2 py-0.5 text-[10px] font-semibold',
+                  'rounded-full px-4 py-1 text-xs font-semibold',
                   !isAdmin && 'bg-zinc-700 text-zinc-400',
                 )}
                 style={isAdmin
@@ -217,7 +217,7 @@ export default function UserMenu() {
                     <p className={cn('text-xs font-semibold', opt.color)}>
                       {opt.label}
                     </p>
-                    <p className="text-[10px] text-zinc-400">{opt.description}</p>
+                    <p className="text-xs text-zinc-400">{opt.description}</p>
                   </div>
                 </button>
               </div>

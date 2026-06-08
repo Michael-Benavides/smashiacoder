@@ -110,7 +110,7 @@ export default function AuditoriaPage() {
         const key = val?.toLowerCase?.() ?? ''
         const style = ACCION_STYLES[key] ?? 'bg-zinc-100 text-zinc-700 border border-zinc-200'
         return (
-          <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${style}`}>
+          <span className={`inline-flex items-center rounded-md px-4 py-1 text-xs font-medium ${style}`}>
             {val ?? '—'}
           </span>
         )

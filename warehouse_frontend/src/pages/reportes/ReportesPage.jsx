@@ -152,7 +152,7 @@ export default function ReportesPage() {
                     {highlights.map((h) => (
                       <li
                         key={h}
-                        className="rounded-md bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-600"
+                        className="rounded-md bg-zinc-100 px-4 py-1 text-xs font-medium text-zinc-600"
                       >
                         {h}
                       </li>
@@ -170,7 +170,7 @@ export default function ReportesPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-[10px] text-zinc-500">{t('Desde')}</label>
+                      <label className="text-xs text-zinc-500">{t('Desde')}</label>
                       <input
                         type="date"
                         value={dateFilters.fecha_desde}
@@ -179,7 +179,7 @@ export default function ReportesPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] text-zinc-500">{t('Hasta')}</label>
+                      <label className="text-xs text-zinc-500">{t('Hasta')}</label>
                       <input
                         type="date"
                         value={dateFilters.fecha_hasta}

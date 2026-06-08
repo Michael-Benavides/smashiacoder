@@ -105,7 +105,7 @@ function TopNavItem({ to, icon: Icon, label, onNavigate }) {
       onClick={onNavigate}
       className={({ isActive }) => cn(
         'mb-1 flex min-h-[40px] items-center gap-3 rounded-xl px-3 py-2.5',
-        'text-[14px] transition-all duration-150 active:scale-95',
+        'text-sm transition-all duration-150 active:scale-95',
         isActive ? 'font-semibold shadow-inner' : 'font-medium text-zinc-300 hover:bg-zinc-800/80 hover:text-white',
       )}
       style={({ isActive }) => (isActive ? activeNavStyle : undefined)}
@@ -228,7 +228,7 @@ export default function Sidebar() {
                     className="text-zinc-400 transition-colors duration-200 group-hover:text-[var(--accent-color)]"
                   />
                 </div>
-                <span className="flex-1 text-left text-[13.5px] font-semibold tracking-wide">
+                <span className="flex-1 text-left text-sm font-semibold tracking-wide">
                   {t(group.labelKey)}
                 </span>
                 <ChevronRight
@@ -249,7 +249,7 @@ export default function Sidebar() {
                       onClick={closeMobile}
                       className={({ isActive }) => cn(
                         'relative mb-0.5 flex min-h-[40px] items-center gap-2.5 rounded-lg px-3 py-2',
-                        'text-[13px] transition-all duration-150 active:scale-95',
+                        'text-sm transition-all duration-150 active:scale-95',
                         isActive
                           ? 'border-l-2 pl-[9px] font-semibold sidebar-item-active'
                           : 'font-medium text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-100',

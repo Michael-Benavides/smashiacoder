@@ -13,7 +13,7 @@ export function Badge({ variant = 'default', className, children }) {
   return (
     <span
       className={cn(
-        'inline-flex animate-fade-in-up items-center rounded-md px-2 py-0.5 text-xs font-medium transition-all duration-200',
+        'inline-flex animate-fade-in-up items-center rounded-md px-4 py-1 text-xs font-medium transition-all duration-200',
         variants[variant],
         className,
       )}

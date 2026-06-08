@@ -273,7 +273,7 @@ export default function DashboardPage() {
                 type="button"
                 onClick={() => setRango(r)}
                 className={cn(
-                  'rounded-full px-3 py-1 text-xs font-medium transition-all',
+                  'rounded-full px-4 py-1 text-xs font-medium transition-all',
                   rango === r ? cn('shadow-sm', rangeActive) : rangeIdle,
                 )}
               >
@@ -324,14 +324,14 @@ export default function DashboardPage() {
             <Lightbulb size={16} className="text-amber-500" />
             {t('Requiere Atención')}
           </h2>
-          <span className={cn('rounded-full px-3 py-1 text-xs font-medium', pill)}>
+          <span className={cn('rounded-full px-4 py-1 text-xs font-medium', pill)}>
             {t('ACTUALIZADO AHORA')}
           </span>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
-            <span className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-600">
+            <span className="rounded-full bg-red-50 px-4 py-1 text-xs font-semibold text-red-600">
               {t('STOCK CRÍTICO')}
             </span>
             <h3 className={cn('mb-2 mt-3 font-semibold', heading)}>
@@ -349,7 +349,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
-            <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-600">
+            <span className="rounded-full bg-amber-50 px-4 py-1 text-xs font-semibold text-amber-600">
               {t('INVENTARIO')}
             </span>
             <h3 className={cn('mb-2 mt-3 font-semibold', heading)}>
@@ -367,7 +367,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
-            <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-600">
+            <span className="rounded-full bg-blue-50 px-4 py-1 text-xs font-semibold text-blue-600">
               {t('VENCIMIENTOS')}
             </span>
             <h3 className={cn('mb-2 mt-3 font-semibold', heading)}>

@@ -150,7 +150,7 @@ export default function CanjesPage() {
                         <span>{opt.label}</span>
                         {opt.raw && (
                           <span className={cn(
-                            'rounded border px-1.5 py-0.5 text-xs',
+                            'rounded border px-4 py-1 text-xs',
                             NIVEL_STYLES[opt.raw.nivel_fidelidad] ?? ''
                           )}>
                             {opt.raw.puntos_fidelizacion} pts

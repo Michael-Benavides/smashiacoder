@@ -12,7 +12,7 @@ function StatBadge({ label, value, variant = 'default' }) {
   const labelColor = isDark ? 'text-zinc-400' : 'text-zinc-500'
 
   return (
-    <span className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium', styles[variant])}>
+    <span className={cn('inline-flex items-center gap-1.5 rounded-full px-4 py-1 text-xs font-medium', styles[variant])}>
       <span className={labelColor}>{label}</span>
       <span className="font-semibold tabular-nums">{value}</span>
     </span>

@@ -115,7 +115,7 @@ export default function MovimientosPage() {
       render: (val) => {
         const cfg = tipoBadge[val] ?? { label: val ?? '—', className: 'bg-zinc-100 text-zinc-700 border border-zinc-200' }
         return (
-          <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${cfg.className}`}>
+          <span className={`inline-flex items-center rounded-md px-4 py-1 text-xs font-medium ${cfg.className}`}>
             {cfg.label}
           </span>
         )

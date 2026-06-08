@@ -58,7 +58,7 @@ export default function Header() {
         >
           <Menu size={20} />
         </button>
-        <h1 className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        <h1 className="truncate text-base font-semibold text-zinc-900 dark:text-zinc-100">
           {pageTitle}
         </h1>
       </div>
