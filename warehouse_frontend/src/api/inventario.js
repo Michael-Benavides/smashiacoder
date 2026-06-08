@@ -19,7 +19,7 @@ export const getProducto = (id) => client.get(`/inventario/productos/${id}`)
 export const createProducto = (data) => client.post('/inventario/productos', data)
 export const updateProducto = (id, data) => client.put(`/inventario/productos/${id}`, data)
 export const deleteProducto = (id) => client.delete(`/inventario/productos/${id}`)
-export const getLotesProducto = (id) => client.get(`/inventario/productos/${id}/lotes`)
+export const getLotesProducto = (id, params) => client.get(`/inventario/productos/${id}/lotes`, { params })
 
 // Lotes
 export const getLotes = (params) => client.get('/inventario/lotes', { params })

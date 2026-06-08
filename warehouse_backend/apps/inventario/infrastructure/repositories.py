@@ -259,6 +259,12 @@ class DjangoLoteRepository(LoteRepositoryPort):
         ).order_by('fecha_ingreso')
         return [_lote_orm_a_domain(l) for l in qs]
 
+    def listar_por_producto(self, producto_id: int) -> List[LoteDomain]:
+        qs = LoteORM.objects.filter(
+            producto_id=producto_id,
+        ).order_by('-fecha_ingreso')
+        return [_lote_orm_a_domain(l) for l in qs]
+
     def actualizar_cantidad(self, lote_id: int, nueva_cantidad: int) -> None:
         LoteORM.objects.filter(pk=lote_id).update(cantidad=nueva_cantidad)
 

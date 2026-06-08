@@ -13,6 +13,10 @@ import { toPaginationMeta } from '@/lib/pagination'
 
 const ENTIDADES = [
   '',
+  'inventario',
+  'lotes',
+  'canjes',
+  'usuarios',
   'producto',
   'cliente',
   'proveedor',

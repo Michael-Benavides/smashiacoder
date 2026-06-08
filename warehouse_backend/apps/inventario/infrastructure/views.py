@@ -2,6 +2,7 @@
 from rest_framework import status
 from rest_framework.views import APIView
 
+from shared.pagination import ZarpronixPagination
 from shared.exceptions import (
     EntidadNoEncontradaException,
     ReglaNegocioException,
@@ -15,6 +16,7 @@ from ..application.use_cases import (
     EliminarProductoUseCase,
 )
 from ..domain.entities import UbicacionDomain
+from .models import LoteORM
 from .repositories import (
     DjangoCategoriaRepository,
     DjangoLoteRepository,
@@ -81,6 +83,20 @@ def _lote_a_dict(l) -> dict:
         "fecha_vencimiento": l.fecha_vencimiento.isoformat() if l.fecha_vencimiento else None,
         "cantidad": l.cantidad,
         "activo": l.activo,
+    }
+
+
+def _lote_orm_a_dict(orm: LoteORM) -> dict:
+    return {
+        "id": orm.id,
+        "producto_id": orm.producto_id,
+        "producto_codigo": orm.producto.codigo if orm.producto_id else None,
+        "producto_nombre": orm.producto.nombre if orm.producto_id else None,
+        "numero_lote": orm.numero_lote,
+        "fecha_ingreso": orm.fecha_ingreso.isoformat() if orm.fecha_ingreso else None,
+        "fecha_vencimiento": orm.fecha_vencimiento.isoformat() if orm.fecha_vencimiento else None,
+        "cantidad": orm.cantidad,
+        "activo": orm.activo,
     }
 
 
@@ -341,7 +357,7 @@ class ProductoDetailView(APIView):
 
 
 class ProductoLotesView(APIView):
-    """GET /productos/<id>/lotes — lotes activos del producto en orden FIFO."""
+    """GET /productos/<id>/lotes — lotes del producto (?todos=true incluye agotados/vencidos)."""
 
     def get(self, request, id: int):
         if not DjangoProductoRepository().obtener_por_id(id):
@@ -350,7 +366,11 @@ class ProductoLotesView(APIView):
                 status_code=status.HTTP_404_NOT_FOUND,
             )
         repo = DjangoLoteRepository()
-        lotes = repo.listar_por_producto_fifo(id)
+        incluir_todos = request.query_params.get('todos', 'false').lower() == 'true'
+        if incluir_todos:
+            lotes = repo.listar_por_producto(id)
+        else:
+            lotes = repo.listar_por_producto_fifo(id)
         return success_response(data=[_lote_a_dict(l) for l in lotes])
 
 
@@ -370,3 +390,20 @@ class LoteListView(APIView):
         repo = DjangoLoteRepository()
         lotes = repo.listar_por_producto_fifo(producto_id)
         return success_response(data=[_lote_a_dict(l) for l in lotes])
+
+
+class LoteListAllView(APIView):
+    """GET /lotes — listado paginado de todos los lotes."""
+
+    def get(self, request):
+        qs = LoteORM.objects.select_related('producto').order_by('-fecha_ingreso')
+
+        producto_id = request.query_params.get('producto_id')
+        if producto_id:
+            qs = qs.filter(producto_id=producto_id)
+
+        paginator = ZarpronixPagination()
+        page = paginator.paginate_queryset(qs, request, view=self)
+        return paginator.get_paginated_response(
+            [_lote_orm_a_dict(l) for l in page]
+        )

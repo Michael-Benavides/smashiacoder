@@ -20,7 +20,7 @@ from ..application.use_cases import (
     DesactivarReglaFidelizacionUseCase,
     OtorgarPuntosVentaUseCase,
 )
-from .models import ReglaFidelizacionORM
+from .models import CanjesFidelizacionORM, ReglaFidelizacionORM
 from .repositories import (
     DjangoCanjeRepository,
     DjangoReglaFidelizacionRepository,
@@ -71,6 +71,19 @@ def _canje_a_dict(c) -> dict:
         "recompensa": c.recompensa,
         "usuario_id": c.usuario_id,
         "fecha": c.fecha.isoformat() if c.fecha else None,
+    }
+
+
+def _canje_orm_a_dict(orm: CanjesFidelizacionORM) -> dict:
+    return {
+        "id": orm.id,
+        "cliente_id": orm.cliente_id,
+        "cliente_nombre": orm.cliente.nombre if orm.cliente_id else None,
+        "puntos_canjeados": orm.puntos_canjeados,
+        "recompensa": orm.recompensa,
+        "usuario_id": orm.usuario_id,
+        "usuario_nombre": orm.usuario.nombre if orm.usuario_id else None,
+        "fecha": orm.fecha.isoformat() if orm.fecha else None,
     }
 
 
@@ -164,6 +177,25 @@ class ReglaDetailView(APIView):
                 "Regla de fidelización no encontrada.", e.detail,
                 status_code=status.HTTP_404_NOT_FOUND,
             )
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Canjes — listado
+# ──────────────────────────────────────────────────────────────────────
+
+class CanjeListView(APIView):
+    """GET /fidelizacion/canjes — listado paginado de canjes registrados."""
+
+    def get(self, request):
+        qs = CanjesFidelizacionORM.objects.select_related(
+            'cliente', 'usuario',
+        ).order_by('-fecha')
+
+        paginator = ZarpronixPagination()
+        page = paginator.paginate_queryset(qs, request, view=self)
+        return paginator.get_paginated_response(
+            [_canje_orm_a_dict(c) for c in page]
+        )
 
 
 # ──────────────────────────────────────────────────────────────────────

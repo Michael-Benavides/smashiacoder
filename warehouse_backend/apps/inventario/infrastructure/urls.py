@@ -13,6 +13,7 @@ from .movement_views import (
 from .views import (
     CategoriaDetailView,
     CategoriaListCreateView,
+    LoteListAllView,
     LoteListView,
     ProductoBuscarView,
     ProductoDetailView,
@@ -39,6 +40,7 @@ urlpatterns = [
 
     # ────────────────────────── Lotes ───────────────────────────────
     path('lotes/producto/<int:producto_id>', LoteListView.as_view(), name='lotes-por-producto'),
+    path('lotes', LoteListAllView.as_view(), name='lotes-list'),
 
     # ────────────────────────── Movimientos ─────────────────────────
     path('movimientos/', MovimientoListView.as_view(), name='movimientos-list'),

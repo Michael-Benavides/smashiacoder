@@ -180,7 +180,7 @@ export default function ProductosPage() {
   const { data: lotes = [], isLoading: loadingLotes } = useQuery({
     queryKey: ['producto-lotes', lotesProducto?.id],
     queryFn: async () => {
-      const res = await getLotesProducto(lotesProducto.id)
+      const res = await getLotesProducto(lotesProducto.id, { todos: true })
       return res.data.data ?? []
     },
     enabled: !!lotesProducto?.id,

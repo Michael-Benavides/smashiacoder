@@ -13,7 +13,9 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { useT } from '@/hooks/useT'
-import { canjearPuntos } from '@/api/fidelizacion'
+import { canjearPuntos, getCanjes } from '@/api/fidelizacion'
+import { Pagination } from '@/components/shared/Pagination'
+import { toPaginationMeta } from '@/lib/pagination'
 import { getClientes } from '@/api/terceros'
 import { applyApiErrors, apiErrorMessage } from '@/lib/formUtils'
 import { cn } from '@/lib/utils'
@@ -36,10 +38,12 @@ function formatFecha(iso) {
   }
 }
 
+const PAGE_SIZE = 20
+
 export default function CanjesPage() {
   const { t } = useT()
   const queryClient = useQueryClient()
-  const [recentCanjes, setRecentCanjes] = useState([])
+  const [page, setPage] = useState(1)
 
   const { register, handleSubmit, reset, control, watch, setError, formState: { errors } } = useForm({
     defaultValues: EMPTY,
@@ -78,17 +82,30 @@ export default function CanjesPage() {
     [clientes]
   )
 
+  const { data: canjesData, isLoading: loadingCanjes } = useQuery({
+    queryKey: ['canjes', page],
+    queryFn: async () => {
+      const res = await getCanjes({ page, page_size: PAGE_SIZE })
+      return {
+        items: res.data.data ?? [],
+        meta: toPaginationMeta(res.data.pagination),
+      }
+    },
+  })
+
+  const canjes = canjesData?.items ?? []
+  const canjesMeta = canjesData?.meta
+
   const mutation = useMutation({
     mutationFn: canjearPuntos,
     onSuccess: (res) => {
-      const { canje, cliente } = res.data.data ?? {}
+      const { cliente } = res.data.data ?? {}
       toast.success(
         `${res.data.message ?? t('Canje registrado')} — ${t('Puntos restantes')}: ${cliente?.puntos_fidelizacion ?? '—'}`
       )
-      if (canje) {
-        setRecentCanjes((prev) => [{ ...canje, cliente_nombre: cliente?.nombre }, ...prev])
-      }
+      setPage(1)
       queryClient.invalidateQueries({ queryKey: ['clientes'] })
+      queryClient.invalidateQueries({ queryKey: ['canjes'] })
       reset(EMPTY)
     },
     onError: (err) => {
@@ -209,13 +226,17 @@ export default function CanjesPage() {
         </Card>
 
         <div>
-          <h2 className="mb-3 text-sm font-semibold text-zinc-900">{t('Canjes recientes')}</h2>
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900">{t('Canjes registrados')}</h2>
           <DataTable
             columns={canjesColumns}
-            data={recentCanjes}
-            emptyTitle={t('Sin canjes en esta sesión')}
-            emptyDescription={t('Los canjes registrados aparecerán aquí.')}
+            data={canjes}
+            loading={loadingCanjes}
+            emptyTitle={t('Sin canjes registrados')}
+            emptyDescription={t('Los canjes del sistema aparecerán aquí.')}
           />
+          {canjesMeta?.pagination && (
+            <Pagination meta={canjesMeta} onPageChange={setPage} />
+          )}
         </div>
       </div>
     </div>

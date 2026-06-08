@@ -2,6 +2,7 @@
 from django.urls import path
 
 from .views import (
+    CanjeListView,
     CanjearPuntosView,
     OtorgarPuntosVentaView,
     ReglaDetailView,
@@ -10,6 +11,7 @@ from .views import (
 
 urlpatterns = [
     # Canjes y otorgamiento de puntos (rutas explícitas antes que <int:id>)
+    path('canjes', CanjeListView.as_view(), name='fidelizacion-canjes-list'),
     path('canjear', CanjearPuntosView.as_view(), name='fidelizacion-canjear'),
     path('otorgar-puntos', OtorgarPuntosVentaView.as_view(), name='fidelizacion-otorgar-puntos'),
 
