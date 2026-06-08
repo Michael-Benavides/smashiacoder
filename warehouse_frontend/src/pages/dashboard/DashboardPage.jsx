@@ -432,7 +432,7 @@ export default function DashboardPage() {
             {movimientos.slice(0, 6).map((m, i) => (
               <div
                 key={m.id}
-                className="flex items-center gap-4 py-3"
+                className="flex items-center gap-4 py-5"
                 style={{
                   opacity: 0,
                   animation: 'fadeInUp 0.4s ease forwards',

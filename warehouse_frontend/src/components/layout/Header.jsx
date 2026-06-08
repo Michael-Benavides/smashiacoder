@@ -48,7 +48,7 @@ export default function Header() {
   }, [pathname, t])
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900 lg:px-6">
+    <header className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-5 dark:border-zinc-800 dark:bg-zinc-900 lg:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <button
           type="button"

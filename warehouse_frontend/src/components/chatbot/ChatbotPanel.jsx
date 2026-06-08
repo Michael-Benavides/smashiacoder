@@ -14,7 +14,7 @@ const MAX_CHARS = 4000
 
 function TypingIndicator() {
   return (
-    <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-zinc-100 px-4 py-3">
+    <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-zinc-100 p-5">
       <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400 [animation-delay:0ms]" />
       <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400 [animation-delay:150ms]" />
       <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400 [animation-delay:300ms]" />
@@ -92,7 +92,7 @@ export default function ChatbotPanel({
 
   return (
     <div className={cn('flex flex-col overflow-hidden bg-white', className)}>
-      <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3">
+      <div className="flex items-center justify-between border-b border-zinc-100 p-5">
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-900 text-white">
             <Bot size={16} />
@@ -113,7 +113,7 @@ export default function ChatbotPanel({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-3">
+      <div className="flex-1 overflow-y-auto p-5">
         {messages.length === 0 && !loading && (
           <div className="flex h-full flex-col items-center justify-center text-center">
             <Bot size={compact ? 32 : 40} className="mb-3 text-zinc-300" />
@@ -133,7 +133,7 @@ export default function ChatbotPanel({
         </div>
       </div>
 
-      <div className="border-t border-zinc-100 px-4 py-3">
+      <div className="border-t border-zinc-100 p-5">
         <div className="flex gap-2">
           <textarea
             ref={inputRef}

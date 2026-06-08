@@ -508,19 +508,19 @@ export default function ProductosPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-zinc-200 bg-zinc-50">
-                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <th className="px-5 py-5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     {t('Nº Lote')}
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <th className="px-5 py-5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     {t('Ingreso')}
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <th className="px-5 py-5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     {t('Vencimiento')}
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <th className="px-5 py-5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     {t('Cantidad')}
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <th className="px-5 py-5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     {t('Estado')}
                   </th>
                 </tr>
@@ -528,11 +528,11 @@ export default function ProductosPage() {
               <tbody className="divide-y divide-zinc-100">
                 {lotes.map((l) => (
                   <tr key={l.id}>
-                    <td className="px-4 py-2 font-medium text-zinc-900">{l.numero_lote}</td>
-                    <td className="px-4 py-2 text-zinc-600">{formatFecha(l.fecha_ingreso)}</td>
-                    <td className="px-4 py-2 text-zinc-600">{formatFecha(l.fecha_vencimiento)}</td>
-                    <td className="px-4 py-2 text-zinc-600">{l.cantidad}</td>
-                    <td className="px-4 py-2">
+                    <td className="px-5 py-5 font-medium text-zinc-900">{l.numero_lote}</td>
+                    <td className="px-5 py-5 text-zinc-600">{formatFecha(l.fecha_ingreso)}</td>
+                    <td className="px-5 py-5 text-zinc-600">{formatFecha(l.fecha_vencimiento)}</td>
+                    <td className="px-5 py-5 text-zinc-600">{l.cantidad}</td>
+                    <td className="px-5 py-5">
                       <Badge variant={l.activo ? 'success' : 'default'}>
                         {l.activo ? t('Activo') : t('Inactivo')}
                       </Badge>

@@ -7,7 +7,7 @@ export function Pagination({ meta, onPageChange }) {
   if (total_paginas <= 1 && total_registros === 0) return null
 
   return (
-    <div className="flex items-center justify-between px-1 py-3">
+    <div className="flex items-center justify-between px-5 py-5">
       <p className="text-xs text-zinc-500">{total_registros} registros totales</p>
       <div className="flex items-center gap-1">
         <Button

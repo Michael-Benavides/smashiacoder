@@ -19,14 +19,14 @@ export function Card({ className, highlighted, hoverable, children, ...props }) 
 
 export function CardHeader({ className, children }) {
   return (
-    <div className={cn('border-b border-[var(--color-border)] px-6 py-4', className)}>
+    <div className={cn('border-b border-[var(--color-border)] p-5', className)}>
       {children}
     </div>
   )
 }
 
 export function CardContent({ className, children }) {
-  return <div className={cn('px-6 py-4', className)}>{children}</div>
+  return <div className={cn('p-5', className)}>{children}</div>
 }
 
 export function CardTitle({ className, children }) {

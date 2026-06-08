@@ -37,7 +37,7 @@ export function DataTable({ columns, data, loading, emptyTitle, emptyDescription
               <th
                 key={col.key}
                 className={cn(
-                  'px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-100',
+                  'px-5 py-5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-100',
                   col.className,
                 )}
               >
@@ -65,7 +65,7 @@ export function DataTable({ columns, data, loading, emptyTitle, emptyDescription
               {columns.map((col) => (
                 <td
                   key={col.key}
-                  className={cn('px-4 py-3 text-sm', cellText, col.className, col.cellClassName)}
+                  className={cn('px-5 py-5 text-sm', cellText, col.className, col.cellClassName)}
                 >
                   {col.render ? col.render(row[col.key], row) : row[col.key] ?? '—'}
                 </td>

@@ -107,7 +107,7 @@ export default function TimelinePage() {
                     <Icon size={14} />
                   </div>
                   <Card className="flex-1">
-                    <CardContent className="py-4">
+                    <CardContent className="py-5">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <Badge variant={cfg.variant}>{cfg.label}</Badge>

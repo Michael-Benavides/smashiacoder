@@ -10,8 +10,8 @@ export default function Layout() {
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header />
         <main
-          className="flex-1 overflow-y-auto p-4 lg:p-6"
-          style={{ padding: 'var(--density-padding, 1rem)' }}
+          className="flex-1 overflow-y-auto p-5 lg:p-6"
+          style={{ padding: 'var(--density-padding, 1.25rem)' }}
         >
           <Outlet />
         </main>

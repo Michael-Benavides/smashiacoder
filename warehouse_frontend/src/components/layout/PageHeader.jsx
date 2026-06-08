@@ -29,17 +29,17 @@ export function PageHeader({ title, description, actions, children, stats, varia
   if (variant === 'list') {
     return (
       <div
-        className={cn('-mx-6 -mt-6 mb-6 border-b bg-[var(--color-surface)]', border, className)}
+        className={cn('-mx-5 -mt-5 mb-6 border-b bg-[var(--color-surface)] lg:-mx-6 lg:-mt-6', border, className)}
         style={{ animation: 'fadeInUp 0.4s ease forwards' }}
       >
-        <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 p-5 lg:px-6">
           <h1 className={cn('text-lg font-bold tracking-tight', heading)}>{title}</h1>
           {actionSlot && (
             <div className="flex flex-wrap items-center gap-3">{actionSlot}</div>
           )}
         </div>
         {stats?.length > 0 && (
-          <div className="flex flex-wrap gap-2 px-6 pb-4">
+          <div className="flex flex-wrap gap-2 px-5 pb-5 lg:px-6">
             {stats.map((s) => (
               <StatBadge key={s.label} {...s} />
             ))}

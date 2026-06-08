@@ -260,7 +260,7 @@ export default function ConfiguracionPanel({ compact = false }) {
                 options={[{ value: 'USD', label: 'USD' }, { value: 'EUR', label: 'EUR' }]}
               />
             </FieldRow>
-            <div className="flex justify-end border-t border-zinc-100 pt-4 dark:border-zinc-800">
+            <div className="flex justify-end border-t border-zinc-100 pt-5 dark:border-zinc-800">
               <Button loading={saving} onClick={() => saveSection(general, t('General'))}><Save size={15} /> {t('Guardar')}</Button>
             </div>
           </CardContent>
@@ -313,7 +313,7 @@ export default function ConfiguracionPanel({ compact = false }) {
                 ]}
               />
             </FieldRow>
-            <div className="flex justify-end border-t border-zinc-100 pt-4 dark:border-zinc-800">
+            <div className="flex justify-end border-t border-zinc-100 pt-5 dark:border-zinc-800">
               <Button onClick={saveApariencia}><Save size={15} /> {t('Guardar')}</Button>
             </div>
           </CardContent>
@@ -342,7 +342,7 @@ export default function ConfiguracionPanel({ compact = false }) {
                 options={[{ value: 'true', label: 'Sí' }, { value: 'false', label: 'No' }]}
               />
             </FieldRow>
-            <div className="flex justify-end border-t border-zinc-100 pt-4 dark:border-zinc-800">
+            <div className="flex justify-end border-t border-zinc-100 pt-5 dark:border-zinc-800">
               <Button loading={saving} onClick={() => saveSection(notificaciones, 'Notificaciones')}><Save size={15} /> Guardar</Button>
             </div>
           </CardContent>
@@ -371,7 +371,7 @@ export default function ConfiguracionPanel({ compact = false }) {
               <Input type="number" min={1} max={20} value={seguridad.intentos_login_max}
                 onChange={(e) => setSeguridad((s) => ({ ...s, intentos_login_max: e.target.value }))} className="max-w-xs" />
             </FieldRow>
-            <div className="flex justify-end border-t border-zinc-100 pt-4 dark:border-zinc-800">
+            <div className="flex justify-end border-t border-zinc-100 pt-5 dark:border-zinc-800">
               <Button loading={saving} onClick={() => saveSection(seguridad, 'Seguridad')}><Save size={15} /> Guardar</Button>
             </div>
           </CardContent>
@@ -403,7 +403,7 @@ export default function ConfiguracionPanel({ compact = false }) {
                 options={[{ value: 'true', label: 'Sí' }, { value: 'false', label: 'No' }]}
               />
             </FieldRow>
-            <div className="flex justify-end border-t border-zinc-100 pt-4 dark:border-zinc-800">
+            <div className="flex justify-end border-t border-zinc-100 pt-5 dark:border-zinc-800">
               <Button loading={saving} onClick={() => saveSection(correo, 'Correo')}><Save size={15} /> Guardar</Button>
             </div>
           </CardContent>

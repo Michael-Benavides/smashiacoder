@@ -50,7 +50,7 @@ export function SearchableSelect({
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-lg border border-zinc-200 bg-white shadow-lg">
-            <div className="border-b border-zinc-100 p-2">
+            <div className="border-b border-zinc-100 p-5">
               <input
                 className="h-8 w-full rounded-md border border-zinc-200 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
                 placeholder={searchPlaceholder}
@@ -61,14 +61,14 @@ export function SearchableSelect({
             </div>
             <ul className="max-h-48 overflow-y-auto py-1">
               {filtered.length === 0 ? (
-                <li className="px-3 py-2 text-sm text-zinc-500">{emptyMessage}</li>
+                <li className="px-5 py-4 text-sm text-zinc-500">{emptyMessage}</li>
               ) : (
                 filtered.map((opt) => (
                   <li key={opt.value}>
                     <button
                       type="button"
                       className={cn(
-                        'w-full px-3 py-2 text-left text-sm hover:bg-zinc-50',
+                        'w-full px-5 py-4 text-left text-sm hover:bg-zinc-50',
                         String(opt.value) === String(value) && 'bg-zinc-100 font-medium'
                       )}
                       onClick={() => {

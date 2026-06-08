@@ -55,7 +55,7 @@ function JsonBlock({ title, data, emptyLabel }) {
   return (
     <div>
       <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">{title}</p>
-      <pre className="max-h-48 overflow-auto rounded-lg bg-zinc-950 p-4 text-xs leading-relaxed text-green-400">
+      <pre className="max-h-48 overflow-auto rounded-lg bg-zinc-950 p-5 text-xs leading-relaxed text-green-400">
         {JSON.stringify(data, null, 2)}
       </pre>
     </div>

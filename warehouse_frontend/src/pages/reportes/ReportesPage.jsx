@@ -163,7 +163,7 @@ export default function ReportesPage() {
             </CardHeader>
             <CardContent className="mt-auto space-y-2 pt-0">
               {hasDateFilter && (
-                <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 space-y-2">
+                <div className="space-y-2 rounded-lg border border-zinc-200 bg-zinc-50 p-5">
                   <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-600">
                     <Calendar size={13} />
                     {t('Período del informe')}
@@ -228,7 +228,7 @@ export default function ReportesPage() {
         ))}
       </div>
 
-      <div className="mt-6 flex items-start gap-2 rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600">
+      <div className="mt-6 flex items-start gap-2 rounded-xl border border-zinc-200 bg-zinc-50 p-5 text-sm text-zinc-600">
         <BarChart3 size={18} className="mt-0.5 shrink-0 text-zinc-500" />
         <p>
           {t('Todos los informes incluyen portada profesional con logo, fecha y período. Los archivos Excel tienen hoja de resumen ejecutivo, formato de moneda y resaltado condicional para stock crítico.')}

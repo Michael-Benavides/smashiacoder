@@ -54,7 +54,7 @@ export function ChatbotMessage({ msg, locale = es }) {
     >
       <div
         className={cn(
-          'max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
+          'max-w-[85%] rounded-2xl p-5 text-sm leading-relaxed',
           msg.role === 'user'
             ? 'rounded-br-md bg-zinc-900 text-white'
             : cn(
@@ -87,10 +87,10 @@ export function ChatbotMessage({ msg, locale = es }) {
                   )
                 },
                 th: ({ children }) => (
-                  <th className="px-3 py-2 font-semibold">{children}</th>
+                  <th className="px-5 py-5 font-semibold">{children}</th>
                 ),
                 td: ({ children }) => (
-                  <td className="px-3 py-2 text-zinc-700">{children}</td>
+                  <td className="px-5 py-5 text-zinc-700">{children}</td>
                 ),
               }}
             >

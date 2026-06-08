@@ -158,7 +158,7 @@ export default function UserMenu() {
 
   return (
     <>
-      <div ref={menuRef} className="relative mx-2 mb-3 rounded-xl bg-zinc-800/50 p-3">
+      <div ref={menuRef} className="relative mx-2 mb-3 rounded-xl bg-zinc-800/50 p-5">
         <button
           type="button"
           onClick={() => setMenuOpen((v) => !v)}
@@ -195,7 +195,7 @@ export default function UserMenu() {
 
         {menuOpen && (
           <div className="absolute bottom-full left-0 right-0 z-50 mx-2 mb-2 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl animate-fade-in-up dark:border-zinc-700 dark:bg-zinc-800">
-            <div className="border-b border-zinc-100 px-4 py-3 dark:border-zinc-700">
+            <div className="border-b border-zinc-100 p-5 dark:border-zinc-700">
               <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
                 {user?.nombre}
               </p>
@@ -210,7 +210,7 @@ export default function UserMenu() {
                 <button
                   type="button"
                   onClick={opt.action}
-                  className="flex w-full items-center gap-3 px-4 py-2.5 transition-colors duration-150 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
+                  className="flex w-full items-center gap-3 px-5 py-4 transition-colors duration-150 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
                 >
                   <opt.icon size={15} className={opt.color} />
                   <div className="flex-1 text-left">

@@ -24,6 +24,9 @@
   --text-3xl: 2rem;
   --text-3xl--line-height: 2.25rem;
 
+  /* Padding mínimo en contenedores (~19px / 0.5cm) */
+  --spacing-container-min: 1.25rem;
+
   --color-background: #FAFAFA;
   --color-surface: #FFFFFF;
   --color-surface-hover: #F4F4F5;
@@ -263,9 +266,9 @@ body {
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4) !important;
 }
 
-html[data-density="compact"] { --density-padding: 0.5rem; --density-gap: 0.25rem; }
-html[data-density="normal"] { --density-padding: 1rem; --density-gap: 0.5rem; }
-html[data-density="spacious"] { --density-padding: 1.5rem; --density-gap: 0.75rem; }
+html[data-density="compact"] { --density-padding: 1.25rem; --density-gap: 0.5rem; }
+html[data-density="normal"] { --density-padding: 1.25rem; --density-gap: 0.75rem; }
+html[data-density="spacious"] { --density-padding: 1.5rem; --density-gap: 1rem; }
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(16px); }

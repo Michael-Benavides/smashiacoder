@@ -34,7 +34,7 @@ export function TableHead({ children, className }) {
   return (
     <th
       className={cn(
-        'h-10 px-4 text-left align-middle text-xs font-semibold uppercase tracking-wide text-text-secondary',
+        'h-10 px-5 text-left align-middle text-xs font-semibold uppercase tracking-wide text-text-secondary',
         className
       )}
     >
@@ -45,7 +45,7 @@ export function TableHead({ children, className }) {
 
 export function TableCell({ children, className }) {
   return (
-    <td className={cn('px-4 py-3 align-middle text-text-primary', className)}>
+    <td className={cn('px-5 py-5 align-middle text-text-primary', className)}>
       {children}
     </td>
   )
