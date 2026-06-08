@@ -79,7 +79,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row">
+    <div className="flex min-h-screen flex-col lg:flex-row" style={{ backgroundColor: '#F5F5F5' }}>
       <div
         className="relative hidden w-[420px] shrink-0 overflow-hidden lg:flex"
         style={{
@@ -166,7 +166,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="flex min-h-screen flex-1 items-center justify-center overflow-y-auto bg-[#FAFAFA] p-6 lg:min-h-0 lg:p-12">
+      <div className="flex min-h-screen flex-1 items-center justify-center overflow-y-auto p-6 lg:min-h-0 lg:p-12">
         <div className="mx-auto w-full max-w-sm">
           {/* Banner de branding solo en móvil */}
           <div
@@ -215,7 +215,10 @@ export default function LoginPage() {
           </div>
 
           {/* Card principal del formulario */}
-          <div className="mx-auto w-full max-w-sm rounded-3xl border border-zinc-700/50 bg-zinc-900/95 !p-8 shadow-2xl backdrop-blur-sm">
+          <div
+            className="mx-auto flex w-full max-w-sm flex-col rounded-3xl border border-zinc-700/50 bg-zinc-900/95 shadow-2xl backdrop-blur-sm"
+            style={{ padding: '32px', gap: '16px' }}
+          >
             <div className="mb-8 flex flex-col items-center">
               <div
                 className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 shadow-lg shadow-amber-500/30"
