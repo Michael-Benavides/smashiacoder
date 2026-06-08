@@ -224,7 +224,7 @@ export default function DashboardPage() {
           <Link
             to="/movimientos/entrada"
             className={cn(
-              'rounded-full border px-5 py-2.5 text-sm font-medium transition-all',
+              'rounded-full border px-5 py-5 text-sm font-medium transition-all',
               isDark
                 ? 'border-zinc-700 text-zinc-300 hover:bg-zinc-800'
                 : 'border-zinc-300 text-zinc-700 hover:bg-zinc-50',
@@ -234,7 +234,7 @@ export default function DashboardPage() {
           </Link>
           <Link
             to="/inventario/productos"
-            className="rounded-full px-5 py-2.5 text-sm font-medium text-white transition-all active:scale-95 hover:opacity-90"
+            className="rounded-full px-5 py-5 text-sm font-medium text-white transition-all active:scale-95 hover:opacity-90"
             style={{ backgroundColor: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
           >
             {t('Ver Inventario')}
@@ -266,14 +266,14 @@ export default function DashboardPage() {
               {t('Entradas y salidas registradas')}
             </p>
           </div>
-          <div className={cn('flex gap-1 rounded-full p-1', rangeWrap)}>
+          <div className={cn('flex gap-1 rounded-full p-5', rangeWrap)}>
             {['7D', '15D', '30D'].map((r) => (
               <button
                 key={r}
                 type="button"
                 onClick={() => setRango(r)}
                 className={cn(
-                  'rounded-full px-4 py-1 text-xs font-medium transition-all',
+                  'rounded-full px-5 py-5 text-xs font-medium transition-all',
                   rango === r ? cn('shadow-sm', rangeActive) : rangeIdle,
                 )}
               >
@@ -324,14 +324,14 @@ export default function DashboardPage() {
             <Lightbulb size={16} className="text-amber-500" />
             {t('Requiere Atención')}
           </h2>
-          <span className={cn('rounded-full px-4 py-1 text-xs font-medium', pill)}>
+          <span className={cn('rounded-full px-5 py-5 text-xs font-medium', pill)}>
             {t('ACTUALIZADO AHORA')}
           </span>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
-            <span className="rounded-full bg-red-50 px-4 py-1 text-xs font-semibold text-red-600">
+            <span className="rounded-full bg-red-50 px-5 py-5 text-xs font-semibold text-red-600">
               {t('STOCK CRÍTICO')}
             </span>
             <h3 className={cn('mb-2 mt-3 font-semibold', heading)}>
@@ -349,7 +349,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
-            <span className="rounded-full bg-amber-50 px-4 py-1 text-xs font-semibold text-amber-600">
+            <span className="rounded-full bg-amber-50 px-5 py-5 text-xs font-semibold text-amber-600">
               {t('INVENTARIO')}
             </span>
             <h3 className={cn('mb-2 mt-3 font-semibold', heading)}>
@@ -367,7 +367,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={cn('rounded-2xl border p-5 transition-all duration-300 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-500/10', surface)}>
-            <span className="rounded-full bg-blue-50 px-4 py-1 text-xs font-semibold text-blue-600">
+            <span className="rounded-full bg-blue-50 px-5 py-5 text-xs font-semibold text-blue-600">
               {t('VENCIMIENTOS')}
             </span>
             <h3 className={cn('mb-2 mt-3 font-semibold', heading)}>

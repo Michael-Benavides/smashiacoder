@@ -37,7 +37,7 @@ const NIVEL_STYLES = {
 function NivelBadge({ nivel }) {
   const style = NIVEL_STYLES[nivel] ?? 'bg-zinc-100 text-zinc-700'
   return (
-    <span className={cn('inline-flex items-center rounded-md border px-4 py-1 text-xs font-medium', style)}>
+    <span className={cn('inline-flex items-center rounded-md border px-5 py-5 text-xs font-medium', style)}>
       {nivel ?? '—'}
     </span>
   )

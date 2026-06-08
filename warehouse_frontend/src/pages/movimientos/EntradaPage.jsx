@@ -162,7 +162,7 @@ export default function EntradaPage() {
             <div>
               <label className="text-sm font-medium text-zinc-700">{t('Observaciones')}</label>
               <textarea
-                className="mt-1.5 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                className="mt-1.5 w-full rounded-lg border border-zinc-300 px-5 py-5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
                 rows={3}
                 placeholder={t('Notas adicionales...')}
                 {...register('observaciones')}

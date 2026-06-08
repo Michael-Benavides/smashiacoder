@@ -55,7 +55,7 @@ function SelectField({ label, error, options, placeholder, ...props }) {
     <div className="flex flex-col gap-1.5">
       {label && <label className="text-sm font-medium text-zinc-700">{label}</label>}
       <select
-        className="h-9 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent disabled:bg-zinc-50"
+        className="h-9 w-full rounded-lg border border-zinc-300 bg-white px-5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent disabled:bg-zinc-50"
         {...props}
       >
         {placeholder && <option value="">{placeholder}</option>}
@@ -383,7 +383,7 @@ export default function ProductosPage() {
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <select
-          className="h-9 rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+          className="h-9 rounded-lg border border-zinc-300 bg-white px-5 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-900"
           value={categoriaFilter}
           onChange={(e) => { setCategoriaFilter(e.target.value); setPage(1) }}
         >
@@ -480,7 +480,7 @@ export default function ProductosPage() {
             error={errors.stock_minimo?.message}
             {...register('stock_minimo', { required: t('El stock mínimo es requerido') })}
           />
-          <div className="flex justify-end gap-2 pt-2 sm:col-span-2">
+          <div className="flex justify-end gap-2 pt-5 sm:col-span-2">
             <Button type="button" variant="outline" onClick={closeModal}>
               {t('Cancelar')}
             </Button>
@@ -505,7 +505,7 @@ export default function ProductosPage() {
           </p>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-zinc-200">
-            <table className="w-full text-sm">
+            <table className="w-full p-5 text-sm">
               <thead>
                 <tr className="border-b border-zinc-200 bg-zinc-50">
                   <th className="px-5 py-5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">

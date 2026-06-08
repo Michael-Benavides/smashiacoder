@@ -18,7 +18,7 @@ export function Pagination({ meta, onPageChange }) {
         >
           <ChevronLeft size={14} />
         </Button>
-        <span className="text-xs text-zinc-600 px-2">{pagina_actual} / {total_paginas}</span>
+        <span className="text-xs text-zinc-600 px-5">{pagina_actual} / {total_paginas}</span>
         <Button
           variant="outline"
           size="sm"

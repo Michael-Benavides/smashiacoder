@@ -183,7 +183,7 @@ export default function LayoutAlmacenPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedUbicacion(null)}
-                  className="rounded-lg p-1.5 hover:bg-zinc-100"
+                  className="rounded-lg p-5 hover:bg-zinc-100"
                 >
                   <X size={16} />
                 </button>

@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 export function Table({ className, children }) {
   return (
     <div className="w-full overflow-auto rounded-lg border border-border">
-      <table className={cn('w-full caption-bottom text-sm', className)}>
+      <table className={cn('w-full caption-bottom p-5 text-sm', className)}>
         {children}
       </table>
     </div>
@@ -34,7 +34,7 @@ export function TableHead({ children, className }) {
   return (
     <th
       className={cn(
-        'h-10 px-5 text-left align-middle text-xs font-semibold uppercase tracking-wide text-text-secondary',
+        'px-5 py-5 text-left align-middle text-xs font-semibold uppercase tracking-wide text-text-secondary',
         className
       )}
     >

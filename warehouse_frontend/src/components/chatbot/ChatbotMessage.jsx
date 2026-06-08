@@ -71,7 +71,7 @@ export function ChatbotMessage({ msg, locale = es }) {
               components={{
                 table: ({ children }) => (
                   <div className="my-2 overflow-x-auto rounded-lg border border-zinc-200">
-                    <table className="w-full text-left text-xs">{children}</table>
+                    <table className="w-full p-5 text-left text-xs">{children}</table>
                   </div>
                 ),
                 thead: ({ children }) => (

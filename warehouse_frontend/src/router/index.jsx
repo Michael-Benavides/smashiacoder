@@ -45,7 +45,7 @@ function AdminRoute() {
         </p>
         <Link
           to="/dashboard"
-          className="rounded-lg px-4 py-2 text-sm transition-all active:scale-95"
+          className="rounded-lg px-5 py-5 text-sm transition-all active:scale-95"
           style={{ backgroundColor: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}
         >
           Volver al inicio

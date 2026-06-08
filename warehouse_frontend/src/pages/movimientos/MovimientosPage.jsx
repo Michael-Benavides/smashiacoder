@@ -115,7 +115,7 @@ export default function MovimientosPage() {
       render: (val) => {
         const cfg = tipoBadge[val] ?? { label: val ?? '—', className: 'bg-zinc-100 text-zinc-700 border border-zinc-200' }
         return (
-          <span className={`inline-flex items-center rounded-md px-4 py-1 text-xs font-medium ${cfg.className}`}>
+          <span className={`inline-flex items-center rounded-md px-5 py-5 text-xs font-medium ${cfg.className}`}>
             {cfg.label}
           </span>
         )
@@ -150,7 +150,7 @@ export default function MovimientosPage() {
         <div>
           <label className="mb-1 block text-xs font-medium text-zinc-500">{t('Tipo')}</label>
           <select
-            className="h-9 rounded-lg border border-zinc-300 bg-white px-3 text-sm"
+            className="h-9 rounded-lg border border-zinc-300 bg-white px-5 text-sm"
             value={tipo}
             onChange={(e) => { setTipo(e.target.value); setPage(1) }}
           >
@@ -164,7 +164,7 @@ export default function MovimientosPage() {
           <label className="mb-1 block text-xs font-medium text-zinc-500">{t('Desde')}</label>
           <input
             type="date"
-            className="h-9 rounded-lg border border-zinc-300 bg-white px-3 text-sm"
+            className="h-9 rounded-lg border border-zinc-300 bg-white px-5 text-sm"
             value={fechaDesde}
             onChange={(e) => { setFechaDesde(e.target.value); setPage(1) }}
           />
@@ -173,7 +173,7 @@ export default function MovimientosPage() {
           <label className="mb-1 block text-xs font-medium text-zinc-500">{t('Hasta')}</label>
           <input
             type="date"
-            className="h-9 rounded-lg border border-zinc-300 bg-white px-3 text-sm"
+            className="h-9 rounded-lg border border-zinc-300 bg-white px-5 text-sm"
             value={fechaHasta}
             onChange={(e) => { setFechaHasta(e.target.value); setPage(1) }}
           />

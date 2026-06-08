@@ -180,7 +180,7 @@ export default function UserMenu() {
             <div className="mt-1 flex items-center gap-2">
               <span
                 className={cn(
-                  'rounded-full px-4 py-1 text-xs font-semibold',
+                  'rounded-full px-5 py-5 text-xs font-semibold',
                   !isAdmin && 'bg-zinc-700 text-zinc-400',
                 )}
                 style={isAdmin
@@ -210,7 +210,7 @@ export default function UserMenu() {
                 <button
                   type="button"
                   onClick={opt.action}
-                  className="flex w-full items-center gap-3 px-5 py-4 transition-colors duration-150 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
+                  className="flex w-full items-center gap-3 px-5 py-5 transition-colors duration-150 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
                 >
                   <opt.icon size={15} className={opt.color} />
                   <div className="flex-1 text-left">
@@ -234,7 +234,7 @@ export default function UserMenu() {
             {...profileForm.register('nombre', { required: t('El nombre es requerido') })}
           />
           <Input label={t('Email')} value={user?.email ?? ''} readOnly disabled />
-          <div className="border-t border-zinc-100 pt-4 dark:border-zinc-800">
+          <div className="border-t border-zinc-100 pt-5 dark:border-zinc-800">
             <p className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">{t('Cambiar contraseña')}</p>
             <div className="space-y-3">
               <Input
@@ -260,7 +260,7 @@ export default function UserMenu() {
               />
             </div>
           </div>
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-end gap-2 pt-5">
             <Button type="button" variant="outline" onClick={() => setShowProfile(false)}>
               {t('Cancelar')}
             </Button>

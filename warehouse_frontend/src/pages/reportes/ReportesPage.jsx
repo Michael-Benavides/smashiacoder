@@ -152,7 +152,7 @@ export default function ReportesPage() {
                     {highlights.map((h) => (
                       <li
                         key={h}
-                        className="rounded-md bg-zinc-100 px-4 py-1 text-xs font-medium text-zinc-600"
+                        className="rounded-md bg-zinc-100 px-5 py-5 text-xs font-medium text-zinc-600"
                       >
                         {h}
                       </li>
@@ -161,7 +161,7 @@ export default function ReportesPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="mt-auto space-y-2 pt-0">
+            <CardContent className="mt-auto space-y-2 pt-5">
               {hasDateFilter && (
                 <div className="space-y-2 rounded-lg border border-zinc-200 bg-zinc-50 p-5">
                   <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-600">
@@ -175,7 +175,7 @@ export default function ReportesPage() {
                         type="date"
                         value={dateFilters.fecha_desde}
                         onChange={(e) => setDateFilters((s) => ({ ...s, fecha_desde: e.target.value }))}
-                        className="mt-0.5 h-8 w-full rounded-md border border-zinc-300 px-2 text-xs"
+                        className="mt-0.5 h-8 w-full rounded-md border border-zinc-300 px-5 text-xs"
                       />
                     </div>
                     <div>
@@ -184,7 +184,7 @@ export default function ReportesPage() {
                         type="date"
                         value={dateFilters.fecha_hasta}
                         onChange={(e) => setDateFilters((s) => ({ ...s, fecha_hasta: e.target.value }))}
-                        className="mt-0.5 h-8 w-full rounded-md border border-zinc-300 px-2 text-xs"
+                        className="mt-0.5 h-8 w-full rounded-md border border-zinc-300 px-5 text-xs"
                       />
                     </div>
                   </div>
@@ -257,7 +257,7 @@ export default function ReportesPage() {
           <div>
             <label className="text-sm font-medium text-zinc-700">{t('Tipo de informe')}</label>
             <select
-              className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
+              className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-5 text-sm"
               {...register('tipo', { required: true })}
             >
               {reportOptions.map((o) => (
@@ -268,14 +268,14 @@ export default function ReportesPage() {
           <div>
             <label className="text-sm font-medium text-zinc-700">{t('Formato')}</label>
             <select
-              className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
+              className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-5 text-sm"
               {...register('formato', { required: true })}
             >
               <option value="pdf">PDF</option>
               <option value="excel">Excel</option>
             </select>
           </div>
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-end gap-2 pt-5">
             <Button type="button" variant="outline" onClick={() => setEmailModal(null)}>
               {t('Cancelar')}
             </Button>

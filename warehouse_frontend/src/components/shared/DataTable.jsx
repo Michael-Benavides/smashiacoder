@@ -30,7 +30,7 @@ export function DataTable({ columns, data, loading, emptyTitle, emptyDescription
 
   return (
     <div className="overflow-x-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-      <table className="w-full text-sm">
+      <table className="w-full p-5 text-sm">
         <thead>
           <tr className={cn('border-b', headRow)}>
             {columns.map((col) => (

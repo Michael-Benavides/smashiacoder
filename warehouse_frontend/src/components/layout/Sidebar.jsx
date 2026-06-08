@@ -104,7 +104,7 @@ function TopNavItem({ to, icon: Icon, label, onNavigate }) {
       to={to}
       onClick={onNavigate}
       className={({ isActive }) => cn(
-        'mb-1 flex min-h-[40px] items-center gap-3 rounded-xl px-3 py-2.5',
+        'mb-1 flex min-h-[40px] items-center gap-3 rounded-xl px-5 py-5',
         'text-sm transition-all duration-150 active:scale-95',
         isActive ? 'font-semibold shadow-inner' : 'font-medium text-zinc-300 hover:bg-zinc-800/80 hover:text-white',
       )}
@@ -220,7 +220,7 @@ export default function Sidebar() {
               <button
                 type="button"
                 onClick={() => toggleGroup(group.labelKey)}
-                className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-zinc-300 transition-all duration-200 hover:bg-zinc-800/80 hover:text-white"
+                className="group flex w-full items-center gap-3 rounded-xl px-5 py-5 text-zinc-300 transition-all duration-200 hover:bg-zinc-800/80 hover:text-white"
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-800 transition-colors duration-200 group-hover:bg-zinc-700">
                   <GroupIcon
@@ -241,17 +241,17 @@ export default function Sidebar() {
               </button>
 
               {isOpen && (
-                <div className="submenu-open relative ml-4 border-l border-zinc-700/50 pl-4">
+                <div className="submenu-open relative ml-4 border-l border-zinc-700/50 pl-5">
                   {group.items.map((item) => (
                     <NavLink
                       key={item.to}
                       to={item.to}
                       onClick={closeMobile}
                       className={({ isActive }) => cn(
-                        'relative mb-0.5 flex min-h-[40px] items-center gap-2.5 rounded-lg px-3 py-2',
+                        'relative mb-0.5 flex min-h-[40px] items-center gap-2.5 rounded-lg px-5 py-5',
                         'text-sm transition-all duration-150 active:scale-95',
                         isActive
-                          ? 'border-l-2 pl-[9px] font-semibold sidebar-item-active'
+                          ? 'border-l-2 pl-5 font-semibold sidebar-item-active'
                           : 'font-medium text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-100',
                       )}
                       style={({ isActive }) => (isActive ? activeNavStyle : undefined)}

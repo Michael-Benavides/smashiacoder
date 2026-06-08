@@ -137,7 +137,7 @@ export default function ChatbotPanel({
         <div className="flex gap-2">
           <textarea
             ref={inputRef}
-            className="min-h-[40px] max-h-24 flex-1 resize-none rounded-xl border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+            className="min-h-[40px] max-h-24 flex-1 resize-none rounded-xl border border-zinc-300 px-5 py-5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
             placeholder={t('Escribe un mensaje...')}
             value={input}
             maxLength={MAX_CHARS}

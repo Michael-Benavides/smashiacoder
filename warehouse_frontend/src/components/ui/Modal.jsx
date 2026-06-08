@@ -34,7 +34,7 @@ export function Modal({ open, onClose, title, children, size = 'md' }) {
           <button
             onClick={onClose}
             className={cn(
-              'rounded-lg p-1.5 text-zinc-500 transition-colors',
+              'rounded-lg p-5 text-zinc-500 transition-colors',
               closeBtn,
             )}
           >

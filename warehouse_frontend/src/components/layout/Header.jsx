@@ -53,7 +53,7 @@ export default function Header() {
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
-          className="rounded-lg p-2 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 lg:hidden"
+          className="rounded-lg p-5 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 lg:hidden"
           aria-label={t('Abrir menú')}
         >
           <Menu size={20} />
@@ -64,7 +64,7 @@ export default function Header() {
       </div>
       <button
         type="button"
-        className="relative shrink-0 rounded-lg p-2 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-700 dark:hover:bg-zinc-800"
+        className="relative shrink-0 rounded-lg p-5 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-700 dark:hover:bg-zinc-800"
         title={alertCount > 0 ? `${alertCount} ${t('Alertas')}` : t('Sin alertas')}
       >
         <Bell size={16} />

@@ -208,7 +208,7 @@ export default function CategoriasPage() {
             error={errors.descripcion?.message}
             {...register('descripcion')}
           />
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-end gap-2 pt-5">
             <Button type="button" variant="outline" onClick={closeModal}>
               {t('Cancelar')}
             </Button>

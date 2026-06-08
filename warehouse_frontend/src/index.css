@@ -71,6 +71,36 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+@layer base {
+  div,
+  section,
+  article,
+  main,
+  aside,
+  header,
+  footer,
+  form,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  button,
+  input,
+  select,
+  textarea,
+  ul,
+  ol,
+  li,
+  label,
+  a,
+  span,
+  p {
+    padding: 1.25rem;
+  }
+}
+
 body {
   font-family: var(--font-body);
   font-size: var(--text-base);

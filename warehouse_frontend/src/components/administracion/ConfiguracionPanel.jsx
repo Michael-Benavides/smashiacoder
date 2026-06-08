@@ -81,7 +81,7 @@ function SelectField({ value, onChange, options }) {
     <select
       value={value}
       onChange={onChange}
-      className="h-9 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+      className="h-9 w-full rounded-lg border border-zinc-200 bg-white px-5 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -415,7 +415,7 @@ export default function ConfiguracionPanel({ compact = false }) {
   return (
     <div className={cn('flex flex-col gap-4', !compact && 'lg:flex-row lg:gap-6')}>
       <nav className={cn(
-        'flex shrink-0 gap-1 overflow-x-auto rounded-xl border border-zinc-100 bg-white p-1.5 dark:border-zinc-800 dark:bg-zinc-900',
+        'flex shrink-0 gap-1 overflow-x-auto rounded-xl border border-zinc-100 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900',
         compact ? 'flex-row' : 'flex-row lg:w-56 lg:flex-col',
       )}>
         {TABS.map(({ id, labelKey, icon: Icon }) => (
@@ -424,7 +424,7 @@ export default function ConfiguracionPanel({ compact = false }) {
             type="button"
             onClick={() => setActiveTab(id)}
             className={cn(
-              'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors',
+              'flex items-center gap-2 rounded-lg px-5 py-5 text-sm font-medium whitespace-nowrap transition-colors',
               activeTab === id
                 ? 'text-white'
                 : 'text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-800',

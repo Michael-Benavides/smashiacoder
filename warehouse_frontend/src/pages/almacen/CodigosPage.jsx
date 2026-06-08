@@ -224,7 +224,7 @@ export default function CodigosPage() {
             <div>
               <label className="text-sm font-medium text-zinc-700">{t('Producto')}</label>
               <select
-                className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
+                className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-5 text-sm"
                 value={productoId}
                 onChange={(e) => setProductoId(e.target.value)}
               >
@@ -284,7 +284,7 @@ export default function CodigosPage() {
             <div>
               <label className="text-sm font-medium text-zinc-700">{t('Producto')}</label>
               <select
-                className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
+                className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-5 text-sm"
                 value={productoId}
                 onChange={(e) => setProductoId(e.target.value)}
               >
@@ -298,7 +298,7 @@ export default function CodigosPage() {
             <div>
               <label className="text-sm font-medium text-zinc-700">{t('Lote')}</label>
               <select
-                className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm"
+                className="mt-1.5 h-9 w-full rounded-lg border border-zinc-300 px-5 text-sm"
                 value={loteId}
                 onChange={(e) => setLoteId(e.target.value)}
                 disabled={!productoId}

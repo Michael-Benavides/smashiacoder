@@ -243,7 +243,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="admin@smashiacoder.com"
                   className={cn(
-                    'h-12 w-full rounded-xl px-4 text-sm',
+                    'h-12 w-full rounded-xl px-5 text-sm',
                     'border border-zinc-700 bg-zinc-800/80',
                     'text-white placeholder:text-zinc-600',
                     'transition-all duration-200 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20',
@@ -264,7 +264,7 @@ export default function LoginPage() {
                   type="password"
                   placeholder="••••••••"
                   className={cn(
-                    'h-12 w-full rounded-xl px-4 text-sm',
+                    'h-12 w-full rounded-xl px-5 text-sm',
                     'border border-zinc-700 bg-zinc-800/80',
                     'text-white placeholder:text-zinc-600',
                     'transition-all duration-200 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20',
